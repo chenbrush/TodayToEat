@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">今天吃什么</string>
+    <string name="title">吃什么</string>
+    <string name="next_time">下一餐</string>
+    <string name="all_day">今天全天吃</string>
+    <string name="result">点击按钮，输出结果</string>
+    <string name="settings">设置</string>
+    <string name="history">历史记录</string>
+    <string name="list">商铺列表</string>
+    <string name="shop_list_notice">你可以通过右上角的编辑按钮对商铺进行编辑，长按商铺可以选择删除</string>
+    <string name="repetition">不允许每日重复</string>
+    <string name="date">日期</string>
+    <string name="amEat">上午吃的</string>
+</resources>

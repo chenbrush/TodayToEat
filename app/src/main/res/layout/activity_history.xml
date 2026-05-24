@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/history_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HistoryActivity"
+    android:layout_marginTop="30sp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        android:orientation="horizontal"
+        android:layout_margin="10sp"
+        tools:ignore="MissingConstraints">
+
+        <ImageButton
+            android:id="@+id/ib_back"
+            android:layout_width="0dp"
+            android:layout_height="50sp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:src="@drawable/baseline_arrow_back_ios_new_24"
+            app:tint="@color/title_color" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|start"
+            android:layout_weight="9"
+            android:text="@string/history"
+            android:textColor="@color/title_color"
+            android:textSize="30sp"
+            tools:ignore="MissingConstraints" />
+
+    </LinearLayout>
+
+    <ListView
+        android:padding="10sp"
+        android:id="@+id/lv_history"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints"
+        android:orientation="vertical"
+        android:layout_marginTop="60sp"
+        android:dividerHeight="8sp"
+        android:divider="@color/transparent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

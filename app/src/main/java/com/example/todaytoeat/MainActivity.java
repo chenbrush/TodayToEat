@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 判断文件读取的长度，根据长度对显示的内容进行判断
         String line1 = "";
         String line2 = "";
-        if (content.isEmpty() || content.contains("null：没有记录")) {
+        if (content.isEmpty() || content.contains("null")) {
             line1 = noClick;
         } else {
             String[] lines = content.split("：");

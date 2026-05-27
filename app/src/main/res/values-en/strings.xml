@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Today To Eat</string>
+    <string name="title">EAT?</string>
+    <string name="next_time">Next time</string>
+    <string name="all_day">All day</string>
+    <string name="result">Click the button to output the result</string>
+    <string name="settings">Setting</string>
+    <string name="history">History</string>
+    <string name="list">Shops list</string>
+    <string name="shop_list_notice">You can edit the shop by clicking the edit button in the top right corner, and long press the shop to select delete</string>
+    <string name="repetition">No daily repetition allowed</string>
+    <string name="date">Date</string>
+    <string name="amEat">amEat</string>
+</resources>

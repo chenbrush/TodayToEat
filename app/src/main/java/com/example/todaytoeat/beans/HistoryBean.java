@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Environment;
 
+import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.AppConstantsUtils;
 import com.example.todaytoeat.utils.FileUtil;
 
@@ -39,8 +40,8 @@ public class HistoryBean {
             String date = localDate.minusDays(i).toString();
             String fileName = AppConstantsUtils.getDateFilePath(context, date);
             String Context = FileUtil.openText(fileName);
-            String amEatHis = "没有记录";
-            String pmEatHis = "没有记录";
+            String amEatHis = context.getString(R.string.no_record);
+            String pmEatHis = context.getString(R.string.no_record);
 
             File file = new File(fileName);
             // 如果文件不存在

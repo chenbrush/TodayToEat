@@ -11,4 +11,32 @@
     <string name="repetition">不允许每日重复</string>
     <string name="date">日期</string>
     <string name="amEat">上午吃的</string>
+    <string name="only_eat">仅吃</string>
+    <string name="after_eat">等会吃</string>
+    <string name="am_eat">中饭吃</string>
+    <string name="pm_eat">晚饭吃</string>
+    <string name="tomorrow_all_day">明天全天吃</string>
+    <string name="today_all_day">今天全天吃</string>
+    <string name="only_am">仅吃中饭</string>
+    <string name="only_pm">仅吃晚饭</string>
+    <string name="notice">友情提醒</string>
+    <string name="notice_nexttime_message">再过一会就可以吃晚饭了，点下一餐吧</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="notice_nagative_button">我要把晚饭当宵夜吃！！！</string>
+    <string name="notice_low_shops_message">添加的商铺有点少，是否前去添加？</string>
+    <string name="let_s_goooooo" translatable="false">Let\'s goooooo</string>
+    <string name="notice_low_shop_nageative_botton">还是点下一餐吧</string>
+    <string name="notice_none_shops_message">还未添加任何店铺，是否前去添加？</string>
+    <string name="notice_repeat_boom_message">添加的商铺有点少，继续选择重复可能会导致程序崩溃</string>
+    <string name="notice_repeat_boom_positive_botton">点击按钮更改</string>
+    <string name="notice_delete_shop">删除商铺</string>
+    <string name="notice_delete_shop_confirm">确认删除这家商铺吗？</string>
+    <string name="none_shops">未添加任何商铺</string>
+    <string name="notice_delete_shop_nagative_bottom">算了吧，还值得吃</string>
+    <string name="add_shop">添加商铺</string>
+    <string name="cancel">取消</string>
+    <string name="current_vision_code">当前版本号：</string>
+    <string name="version">版本信息</string>
+    <string name="no_record">没有记录</string>
+    <string name="dialog_add_shop">请输入要添加的商铺</string>
 </resources>

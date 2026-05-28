@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static String amEat = "";
     static String pmEat = "";
     static String nowEat = "";
-    static String noClick = "点击按钮，输出结果";
+    static String noClick;
     static String[] shop;
     TextView tvResult_first;
     TextView tvResult_second;
@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return insets;
         });
         EdgeToEdge.enable(this);
+
+        noClick = getString(R.string.result);
 
         // 初始化设置
         findViewById(R.id.btn_all_day).setOnClickListener(this);
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void reloadSettings() {
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
         repStatus = sharedPreferences.getBoolean("repStatus", false);
-        Log.d("kskbl",  repStatus + "");
+        Log.d("kskbl", repStatus + "");
     }
 
     // 恢复显示界面
@@ -109,15 +111,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             String[] lines = content.split("：");
             if (lines.length == 2) {
-                if (content.contains("仅吃")){
-                    line1 = "等会吃：" + lines[1];
-                }else {
-                    line1 = "中饭吃：" + lines[0];
-                    line2 = "晚饭吃：" + lines[1];
+                if (content.contains(getString(R.string.only_eat))) {
+                    line1 = getString(R.string.after_eat) + "：" + lines[1];
+                } else {
+                    line1 = getString(R.string.am_eat) + "：" + lines[0];
+                    line2 = getString(R.string.pm_eat) + "：" + lines[1];
                 }
             } else if (lines.length == 4) {
-                line1 = "中饭吃：" + lines[1];
-                line2 = "晚饭吃：" + lines[3];
+                line1 = getString(R.string.am_eat) + "：" + lines[1];
+                line2 = getString(R.string.pm_eat) + "：" + lines[3];
             }
         }
         tvResult_first.setText(line1);
@@ -125,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 判断按钮显示方式
         if (lt.getHour() >= 21) {
-            allDay.setText("明天全天吃");
+            allDay.setText(R.string.tomorrow_all_day);
         } else {
-            allDay.setText("今天全天吃");
+            allDay.setText(R.string.today_all_day);
         }
     }
 
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String pathShop = directory + File.pathSeparatorChar + "shop_list.txt";
         // 确认文件是否存在
         File fileShop = new File(pathShop);
-        if (!fileShop.exists() || FileUtil.openText(pathShop).isEmpty() || FileUtil.openText(pathShop).equals("未添加任何商铺")) {
+        if (!fileShop.exists() || FileUtil.openText(pathShop).isEmpty() || FileUtil.openText(pathShop).equals(getString(R.string.none_shops))) {
             shopsListExist = false;
             noticeToAddShops();
             return;
@@ -186,14 +188,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         // 是否允许每天吃的和昨天的重复
-        if (repStatus){
+        if (repStatus) {
             while (!nowEat.equals(amEaten) && !nowEat.equals(pmEaten)) {
                 nowEat = shop[r.nextInt(shop.length)];
-
+                Log.d("eat", nowEat);
             }
+        } else {
+            nowEat = shop[r.nextInt(shop.length)];
+            Log.d("eat", nowEat);
         }
 
-        tvResult_first.setText("等会吃：" + nowEat);
+        tvResult_first.setText(getString(R.string.after_eat) + "：" + nowEat);
         tvResult_second.setText("");
 
         // 判断下一餐的点击时间，并根据点击时间进行存储
@@ -201,12 +206,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lt = LocalTime.now();
         String desc;
         if (lt.getHour() <= 14) {
-            desc = "仅吃中饭";
+            desc = getString(R.string.only_am);
         } else {
             if (lt.getHour() >= 21) {
-                desc = "仅吃中饭";
+                desc = getString(R.string.only_am);
             } else {
-                desc = "仅吃晚饭";
+                desc = getString(R.string.only_pm);
             }
         }
 
@@ -239,14 +244,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int ws = r.nextInt(shop.length);
             pmEat = shop[ws];
 
-            if (repStatus){
+            if (repStatus) {
                 // 判断商铺文件是否大于3，否则会出现死循环导致程序崩溃
-                if (shop.length > 3){
+                if (shop.length > 3) {
                     //如果随机选择出来的和前面的内容有相同，就再选一次
                     if (amEaten.equals(amEat) || amEaten.equals(pmEat) || pmEaten.equals(pmEat) || pmEaten.equals(amEat)) {
                         continue;
                     }
-                }else {
+                } else {
                     // 所以这里直接强制更改
                     sharedPreferences.edit().putBoolean("repStatus", false).apply();
                 }
@@ -260,8 +265,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         //定义两个当前吃什么的变量，方便后期存储数据
-        String amNowEat = "中饭吃：" + amEat;
-        String pmNowEat = "晚饭吃：" + pmEat;
+        String amNowEat = getString(R.string.am_eat) + "：" + amEat;
+        String pmNowEat = getString(R.string.pm_eat) + "：" + pmEat;
 
         //toast弹窗仅用于测试
         //Toast.makeText(this, pathNow, Toast.LENGTH_SHORT).show();
@@ -273,8 +278,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //存储相关文件
         FileUtil.saveText(pathNow, amNowEat + "：" + pmNowEat);
     }
-
-
 
     // 当某个按钮被点击时
     @Override
@@ -309,7 +312,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
-
         // 进入设置按钮
         if (view.getId() == R.id.ib_setting) {
             Log.d("setting", "onClick: true");
@@ -322,16 +324,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 创建建议下一餐的提示框
     private void noticeAfterDialog() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
-                .setTitle("友情提醒")
-                .setMessage("再过一会就可以吃晚饭了，点下一餐吧")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.notice)
+                .setMessage(R.string.notice_nexttime_message)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         nextTime();
 
                     }
                 })
-                .setNegativeButton("我要把晚饭当宵夜吃！！！", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.notice_nagative_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         allDay();
@@ -345,9 +347,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 创建添加的商铺很少的提示框
     private void noticeAddLessShopDialog() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this)
-                .setTitle("友情提醒")
-                .setMessage("添加的商铺有点少，是否前去添加？")
-                .setPositiveButton("Let's goooooo", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.notice))
+                .setMessage(R.string.notice_low_shops_message)
+                .setPositiveButton(R.string.let_s_goooooo, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent();
@@ -355,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         startActivity(intent);
                     }
                 })
-                .setNegativeButton("还是点下一餐吧", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.notice_low_shop_nageative_botton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         nextTime();
@@ -374,9 +376,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 创建添加商铺提示框
     private void noticeToAddShops() {
         new MaterialAlertDialogBuilder(this)
-                .setTitle("提示")
-                .setMessage("还未添加任何店铺，是否前去添加？")
-                .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.notice))
+                .setMessage(R.string.notice_none_shops_message)
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent();

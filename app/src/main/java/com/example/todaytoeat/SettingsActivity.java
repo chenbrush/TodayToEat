@@ -37,7 +37,7 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
 
         ListView lv_setting = findViewById(R.id.lv_setting);
         lv_setting.setOnItemClickListener(this);
-        List<SettingsBean> settingsBeanList = SettingsBean.getDefaultList();
+        List<SettingsBean> settingsBeanList = SettingsBean.getDefaultList(this);
         SettingAdapter adapter = new SettingAdapter(this, settingsBeanList);
         lv_setting.setAdapter(adapter);
 
@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
                 } catch (PackageManager.NameNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-                Toast.makeText(this, "当前版本号：" + versionCode, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.current_vision_code) + versionCode, Toast.LENGTH_LONG).show();
                 break;
         }
     }

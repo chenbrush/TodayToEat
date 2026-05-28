@@ -69,9 +69,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 // 如果商铺小于四个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
                 if (b && shopList.size() < 4){
                     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
-                            .setTitle("友情提醒")
-                            .setMessage("添加的商铺有点少，继续选择重复可能会导致程序崩溃")
-                            .setPositiveButton("点击按钮更改", new DialogInterface.OnClickListener() {
+                            .setTitle(getString(R.string.notice))
+                            .setMessage(R.string.notice_repeat_boom_message)
+                            .setPositiveButton(R.string.notice_repeat_boom_positive_botton, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     sharedPreferences.edit().putBoolean("repStatus", false).apply();
@@ -90,9 +90,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle("删除商铺")
-                        .setMessage("确认删除这家商铺吗？")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.notice_delete_shop)
+                        .setMessage(R.string.notice_delete_shop_confirm)
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i2) {
                                 // 获取需要删除的店铺并进行删除
@@ -103,7 +103,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                                 StringBuilder updateShops = new StringBuilder();
                                 // 如果商铺全都没了，那就换回初始值
                                 if (shopList.isEmpty()){
-                                    updateShops.append("未添加任何商铺");
+                                    updateShops.append(getString(R.string.none_shops));
                                 }else {
                                     for (int i1 = 0; i1 < shopList.size(); i1++) {
                                         updateShops.append(shopList.get(i1)).append(",");
@@ -116,7 +116,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
                             }
                         })
-                        .setNegativeButton("算了吧，还值得吃", null)
+                        .setNegativeButton(R.string.notice_delete_shop_nagative_bottom, null)
                         .show();
                 return false;
             }
@@ -131,7 +131,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         // 检测文件是否存在
         File file = new File(path);
         if (!file.exists()){
-            FileUtil.saveText(path, "未添加任何商铺");
+            FileUtil.saveText(path, getString(R.string.none_shops));
         }
 
         String context = FileUtil.openText(path);
@@ -164,9 +164,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
             // 构建弹窗
             new MaterialAlertDialogBuilder(this)
-                    .setTitle("添加商铺")
+                    .setTitle(R.string.add_shop)
                     .setView(dialogView)  // 绑定带EditText的布局
-                    .setPositiveButton("确定", (dialog, which) -> {
+                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                         // 获取输入的文本
                         String content = etInput.getText().toString().trim();
                         // 后续：保存到文件、刷新ListView
@@ -179,7 +179,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         adapter.notifyDataSetChanged();
 
                     })
-                    .setNegativeButton("取消", null)
+                    .setNegativeButton(R.string.cancel, null)
                     .show();
         }
     }
@@ -188,7 +188,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void addNewShop(String shopName){
         String shops = FileUtil.openText(path);
 
-        if (shops.equals("未添加任何商铺") || shops.isEmpty()){
+        if (shops.equals(getString(R.string.none_shops)) || shops.isEmpty()){
             shops = shopName + ",";
         }else {
             shops += shopName + ",";

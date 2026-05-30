@@ -58,22 +58,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="15sp"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_all_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="250dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/button"
         android:text="@string/all_day"
         android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_next_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
+        app:cornerRadius="10dp"
         android:visibility="visible"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,6 +85,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_all_day"
+        app:cornerRadius="10dp"
         android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

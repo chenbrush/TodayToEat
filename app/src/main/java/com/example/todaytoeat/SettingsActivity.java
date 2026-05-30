@@ -70,16 +70,10 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
                 break;
 
             default:
-                // 版本信息
-                String versionCode;
-                PackageManager pm = this.getPackageManager();
-                try {
-                    PackageInfo pi = pm.getPackageInfo(this.getPackageName(), 0);
-                    versionCode = pi.versionName;
-                } catch (PackageManager.NameNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-                Toast.makeText(this, getString(R.string.current_vision_code) + versionCode, Toast.LENGTH_LONG).show();
+                // 版本查询
+                Intent intentVersion = new Intent();
+                intentVersion.setClass(this, VersionActivity.class);
+                startActivity(intentVersion);
                 break;
         }
     }

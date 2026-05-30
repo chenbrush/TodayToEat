@@ -38,4 +38,8 @@
     <string name="notice_nexttime_message">Dinner will be available soon. Choose the next meal instead.</string>
     <string name="notice_low_shops_message">Too few stores have been added. Would you like to add more?</string>
     <string name="dialog_add_shop">Please enter the shop to add</string>
+    <string name="current_vision">Current Version</string>
+    <string name="update">Update</string>
+    <string name="update_button">Check for Updates</string>
+    <string name="auto_update_notice">Auto Update is Coming Soon</string>
 </resources>

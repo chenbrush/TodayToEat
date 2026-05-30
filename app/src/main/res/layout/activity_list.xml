@@ -48,7 +48,7 @@
 
     </LinearLayout>
 
-    <CheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/cb_repetition"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -118,7 +118,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         })
                         .setNegativeButton(R.string.notice_delete_shop_nagative_bottom, null)
                         .show();
-                return false;
+
+                return true;
             }
         });
     }

@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.todaytoeat.R;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 

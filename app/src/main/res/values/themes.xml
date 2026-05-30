@@ -10,6 +10,9 @@
 
         <item name="materialAlertDialogTheme">@style/MyAlertDialog.Light</item>
 
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOutline">@color/transparent</item>
+
     </style>
 
     <style name="MyAlertDialog.Light" parent="ThemeOverlay.Material3.MaterialAlertDialog">

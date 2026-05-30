@@ -45,7 +45,7 @@
         tools:ignore="MissingConstraints"
         android:orientation="vertical"
         android:layout_marginTop="60sp"
-        android:dividerHeight="8sp"
+        android:dividerHeight="10sp"
         android:divider="@color/transparent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

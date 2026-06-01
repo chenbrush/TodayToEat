@@ -6,7 +6,7 @@
 
         <item name="colorPrimary">@color/darkGray</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">@color/middleGray</item>
+        <item name="colorPrimaryVariant">@color/darkPressGray</item>
 
         <item name="android:windowBackground">@color/black</item>
 

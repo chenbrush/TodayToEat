@@ -189,8 +189,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 是否允许每天吃的和昨天的重复
         if (repStatus) {
-            while (!nowEat.equals(amEaten) && !nowEat.equals(pmEaten)) {
+            while (true) {
                 nowEat = shop[r.nextInt(shop.length)];
+                if (!nowEat.equals(amEaten) && !nowEat.equals(pmEaten)){
+                    break;
+                }
                 Log.d("eat", nowEat);
             }
         } else {

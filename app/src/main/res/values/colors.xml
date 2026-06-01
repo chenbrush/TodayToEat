@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#F0F0F2</color>
     <color name="darkGray">#1F1F1F</color>
+    <color name="darkPressGray">#575757</color>
     <color name="transparent">#00ffffff</color>
-    <color name="middleGray">#6F6F6F</color>
+    <color name="middleGray">#CACACA</color>
 </resources>

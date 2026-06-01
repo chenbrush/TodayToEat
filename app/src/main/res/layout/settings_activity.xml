@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:orientation="horizontal"
-        android:layout_margin="10sp"
         tools:ignore="MissingConstraints">
 
         <ImageButton
@@ -44,6 +43,7 @@
         tools:ignore="MissingConstraints"
         android:orientation="vertical"
         android:layout_marginTop="60sp"
+        android:listSelector="@drawable/item_selector"
         android:dividerHeight="8sp"
         android:divider="@color/transparent">
 

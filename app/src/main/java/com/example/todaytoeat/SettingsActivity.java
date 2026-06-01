@@ -18,6 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.todaytoeat.adapter.SettingAdapter;
 import com.example.todaytoeat.beans.SettingsBean;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.MaterialColors;
 
 import java.util.List;
 
@@ -76,5 +78,6 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
                 startActivity(intentVersion);
                 break;
         }
+
     }
 }

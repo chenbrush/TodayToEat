@@ -6,6 +6,9 @@
     android:orientation="vertical"
     android:minHeight="100sp"
     android:layout_margin="10sp"
+    app:cardBackgroundColor="?attr/colorPrimary"
+    android:clickable="true"
+    android:focusable="true"
     app:cardCornerRadius="10dp">
 
     <TextView

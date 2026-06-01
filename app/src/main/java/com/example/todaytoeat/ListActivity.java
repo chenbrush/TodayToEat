@@ -1,11 +1,14 @@
 package com.example.todaytoeat;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -17,12 +20,15 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.FileUtil;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
@@ -65,7 +71,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCheckedChanged(@NonNull CompoundButton compoundButton, boolean b) {
                 sharedPreferences.edit().putBoolean("repStatus", b).apply();
-
                 // 如果商铺小于四个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
                 if (b && shopList.size() < 4){
                     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
@@ -84,11 +89,13 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
-
+                
         // 长按删除文件
         lv_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MaterialCardView card = view.findViewById(R.id.card_root);
+
                 new MaterialAlertDialogBuilder(ListActivity.this)
                         .setTitle(R.string.notice_delete_shop)
                         .setMessage(R.string.notice_delete_shop_confirm)
@@ -117,6 +124,14 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         })
                         .setNegativeButton(R.string.notice_delete_shop_nagative_bottom, null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                // dialog结束后对效果进行恢复
+                                card.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
+                                card.setCardBackgroundColor(MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface));
+                            }
+                        })
                         .show();
 
                 return true;

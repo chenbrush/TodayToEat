@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:orientation="horizontal"
-        android:layout_margin="10sp"
         tools:ignore="MissingConstraints">
 
         <ImageButton
@@ -46,6 +45,7 @@
         android:orientation="vertical"
         android:layout_marginTop="60sp"
         android:dividerHeight="10sp"
+        android:listSelector="@drawable/item_selector"
         android:divider="@color/transparent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

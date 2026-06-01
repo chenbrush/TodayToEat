@@ -71,6 +71,7 @@
         android:padding="10sp"
         app:layout_constraintTop_toBottomOf="@+id/cb_repetition"
         app:layout_constraintBottom_toTopOf="@+id/tv_notice"
+        android:listSelector="@drawable/item_selector"
         tools:ignore="MissingConstraints" />
 
     <TextView

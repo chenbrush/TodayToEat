@@ -142,7 +142,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     // 加载商铺名称
     private void loadShop() {
         shopList.clear();
-        path = Objects.requireNonNull(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)) + "/files" + File.pathSeparatorChar + "shop_list.txt";
+        path = Objects.requireNonNull(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)) + "/files" + File.separatorChar + "shop_list.txt";
 
         // 检测文件是否存在
         File file = new File(path);

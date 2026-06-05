@@ -8,6 +8,7 @@ appcompat = "1.6.1"
 material = "1.10.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+materialVersion = "1.14.0"
 sdpAndroid = "1.1.1"
 preference = "1.2.0"
 activityKtx = "1.8.0"
@@ -23,6 +24,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+material-v1140 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
 preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }

@@ -1,4 +1,8 @@
 <resources>
+    <string name="filter_7_days">七天</string>
+    <string name="filter_10_days">10天</string>
+    <string name="filter_15_days">15天</string>
+    <string name="filter_30_days">一个月</string>
     <string name="app_name">今天吃什么</string>
     <string name="title">吃什么</string>
     <string name="next_time">下一餐</string>
@@ -43,4 +47,14 @@
     <string name="update">更新</string>
     <string name="update_button">检查更新</string>
     <string name="auto_update_notice">自动更新功能正在制作中，敬请期待</string>
+    <string name="history_save_time">历史记录保存时长</string>
+    <string name="nav_home">首页</string>
+    <string name="nav_shop">店铺</string>
+    <string name="nav_history">历史</string>
+    <string name="nav_settings">设置</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
+
+

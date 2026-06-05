@@ -2,6 +2,7 @@ package com.example.todaytoeat.beans;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 
 import com.example.todaytoeat.R;
@@ -35,11 +36,15 @@ public class HistoryBean {
         boolean isAfter21 = localTime.getHour() >= 21;
         localDate = isAfter21 ? localDate.plusDays(1) : localDate;
 
-        for (int i = 0; i < 8; i++) {
+        // 读取历史记录长度
+        SharedPreferences sharedPreferences = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
+        int historyDays = sharedPreferences.getInt("historyDays", 7);
+
+        for (int i = 0; i <= historyDays; i++) {
             // 初始化文件名
             String date = localDate.minusDays(i).toString();
             String fileName = AppConstantsUtils.getDateFilePath(context, date);
-            String Context = FileUtil.openText(fileName);
+            String content = FileUtil.openText(fileName);
             String amEatHis = context.getString(R.string.no_record);
             String pmEatHis = context.getString(R.string.no_record);
 
@@ -47,7 +52,7 @@ public class HistoryBean {
             // 如果文件不存在
             // 一般来讲文件存在，里面都是有数据的
             if (file.exists()){
-                String[] eatArr = Context.split("：|aaa");
+                String[] eatArr = content.split("：");
                 // 这个if代码适用于文件保存时长度不同的问题
                 if (eatArr.length == 4){
                     amEatHis = eatArr[1];

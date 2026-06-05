@@ -4,6 +4,12 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
 
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <item name="android:windowLightStatusBar">false</item>
+
         <item name="colorPrimary">@color/darkGray</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/darkPressGray</item>
@@ -15,7 +21,8 @@
         <item name="colorSurface">@color/darkGray</item>
         <item name="colorOutline">@color/transparent</item>
 
-    </style>
+        <item name="radioButtonStyle">@style/Widget.TodayToEat.RadioButton</item>
+        </style>
 
     <style name="MyAlertDialog.Dark" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/title_color</item>

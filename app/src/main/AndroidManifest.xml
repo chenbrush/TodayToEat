@@ -16,9 +16,12 @@
         <activity
             android:name=".HistoryActivity"
             android:exported="false" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".ListActivity" />
-        <activity android:name=".VersionActivity" />
+        <activity
+            android:name=".ListActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".VersionActivity"
+            android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

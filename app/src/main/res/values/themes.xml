@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+﻿<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.TodayToEat" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -14,12 +14,17 @@
         <item name="colorOutline">@color/transparent</item>
         <item name="colorPrimaryVariant">@color/middleGray</item>
 
+        <item name="radioButtonStyle">@style/Widget.TodayToEat.RadioButton</item>
     </style>
 
     <style name="MyAlertDialog.Light" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/black</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="Widget.TodayToEat.RadioButton" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="buttonTint">@color/radio_button_tint</item>
     </style>
 
     <color name="title_color">#000000</color>

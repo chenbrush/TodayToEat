@@ -1,6 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Today To Eat</string>
+        <string name="filter_7_days">7 Days</string>
+    <string name="filter_10_days">10 Days</string>
+    <string name="filter_15_days">15 Days</string>
+    <string name="filter_30_days">1 Month</string>
+<string name="app_name">Today To Eat</string>
     <string name="title">EAT?</string>
     <string name="next_time">Next time</string>
     <string name="all_day">All day</string>

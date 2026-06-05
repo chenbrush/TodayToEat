@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // 提取商铺列表
     private void reloadShop() {
-        String pathShop = directory + File.pathSeparatorChar + "shop_list.txt";
+        String pathShop = directory + File.separatorChar + "shop_list.txt";
         // 确认文件是否存在
         File fileShop = new File(pathShop);
         if (!fileShop.exists() || FileUtil.openText(pathShop).isEmpty() || FileUtil.openText(pathShop).equals(getString(R.string.none_shops))) {
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         shopsListExist = true;
         // 对获取的商铺文件进行读取，并且裁剪
-        shop = FileUtil.openText(pathShop).split("[,，、]");
+        shop = FileUtil.openText(pathShop).split(",");
 
     }
 
@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         java.time.LocalDate belongDate = isAfter21 ? todayDate.plusDays(1) : todayDate;
 
         String fileName = belongDate + ".txt";
-        pathNow = directory + File.pathSeparatorChar + fileName;
-        pathLast = directory + File.pathSeparatorChar + belongDate.plusDays(-1) + ".txt";
+        pathNow = directory + File.separatorChar + fileName;
+        pathLast = directory + File.separatorChar + belongDate.plusDays(-1) + ".txt";
 
         File fileHistory = new File(pathLast);
         if (!fileHistory.exists()) {
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String pmEaten = "";
         // if判断是保险机制
         if (!historyEat.isEmpty()) {
-            String[] eatArr = historyEat.split("：|aaa");
+            String[] eatArr = historyEat.split("：");
             // 这个if代码适用于文件保存时长度不同的问题
             if (eatArr.length == 4) {
                 amEaten = eatArr[1];
@@ -189,7 +189,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 是否允许每天吃的和昨天的重复
         if (repStatus) {
+            int nextMaxAttempts = 100;
+            int nextAttempts = 0;
             while (true) {
+                nextAttempts++;
+                if (nextAttempts > nextMaxAttempts) {
+                    nowEat = shop[r.nextInt(shop.length)];
+                    break;
+                }
                 nowEat = shop[r.nextInt(shop.length)];
                 if (!nowEat.equals(amEaten) && !nowEat.equals(pmEaten)){
                     break;
@@ -230,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String pmEaten = "";
         // if判断是保险机制
         if (!historyEat.isEmpty()) {
-            String[] eatArr = historyEat.split("：|aaa");
+            String[] eatArr = historyEat.split("：");
             // 这个if代码适用于文件保存时长度不同的问题
             if (eatArr.length == 4) {
                 amEaten = eatArr[1];
@@ -241,7 +248,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+        int maxAttempts = 100;
+        int attempts = 0;
         while (true) {
+            attempts++;
+            if (attempts > maxAttempts) {
+                break;
+            }
+
             int zw = r.nextInt(shop.length);
             amEat = shop[zw];
             int ws = r.nextInt(shop.length);
@@ -290,6 +304,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 判断商铺文件是否存在
             if (!shopsListExist) {
                 noticeToAddShops();
+                return;
+            }
+            if (shop.length <= 2 && repStatus){
+                noticeAddLessShopDialog();
                 return;
             }
             nextTime();

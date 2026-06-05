@@ -24,6 +24,6 @@ public class AppConstantsUtils {
     // 获取 日期.txt 文件完整路径（你最需要的！）
     public static String getDateFilePath(Context context, String date) {
         String dir = getAppDownloadDirectory(context);
-        return dir + File.pathSeparatorChar + date + ".txt";
+        return dir + File.separatorChar + date + ".txt";
     }
 }

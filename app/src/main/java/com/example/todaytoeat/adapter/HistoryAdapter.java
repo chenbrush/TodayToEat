@@ -19,12 +19,17 @@ public class HistoryAdapter extends BaseAdapter {
 
     public HistoryAdapter(Context mContext, List<HistoryBean> list) {
         this.mContext = mContext;
+   this.mHistoryBeanList = list;
+   }
+   
+    public void refreshData(List<HistoryBean> list) {
         this.mHistoryBeanList = list;
+        notifyDataSetChanged();
     }
 
-    @Override
-    public int getCount() {
-        return mHistoryBeanList.size();
+   @Override
+   public int getCount() {
+       return mHistoryBeanList.size();
     }
 
     @Override
@@ -42,7 +47,7 @@ public class HistoryAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (view == null){
-            view = LayoutInflater.from(mContext).inflate(R.layout.history_item, null);
+            view = LayoutInflater.from(mContext).inflate(R.layout.history_item, viewGroup, false);
 
             holder = new ViewHolder();
             holder.tv_his_date = view.findViewById(R.id.tv_his_date);

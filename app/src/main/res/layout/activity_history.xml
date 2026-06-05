@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,6 +9,8 @@
     android:layout_marginTop="30sp">
 
     <LinearLayout
+        android:id="@+id/ll_history_header"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:orientation="horizontal"
@@ -36,16 +38,110 @@
 
     </LinearLayout>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_history_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:cardCornerRadius="10sp"
+        android:layout_margin="10sp"
+        app:layout_constraintTop_toBottomOf="@id/ll_history_header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_history_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/history_save_time"
+                android:textColor="@color/title_color"
+                android:textSize="20sp"
+                android:gravity="start"
+                android:layout_marginStart="10sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginEnd="10sp" />
+
+            <RadioGroup
+                android:id="@+id/rg_date_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/tv_history_filter"
+                android:layout_marginStart="10sp"
+                android:layout_marginEnd="10sp"
+                android:layout_marginTop="5sp"
+                android:layout_marginBottom="5sp"
+                android:gravity="center"
+                tools:ignore="MissingConstraints">
+
+                <RadioButton
+                    android:id="@+id/rb_7days"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/filter_7_days"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <RadioButton
+                    android:id="@+id/rb_10days"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/filter_10_days"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <RadioButton
+                    android:id="@+id/rb_15days"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/filter_15_days"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <RadioButton
+                    android:id="@+id/rb_30days"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/filter_30_days"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+            </RadioGroup>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:id="@+id/v_divider"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"
+        android:layout_marginTop="10sp"
+        android:background="?attr/colorPrimaryVariant"
+        app:layout_constraintTop_toBottomOf="@+id/card_history_filter"
+        tools:ignore="MissingConstraints" />
+
     <ListView
-        android:padding="10sp"
         android:id="@+id/lv_history"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="MissingConstraints"
-        android:orientation="vertical"
-        android:layout_marginTop="60sp"
+        android:layout_height="0dp"
+        android:layout_marginTop="5sp"
+        android:divider="@color/transparent"
         android:dividerHeight="10sp"
         android:listSelector="@drawable/item_selector"
-        android:divider="@color/transparent" />
+        android:orientation="vertical"
+        android:padding="10sp"
+        app:layout_constraintTop_toBottomOf="@+id/v_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

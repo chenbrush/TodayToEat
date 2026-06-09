@@ -34,5 +34,9 @@
         <item name="buttonTint">@color/radio_button_tint</item>
     </style>
 
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/gray</item> <!-- 高亮颜色 -->
+    </style>
+
     <color name="title_color">#000000</color>
 </resources>

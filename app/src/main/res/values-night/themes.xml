@@ -29,5 +29,9 @@
         <item name="android:textColor">@color/title_color</item>
     </style>
 
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/black</item> <!-- 高亮颜色 -->
+    </style>
+
     <color name="title_color">#ffffff</color>
 </resources>

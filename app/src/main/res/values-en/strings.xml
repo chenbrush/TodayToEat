@@ -47,4 +47,5 @@
     <string name="update_button">Check for Updates</string>
     <string name="auto_update_notice">Auto Update is Coming Soon</string>
     <string name="history_save_time">Keep History For</string>
+    <string name="nav_home">home</string>
 </resources>

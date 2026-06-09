@@ -47,4 +47,5 @@
     <string name="update_button">检查更新</string>
     <string name="auto_update_notice">自动更新功能正在制作中，敬请期待</string>
     <string name="history_save_time">历史记录保存时长</string>
+    <string name="nav_home">首页</string>
 </resources>

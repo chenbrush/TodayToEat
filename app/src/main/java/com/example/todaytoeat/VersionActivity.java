@@ -120,7 +120,12 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
                         LocalDateTime localDateTime = LocalDateTime.now();
                         String currentTime = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                         String lastCheckUpdate = getString(R.string.version_last_check_update) + currentTime;
-                        tv_auto_update.setText(lastCheckUpdate);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tv_auto_update.setText(lastCheckUpdate);
+                            }
+                        });
                         sharedPreferences.edit().
                                 putString("lastUpdateDate", lastCheckUpdate).
                                 apply();

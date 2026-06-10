@@ -25,6 +25,8 @@ import com.example.todaytoeat.ListActivity;
 import com.example.todaytoeat.MainActivity;
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.FileUtil;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;

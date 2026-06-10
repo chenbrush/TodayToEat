@@ -49,11 +49,11 @@
     <string name="auto_update_notice">自动更新功能正在制作中，敬请期待</string>
     <string name="history_save_time">历史记录保存时长</string>
     <string name="nav_home">首页</string>
-    <string name="nav_shop">店铺</string>
-    <string name="nav_history">历史</string>
-    <string name="nav_settings">设置</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="version_notice_newst_version">当前版本为最新版本</string>
+    <string name="version_notice_network_request_failed">网络请求失败，请稍后重试</string>
+    <string name="version_last_check_update">上次检查更新时间：</string>
+    <string name="version_new_version_publish">新版本已发布，是否更新？</string>
+    <string name="confirm">确定</string>
 
 </resources>
 

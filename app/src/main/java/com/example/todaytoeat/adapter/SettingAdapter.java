@@ -1,7 +1,12 @@
 package com.example.todaytoeat.adapter;
 
+import static android.content.Context.MODE_PRIVATE;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -52,6 +57,7 @@ public class SettingAdapter extends BaseAdapter {
             holder.iv_icon = view.findViewById(R.id.iv_icon);
             holder.tv_list = view.findViewById(R.id.tv_list);
             holder.iv_next = view.findViewById(R.id.iv_next);
+            holder.iv_red_dot = view.findViewById(R.id.iv_red_dot);
             holder.cardView = view.findViewById(R.id.card_root);
 
             // 解析themes颜色
@@ -74,6 +80,11 @@ public class SettingAdapter extends BaseAdapter {
         holder.tv_list.setText(settingsBean.name);
         holder.iv_icon.setImageResource(settingsBean.icon);
         holder.iv_next.setImageResource(R.drawable.baseline_arrow_forward_ios_black_24);
+
+        if (settingsBean.icon == R.drawable.baseline_info_24){
+            SharedPreferences sharedPreferences = mContext.getSharedPreferences("setting", MODE_PRIVATE);
+            holder.iv_red_dot.setVisibility(sharedPreferences.getBoolean("checkUpdate", false) ? VISIBLE : INVISIBLE);
+        }
 
         ViewHolder finalHolder = holder;
 
@@ -114,6 +125,7 @@ public class SettingAdapter extends BaseAdapter {
         public ImageView iv_icon;
         public TextView tv_list;
         public ImageView iv_next;
+        public ImageView iv_red_dot;
         public int normalColor;
         public int pressColor;
         public MaterialCardView cardView;

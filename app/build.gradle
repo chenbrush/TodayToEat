@@ -13,7 +13,7 @@ android {
         minSdk 26
         targetSdk 37
         versionCode 1
-        versionName "1.8.0"
+        versionName "1.8.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation libs.activity.ktx
     implementation libs.appcompat
     implementation libs.material

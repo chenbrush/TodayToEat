@@ -49,6 +49,7 @@
     <string name="history_save_time">历史记录保存时长</string>
     <string name="nav_home">首页</string>
     <string name="version_notice_newst_version">当前版本为最新版本</string>
+    <string name="version_notice_network_request_failed">网络请求失败，请稍后重试</string>
     <string name="version_last_check_update">上次检查更新时间：</string>
     <string name="version_new_version_publish">新版本已发布，是否更新？</string>
     <string name="confirm">确定</string>

@@ -48,4 +48,9 @@
     <string name="auto_update_notice">Auto Update is Coming Soon</string>
     <string name="history_save_time">Keep History For</string>
     <string name="nav_home">home</string>
+    <string name="version_new_version_publish">A new version is available. Would you like to update now?</string>
+    <string name="confirm">confirm</string>
+    <string name="version_notice_newst_version">You are using the latest version.</string>
+    <string name="version_notice_network_request_failed">Network request failed. Please try again later.</string>
+    <string name="version_last_check_update">Last update check:</string>
 </resources>

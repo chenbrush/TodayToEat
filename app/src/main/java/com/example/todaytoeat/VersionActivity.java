@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,11 +57,20 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
         }
         tv_current_vision.setText(currentVersion);
 
-        findViewById(R.id.btn_check_update).setOnClickListener(this);
+        Button btn_check_update = findViewById(R.id.btn_check_update);
+        btn_check_update.setOnClickListener(this);
         findViewById(R.id.ib_back).setOnClickListener(this);
         findViewById(R.id.btn_enter_program).setOnClickListener(this);
         tv_auto_update = findViewById(R.id.tv_auto_update);
         tv_auto_update.setText(sharedPreferences.getString("lastUpdateDate", ""));
+
+        // 有更新时自动更改按钮文字，达到提示效果
+        if (!sharedPreferences.getBoolean("checkUpdate", false)) {
+            btn_check_update.setText(R.string.update_button);
+        } else {
+            btn_check_update.setText(R.string.update_button_have);
+        }
+
     }
 
     @Override

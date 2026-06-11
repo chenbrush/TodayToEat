@@ -30,6 +30,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
     private final MainFragment mainFragment = new MainFragment();
     private final SettingFragment settingFragment = new SettingFragment();
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             transaction.commit();
         }
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -63,6 +64,22 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        checkUpdate();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        checkUpdate();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkUpdate();
+    }
+
+    private void checkUpdate() {
         // 检查更新
         SharedPreferences sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
         PackageManager pm = this.getPackageManager();
@@ -85,14 +102,14 @@ public class MainActivity extends AppCompatActivity {
                     sharedPreferences.edit()
                             .putBoolean("checkUpdate", hasNew)
                             .apply();
+                    // 更新完后立即刷新 Badge 显示状态
+                    BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_settings);
+                    badgeDrawable.setVisible(hasNew);
                 });
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
-
-        BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_settings);
-        badgeDrawable.setVisible(sharedPreferences.getBoolean("checkUpdate", false));
     }
 
     public void switchFragment(Fragment fragment) {

@@ -1,18 +1,17 @@
 ﻿<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Theme.TodayToEat" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
 
         <item name="android:navigationBarColor">@android:color/transparent</item>
-
         <item name="android:statusBarColor">@android:color/transparent</item>
-
         <item name="android:windowLightStatusBar">false</item>
 
         <item name="colorPrimary">@color/darkGray</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/darkPressGray</item>
+        <item name="colorPrimaryContainer">@color/black</item>
 
         <item name="android:windowBackground">@color/black</item>
 
@@ -22,7 +21,9 @@
         <item name="colorOutline">@color/transparent</item>
 
         <item name="radioButtonStyle">@style/Widget.TodayToEat.RadioButton</item>
-        </style>
+
+        <item name="itemBackground">@color/transparent</item>
+    </style>
 
     <style name="MyAlertDialog.Dark" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/title_color</item>
@@ -30,8 +31,7 @@
     </style>
 
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/black</item> <!-- 高亮颜色 -->
+        <item name="android:color">@color/darkPressGray</item>
     </style>
 
-    <color name="title_color">#ffffff</color>
 </resources>

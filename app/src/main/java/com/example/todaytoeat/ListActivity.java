@@ -60,13 +60,16 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
         loadShop();
         boolean repStatus = sharedPreferences.getBoolean("repStatus", false);
-        cb_repetition.setChecked(repStatus);
 
         adapter = new ListAdapter(this, shopList);
         lv_list.setAdapter(adapter);
 
         findViewById(R.id.ib_back).setOnClickListener(this);
         findViewById(R.id.ib_edit).setOnClickListener(this);
+
+        // 设置初始状态，在设置监听之前，避免触发 onCheckedChanged
+        cb_repetition.setChecked(repStatus);
+
         cb_repetition.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(@NonNull CompoundButton compoundButton, boolean b) {

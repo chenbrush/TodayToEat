@@ -2,9 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gray">#F0F0F2</color>
-    <color name="darkGray">#1F1F1F</color>
-    <color name="darkPressGray">#575757</color>
     <color name="transparent">#00ffffff</color>
-    <color name="middleGray">#CACACA</color>
+
+    <color name="middleGray">#E7E6E9</color>
+    <color name="gray">#F2F2F4</color>
+
+    <color name="darkGray">#393939</color>
+    <color name="darkPressGray">#262626</color>
+
+    <color name="title_color">#000000</color>
+
 </resources>

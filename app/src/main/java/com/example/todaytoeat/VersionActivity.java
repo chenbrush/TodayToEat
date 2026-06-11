@@ -14,24 +14,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.todaytoeat.utils.GithubUpdateUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class VersionActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -65,6 +58,7 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
 
         findViewById(R.id.btn_check_update).setOnClickListener(this);
         findViewById(R.id.ib_back).setOnClickListener(this);
+        findViewById(R.id.btn_enter_program).setOnClickListener(this);
         tv_auto_update = findViewById(R.id.tv_auto_update);
         tv_auto_update.setText(sharedPreferences.getString("lastUpdateDate", ""));
     }
@@ -78,9 +72,9 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
                 public void run() {
                     Log.d("version", "run");
                     try {
-                        String githubLatestVersion = getGithubUpdate();
+                        String githubLatestVersion = GithubUpdateUtils.getGithubUpdate();
                         // 确认是否有更新
-                        if (compareVersion(githubLatestVersion, currentVersion)) {
+                        if (GithubUpdateUtils.compareVersion(githubLatestVersion, currentVersion)) {
                             Log.d("version", githubLatestVersion);
                             // 当前版本为旧版本
                             runOnUiThread(new Runnable() {
@@ -132,7 +126,7 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
 
                         // 检查更新传递到BottomNavigation中
                         sharedPreferences.edit().
-                                putBoolean("checkUpdate", compareVersion(githubLatestVersion, currentVersion)).
+                                putBoolean("checkUpdate", GithubUpdateUtils.compareVersion(githubLatestVersion, currentVersion)).
                                 apply();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -150,69 +144,10 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
 
         } else if (view.getId() == R.id.ib_back) {
             finish();
+        } else if (view.getId() == R.id.btn_enter_program) {
+            String url = "https://github.com/chenbrush/TodayToEat";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
         }
-    }
-
-    // 从GitHub上获取最新版本
-    public String getGithubUpdate() throws IOException {
-        // 获取分割后的数据
-        String[] getApiData = getGithub();
-
-        // 提取分割之后的版本号
-        String githubVersion = "";
-        for (int i = 0; i < getApiData.length; i++) {
-            if (getApiData[i].contains("tag_name")){
-                githubVersion = getApiData[i];
-                break;
-            }
-        }
-
-        // 对分割后的版本号进行进一步分割，提取纯粹的版本号
-        String[] githubVersionSplit = githubVersion.split("[\":v]");
-        return githubVersionSplit[githubVersionSplit.length - 1];
-    }
-
-    @NonNull
-    private static String[] getGithub() throws IOException {
-        // 初始化访问数据
-        final String githubApi = "https://api.github.com/repos/chenbrush/TodayToEat/releases/latest";
-        URL url = new URL(githubApi);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        InputStream inputStream = connection.getInputStream();
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-
-        while ((line = bufferedReader.readLine()) != null){
-            stringBuilder.append(line);
-        }
-
-        // 通过访问得到的数据进行分割
-        return stringBuilder.toString().split(",");
-    }
-
-
-    /* 版本比较
-    // version1 是当前最新版本，version2 是目前版本
-    // 为什么这么写？
-    // 写的时候回味中午吃的炸鸡了，开始写的时候没反应过来
-    */
-    private boolean compareVersion(String version1, String version2){
-        // 将版本号变成字符串数组，里面全是字符串的数字
-        String[] version1Split = version1.split("\\.");
-        String[] version2Split = version2.split("\\.");
-
-        // 核对版本号
-        for (int i = 0; i < Math.min(version1Split.length, version2Split.length); i++) {
-            int version1Int = Integer.parseInt(version1Split[i]);
-            int version2Int = Integer.parseInt(version2Split[i]);
-
-            if (version1Int > version2Int){
-                return true;
-            }
-        }
-
-        return false;
     }
 }

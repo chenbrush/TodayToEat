@@ -72,14 +72,12 @@ public class HistoryActivity extends AppCompatActivity {
             }
         });
 
-
-        
+        EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.history_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        EdgeToEdge.enable(this);
 
         lvHistory = findViewById(R.id.lv_history);
         loadHistoryData();

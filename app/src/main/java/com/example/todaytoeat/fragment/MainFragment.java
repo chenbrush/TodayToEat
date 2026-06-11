@@ -22,26 +22,21 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.todaytoeat.ListActivity;
-import com.example.todaytoeat.MainActivity;
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.FileUtil;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Objects;
 import java.util.Random;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
-    static String amEat = "";
-    static String pmEat = "";
-    static String nowEat = "";
-    static String noClick;
-    static String[] shop;
+    private String amEat = "";
+    private String pmEat = "";
+    private String noClick;
+    private String[] shop;
     TextView tvResult_first;
     TextView tvResult_second;
     private LocalTime lt;
@@ -200,6 +195,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             }
         }
 
+        String nowEat = "";
         if (repStatus) {
             int nextMaxAttempts = 100;
             int nextAttempts = 0;

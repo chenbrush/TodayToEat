@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20sp">
+    
+    <EditText
+        android:id="@+id/et_input_am_eat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/history_change_am"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/et_input_pm_eat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/history_change_pm"
+        android:inputType="text"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/history_change_notice"
+        android:textColor="@color/title_color"/>
+
+</LinearLayout>

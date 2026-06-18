@@ -56,6 +56,15 @@
     <string name="confirm">确定</string>
     <string name="version_enter_program">查看项目主页</string>
     <string name="update_button_have">点击更新</string>
+    <string name="history_cancel_change">取消修改</string>
+    <string name="history_change">修改历史记录</string>
+    <string name="history_enter_change">输入你想要修改的内容</string>
+    <string name="history_confirm">确认修改</string>
+    <string name="list_notice_similar_message">开启这个按钮后，相同类型的店名将被过滤，部分毫不相关的店名也有可能因为地址名字相同（例如xx店）而被误伤，是否确认开启？</string>
+    <string name="history_change_am">输入中午吃的</string>
+    <string name="history_change_pm">输入晚上吃的</string>
+    <string name="history_change_notice">两行留空则代表没有记录，仅留空一行则代表仅吃一餐</string>
+    <string name="similar">不允许出现相似店名</string>
 
 </resources>
 

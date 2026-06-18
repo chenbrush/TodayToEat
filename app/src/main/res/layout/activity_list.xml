@@ -48,18 +48,35 @@
 
     </LinearLayout>
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/cb_repetition"
+    <LinearLayout
+        android:id="@+id/ll_check_box_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:text="@string/repetition"
-        android:textSize="15sp"
-        android:textColor="@color/title_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linearLayout2"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal">
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cb_repetition"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/repetition"
+            android:textSize="15sp"
+            android:textColor="@color/title_color" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cb_similar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/similar"
+            android:textSize="15sp"
+            android:textColor="@color/title_color" />
+
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/lv_list"
@@ -69,7 +86,7 @@
         android:dividerHeight="8sp"
         android:orientation="vertical"
         android:padding="10sp"
-        app:layout_constraintTop_toBottomOf="@+id/cb_repetition"
+        app:layout_constraintTop_toBottomOf="@+id/ll_check_box_group"
         app:layout_constraintBottom_toTopOf="@+id/tv_notice"
         android:listSelector="@drawable/item_selector"
         tools:ignore="MissingConstraints" />

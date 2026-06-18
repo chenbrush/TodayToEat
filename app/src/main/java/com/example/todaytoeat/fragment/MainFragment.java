@@ -47,6 +47,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     boolean shopsListExist = true;
     private SharedPreferences sharedPreferences;
     private boolean repStatus;
+    private boolean similar;
 
     public MainFragment() {
         // Required empty public constructor
@@ -107,7 +108,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private void reloadSettings() {
         sharedPreferences = requireActivity().getSharedPreferences("setting", MODE_PRIVATE);
         repStatus = sharedPreferences.getBoolean("repStatus", false);
-        Log.d("kskbl", repStatus + "");
+        similar = sharedPreferences.getBoolean("similar", false);
+        Log.d("get settings rep status", repStatus + "");
+        Log.d("get settings similar", similar + "");
     }
 
     // 恢复显示界面
@@ -174,7 +177,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         File fileHistory = new File(pathLast);
         if (!fileHistory.exists()) {
-            FileUtil.saveText(pathLast, "null：无记录：null：无记录");
+            FileUtil.saveText(pathLast, "null：没有记录：null：没有记录");
         }
     }
 
@@ -195,6 +198,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             }
         }
 
+        // 随机筛选店名
         String nowEat = "";
         if (repStatus) {
             int nextMaxAttempts = 100;
@@ -207,7 +211,14 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
                 nowEat = shop[r.nextInt(shop.length)];
                 if (!nowEat.equals(amEaten) && !nowEat.equals(pmEaten)) {
-                    break;
+                    // 判断是否启用了相似检查
+                    if (similar){
+                        if (!checkShopNameSimilar(amEaten, nowEat) && !checkShopNameSimilar(pmEaten, nowEat)){
+                            break;
+                        }
+                    }else {
+                        break;
+                    }
                 }
                 Log.d("eat", nowEat);
             }
@@ -264,11 +275,20 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
             if (repStatus) {
                 if (shop.length > 3) {
+                    // 判断重复
                     if (amEaten.equals(amEat) || amEaten.equals(pmEat) || pmEaten.equals(pmEat) || pmEaten.equals(amEat)) {
                         continue;
                     }
                 } else {
                     sharedPreferences.edit().putBoolean("repStatus", false).apply();
+                }
+            }
+
+            // 判断是否启用了相似检查
+            if (similar) {
+                if (checkShopNameSimilar(amEaten, amEat) || checkShopNameSimilar(pmEaten, amEat) ||
+                    checkShopNameSimilar(amEaten, pmEat) || checkShopNameSimilar(pmEaten, pmEat)) {
+                    continue;
                 }
             }
 
@@ -356,4 +376,25 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 })
                 .show();
     }
+
+    // 验证店名是否相似
+    private boolean checkShopNameSimilar(String str1, String str2){
+        // 通过动态规划进行查询
+        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+
+        int maxLength = 0;
+        for (int i = 1; i <= str1.length(); i++){
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)){
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                    maxLength = Math.max(maxLength, dp[i][j]);
+                }else {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+
+        return maxLength >= 3;
+    }
 }
+

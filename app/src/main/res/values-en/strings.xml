@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
         <string name="filter_7_days">7 Days</string>
     <string name="filter_10_days">10 Days</string>
@@ -55,4 +55,13 @@
     <string name="version_last_check_update">Last update check:</string>
     <string name="version_enter_program">View Project Homepage</string>
     <string name="update_button_have">Update Now</string>
+    <string name="history_cancel_change">Cancel Edit</string>
+    <string name="history_change">Edit History</string>
+    <string name="history_enter_change">Enter the text you want to modify</string>
+    <string name="history_confirm">Confirm</string>
+    <string name="list_notice_similar_message">When enabled, shops with similar names will be filtered out. However, some unrelated shops may also be mistakenly filtered due to similar names or addresses (e.g., “XX Store”). Are you sure you want to enable this feature?</string>
+    <string name="history_change_am">Enter lunch item</string>
+    <string name="history_change_pm">Enter dinner item</string>
+    <string name="history_change_notice">If both fields are empty, no record will be saved. If only one field is filled, only one meal will be recorded.</string>
+    <string name="similar">Duplicate shop names are not allowed</string>
 </resources>

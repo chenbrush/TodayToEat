@@ -57,10 +57,10 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
         ListView lv_list = findViewById(R.id.lv_list);
         CheckBox cb_repetition = findViewById(R.id.cb_repetition);
+        CheckBox cb_similar = findViewById(R.id.cb_similar);
 
         loadShop();
-        boolean repStatus = sharedPreferences.getBoolean("repStatus", false);
-
+        
         adapter = new ListAdapter(this, shopList);
         lv_list.setAdapter(adapter);
 
@@ -68,7 +68,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.ib_edit).setOnClickListener(this);
 
         // 设置初始状态，在设置监听之前，避免触发 onCheckedChanged
-        cb_repetition.setChecked(repStatus);
+        cb_repetition.setChecked(sharedPreferences.getBoolean("repStatus", false));
+        cb_similar.setChecked(sharedPreferences.getBoolean("similar", false));
 
         cb_repetition.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -90,6 +91,50 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
+            }
+        });
+
+        // 设置相似商铺
+        cb_similar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull CompoundButton compoundButton, boolean b) {
+                // 还有一个取消
+                if (!b){
+                    sharedPreferences.edit().putBoolean("similar", false).apply();
+                    return;
+                }
+
+                // 如果商铺小于3个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
+                if (b && shopList.size() < 3) {
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
+                            .setTitle(getString(R.string.notice))
+                            .setMessage(R.string.notice_repeat_boom_message)
+                            .setPositiveButton(R.string.notice_repeat_boom_positive_botton, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    sharedPreferences.edit().putBoolean("similar", false).apply();
+                                    cb_repetition.setChecked(false);
+                                }
+                            });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    return;
+                }
+
+                // 得先做一个提示，确保用户知道效果
+                new MaterialAlertDialogBuilder(ListActivity.this)
+                        .setTitle(getString(R.string.notice))
+                        .setMessage(R.string.list_notice_similar_message)
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                sharedPreferences.edit().putBoolean("similar", true).apply();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .show();
+
             }
         });
                 

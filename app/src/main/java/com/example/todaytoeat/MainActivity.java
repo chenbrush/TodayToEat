@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                     switchFragment(mainFragment);
                 } else if (menuItem.getItemId() == R.id.nav_settings) {
                     switchFragment(settingFragment);
+                    // 切换到设置页面时也检查更新
+                    checkUpdate();
                 }
 
                 return true;
@@ -91,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             return;
         }
+        // 保留上一次的更新标志，避免网络失败时错误地清除
+        final boolean previousHasNew = sharedPreferences.getBoolean("checkUpdate", false);
         final String finalVersion = currentVersion;
         new Thread(() -> {
             try {
@@ -102,12 +106,17 @@ public class MainActivity extends AppCompatActivity {
                     sharedPreferences.edit()
                             .putBoolean("checkUpdate", hasNew)
                             .apply();
-                    // 更新完后立即刷新 Badge 显示状态
+                    // 更新完毕后立即刷新 Badge 显示状态
                     BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_settings);
                     badgeDrawable.setVisible(hasNew);
                 });
             } catch (IOException e) {
                 e.printStackTrace();
+                // 网络请求失败时，保留之前已有的更新标志和 Badge 状态，不要错误清除
+                runOnUiThread(() -> {
+                    BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_settings);
+                    badgeDrawable.setVisible(previousHasNew);
+                });
             }
         }).start();
     }

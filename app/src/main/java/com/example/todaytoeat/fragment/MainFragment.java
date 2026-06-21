@@ -13,8 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
-import android.os.Environment;
 import android.util.Log;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +24,10 @@ import android.widget.TextView;
 import com.example.todaytoeat.ListActivity;
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.FileUtil;
+import com.example.todaytoeat.utils.HistoryManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Random;
 
@@ -41,8 +41,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     TextView tvResult_second;
     private LocalTime lt;
     Random r = new Random();
-    private String pathLast;
-    private String pathNow;
     private String directory;
     boolean shopsListExist = true;
     private SharedPreferences sharedPreferences;
@@ -53,11 +51,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -66,6 +62,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -84,9 +81,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         tvResult_first = view.findViewById(R.id.tv_result_first_line);
         tvResult_second = view.findViewById(R.id.tv_result_second_line);
 
-        // 定义文件保存位置和名称
+        // 定义文件位置及名称
         directory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/files";
-        // 加载之前的数据
+
+        // 校验昨日历史记录文件，不存在则自动创建
+        HistoryManager.ensureYesterdayFileExists(requireContext());
+
+        // 加载全部数据：历史、UI、店铺列表、配置
         reload();
     }
 
@@ -107,7 +108,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     // 恢复设置内容
     private void reloadSettings() {
         sharedPreferences = requireActivity().getSharedPreferences("setting", MODE_PRIVATE);
+        // 获取是否禁止昨日重复店铺，默认关闭false
         repStatus = sharedPreferences.getBoolean("repStatus", false);
+        // 获取是否过滤相似店名，默认关闭false
         similar = sharedPreferences.getBoolean("similar", false);
         Log.d("get settings rep status", repStatus + "");
         Log.d("get settings similar", similar + "");
@@ -118,7 +121,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private void reloadShow() {
         assert getView() != null;
         Button allDay = getView().findViewById(R.id.btn_all_day);
-        String content = FileUtil.openText(pathNow);
+        String content = FileUtil.openText(HistoryManager.getTodayFilePath(requireContext()));
 
         // 判断文件读取长度
         String line1 = "";
@@ -129,12 +132,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             String[] lines = content.split("：");
             if (lines.length == 2) {
                 if (content.contains(getString(R.string.only_eat))) {
-                    line1 = getString(R.string.after_eat) + "：" + lines[1];
+                    line1 = getString(R.string.after_eat) + "："+ lines[1];
                 } else {
-                    line1 = getString(R.string.am_eat) + "：" + lines[0];
-                    line2 = getString(R.string.pm_eat) + "：" + lines[1];
+                    line1 = getString(R.string.am_eat) + "："+ lines[0];
+                    line2 = getString(R.string.pm_eat) + "："+ lines[1];
                 }
-            } else if (lines.length == 4) {
+            }
+            else if (lines.length == 4) {
                 line1 = getString(R.string.am_eat) + "：" + lines[1];
                 line2 = getString(R.string.pm_eat) + "：" + lines[3];
             }
@@ -154,6 +158,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private void reloadShop() {
         String pathShop = directory + File.separatorChar + "shop_list.txt";
         File fileShop = new File(pathShop);
+        // 校验文件有效性
         if (!fileShop.exists() || FileUtil.openText(pathShop).isEmpty() || FileUtil.openText(pathShop).equals(getString(R.string.none_shops))) {
             shopsListExist = false;
             noticeToAddShops();
@@ -161,75 +166,59 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
 
         shopsListExist = true;
+        // 逗号分割店铺数组
         shop = FileUtil.openText(pathShop).split(",");
     }
 
     // 历史记录恢复
     private void reloadHistory() {
         lt = LocalTime.now();
-        LocalDate todayDate = LocalDate.now();
-        boolean isAfter21 = lt.getHour() >= 21;
-        LocalDate belongDate = isAfter21 ? todayDate.plusDays(1) : todayDate;
-
-        String fileName = belongDate + ".txt";
-        pathNow = directory + File.separatorChar + fileName;
-        pathLast = directory + File.separatorChar + belongDate.plusDays(-1) + ".txt";
-
-        File fileHistory = new File(pathLast);
-        if (!fileHistory.exists()) {
-            FileUtil.saveText(pathLast, "null：没有记录：null：没有记录");
-        }
+        HistoryManager.ensureYesterdayFileExists(requireContext());
     }
 
-    // 下一餐吃
+    /**
+     * 下一餐吃
+     */
     @SuppressLint("SetTextI18n")
     private void nextTime() {
-        String historyEat = FileUtil.openText(pathLast);
-        String amEaten = "";
-        String pmEaten = "";
-        if (!historyEat.isEmpty()) {
-            String[] eatArr = historyEat.split("：");
-            if (eatArr.length == 4) {
-                amEaten = eatArr[1];
-                pmEaten = eatArr[3];
-            } else if (eatArr.length == 2) {
-                amEaten = eatArr[0];
-                pmEaten = eatArr[1];
-            }
-        }
+        // 获取昨天就餐记录
+        HistoryManager.Record yesterday = HistoryManager.getYesterdayHistory(requireContext());
+        String amEaten = yesterday.amEat;
+        String pmEaten = yesterday.pmEat;
 
-        // 随机筛选店名
         String nowEat = "";
-        if (repStatus) {
-            int nextMaxAttempts = 100;
-            int nextAttempts = 0;
-            while (true) {
-                nextAttempts++;
-                if (nextAttempts > nextMaxAttempts) {
-                    nowEat = shop[r.nextInt(shop.length)];
-                    break;
-                }
+        int maxAttempts = 100;
+        int attempts = 0;
+        while (true) {
+            attempts++;
+            // 尝试100次仍无合适店铺，直接随机返回一个
+            if (attempts > maxAttempts) {
                 nowEat = shop[r.nextInt(shop.length)];
-                if (!nowEat.equals(amEaten) && !nowEat.equals(pmEaten)) {
-                    // 判断是否启用了相似检查
-                    if (similar){
-                        if (!checkShopNameSimilar(amEaten, nowEat) && !checkShopNameSimilar(pmEaten, nowEat)){
-                            break;
-                        }
-                    }else {
-                        break;
-                    }
-                }
-                Log.d("eat", nowEat);
+                break;
             }
-        } else {
             nowEat = shop[r.nextInt(shop.length)];
-            Log.d("eat", nowEat);
+
+            // 开启重复过滤：当前店铺不能等于昨日早/晚餐
+            if (repStatus && (nowEat.equals(amEaten) || nowEat.equals(pmEaten))) {
+                Log.d("eat", nowEat);
+                continue;
+            }
+
+            // 开启相似店名过滤：当前店铺不能与昨日店内餐相似
+            if (similar && (checkShopNameSimilar(amEaten, nowEat) || checkShopNameSimilar(pmEaten, nowEat))) {
+                Log.d("eat", nowEat);
+                continue;
+            }
+
+            // 通过所有过滤条件
+            break;
         }
 
+        // 更新UI为单餐结果，第二行清空
         tvResult_first.setText(getString(R.string.after_eat) + "：" + nowEat);
         tvResult_second.setText("");
 
+        // 记录当前时间并保存今日就餐记录
         lt = LocalTime.now();
         String desc;
         if (lt.getHour() <= 14) {
@@ -242,73 +231,78 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             }
         }
 
-        FileUtil.saveText(pathNow, desc + "：" + nowEat);
+        HistoryManager.saveTodayRecord(requireContext(), desc + "：" + nowEat);
     }
-
-    // 全天吃
+    /**
+     * 全天吃
+     */
     @SuppressLint("SetTextI18n")
     private void allDay() {
-        String historyEat = FileUtil.openText(pathLast);
-        String amEaten = "";
-        String pmEaten = "";
-        if (!historyEat.isEmpty()) {
-            String[] eatArr = historyEat.split("：");
-            if (eatArr.length == 4) {
-                amEaten = eatArr[1];
-                pmEaten = eatArr[3];
-            } else if (eatArr.length == 2) {
-                amEaten = eatArr[0];
-                pmEaten = eatArr[1];
-            }
-        }
+        // 获取昨日就餐记录
+        HistoryManager.Record yesterday = HistoryManager.getYesterdayHistory(requireContext());
+        String amEaten = yesterday.amEat;
+        String pmEaten = yesterday.pmEat;
+        Log.d("all day", "allDay: " + amEaten + pmEaten);
 
         int maxAttempts = 100;
         int attempts = 0;
         while (true) {
             attempts++;
+            // 尝试100次强制退出
             if (attempts > maxAttempts) break;
 
+            // 随机早、晚餐下标
             int zw = r.nextInt(shop.length);
             amEat = shop[zw];
             int ws = r.nextInt(shop.length);
             pmEat = shop[ws];
 
+            // 开启昨日重复过滤
             if (repStatus) {
+                // 店铺总数大于3才执行重复校验
                 if (shop.length > 3) {
-                    // 判断重复
+                    // 和昨天早/晚餐重复则重新随机
                     if (amEaten.equals(amEat) || amEaten.equals(pmEat) || pmEaten.equals(pmEat) || pmEaten.equals(amEat)) {
                         continue;
                     }
                 } else {
+                    // 店铺不足3家，自动关闭重复过滤开关
                     sharedPreferences.edit().putBoolean("repStatus", false).apply();
                 }
             }
 
-            // 判断是否启用了相似检查
+            // 开启相似店名过滤
             if (similar) {
+                // 任意一餐和昨日店铺相似则重抽
                 if (checkShopNameSimilar(amEaten, amEat) || checkShopNameSimilar(pmEaten, amEat) ||
-                    checkShopNameSimilar(amEaten, pmEat) || checkShopNameSimilar(pmEaten, pmEat)) {
+                        checkShopNameSimilar(amEaten, pmEat) || checkShopNameSimilar(pmEaten, pmEat)) {
                     continue;
                 }
             }
 
-            if (zw != ws) break;
+            // 早晚店铺不能一致，满足则退出循环
+            if (!amEat.equals(pmEat)) break;
         }
 
+        // 更新页面双行结果
         String amNowEat = getString(R.string.am_eat) + "：" + amEat;
         String pmNowEat = getString(R.string.pm_eat) + "：" + pmEat;
-
         tvResult_first.setText(amNowEat);
         tvResult_second.setText(pmNowEat);
-        FileUtil.saveText(pathNow, amNowEat + "：" + pmNowEat);
+        // 写入今日历史文件
+        HistoryManager.saveTodayRecord(requireContext(), amNowEat + "：" + pmNowEat);
     }
 
+    @Override
     public void onClick(View view) {
+        // 下一餐随机按钮
         if (view.getId() == R.id.btn_next_time) {
+            // 无店铺列表弹窗提示添加
             if (!shopsListExist) {
                 noticeToAddShops();
                 return;
             }
+            // 店铺少于等于2家且开启重复过滤，弹窗提示扩充店铺
             if (shop.length <= 2 && repStatus) {
                 noticeAddLessShopDialog();
                 return;
@@ -316,25 +310,29 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             nextTime();
         }
 
+        // 全天随机按钮
         if (view.getId() == R.id.btn_all_day) {
             if (!shopsListExist) {
                 noticeToAddShops();
                 return;
             }
+            // 全天随机至少需要3家店铺
             if (shop.length <= 2) {
                 noticeAddLessShopDialog();
                 return;
             }
+            // 14点-20点区间，弹出选择弹窗
             if (lt.getHour() > 14 && lt.getHour() <= 20) {
                 noticeAfterDialog();
                 return;
             }
             allDay();
         }
-
     }
 
-    // 下一餐的对话框
+    /**
+     * 下一餐的对话框
+     */
     private void noticeAfterDialog() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.notice)
@@ -346,12 +344,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         dialog.show();
     }
 
-    // 商铺少的对话框
+    /**
+     * 店铺数量不足弹窗
+     * 跳转店铺管理页面添加店铺，或直接抽下一餐
+     */
     private void noticeAddLessShopDialog() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.notice))
                 .setMessage(R.string.notice_low_shops_message)
                 .setPositiveButton(R.string.let_s_goooooo, (dialogInterface, i) -> {
+                    // 跳转店铺列表管理页
                     Intent intent = new Intent();
                     intent.setClass(requireActivity(), ListActivity.class);
                     startActivity(intent);
@@ -360,11 +362,14 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+        // 取消按钮不全部大写
         Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         positiveButton.setAllCaps(false);
     }
 
-    // 提示添加商铺的对话框
+    /**
+     * 未添加任何店铺弹窗，跳转店铺管理页面
+     */
     private void noticeToAddShops() {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.notice))
@@ -377,24 +382,29 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 .show();
     }
 
-    // 验证店名是否相似
+    /**
+     * 校验两个店名是否相似（最长公共子串长度≥3判定相似）
+     * @param str1 店名1
+     * @param str2 店名2
+     */
     private boolean checkShopNameSimilar(String str1, String str2){
-        // 通过动态规划进行查询
+        // DP二维数组：dp[i][j]代表str1前i位、str2前j位连续匹配长度
         int[][] dp = new int[str1.length() + 1][str2.length() + 1];
 
         int maxLength = 0;
         for (int i = 1; i <= str1.length(); i++){
             for (int j = 1; j <= str2.length(); j++) {
                 if (str1.charAt(i - 1) == str2.charAt(j - 1)){
+                    // 当前字符匹配，连续长度+1
                     dp[i][j] = dp[i - 1][j - 1] + 1;
                     maxLength = Math.max(maxLength, dp[i][j]);
                 }else {
+                    // 字符不匹配，连续长度重置0
                     dp[i][j] = 0;
                 }
             }
         }
-
+        // 最长公共连续字符≥3视为相似店名
         return maxLength >= 3;
     }
 }
-

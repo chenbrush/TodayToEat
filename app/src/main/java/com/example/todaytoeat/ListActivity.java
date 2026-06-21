@@ -105,17 +105,15 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 // 如果商铺小于3个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
-                if (b && shopList.size() < 3) {
+                if (shopList.size() < 3) {
+                    // 直接更改
+                    sharedPreferences.edit().putBoolean("similar", false).apply();
+                    cb_repetition.setChecked(false);
+
                     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
                             .setTitle(getString(R.string.notice))
                             .setMessage(R.string.notice_repeat_boom_message)
-                            .setPositiveButton(R.string.notice_repeat_boom_positive_botton, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    sharedPreferences.edit().putBoolean("similar", false).apply();
-                                    cb_repetition.setChecked(false);
-                                }
-                            });
+                            .setPositiveButton(R.string.notice_repeat_boom_positive_botton, null);
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
@@ -229,7 +227,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             // 构建弹窗
             new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.add_shop)
-                    .setView(dialogView)  // 绑定带EditText的布局
+                    .setView(dialogView)
                     .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                         // 获取输入的文本
                         String content = etInput.getText().toString().trim();

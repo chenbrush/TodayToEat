@@ -397,7 +397,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 .show();
     }
 
-    /**
 
     /**
      * 长按结果文本弹出修改弹窗（修改当天记录）

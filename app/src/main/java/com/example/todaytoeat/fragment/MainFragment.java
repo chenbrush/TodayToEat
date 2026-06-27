@@ -3,6 +3,7 @@ package com.example.todaytoeat.fragment;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.todaytoeat.ListActivity;
@@ -80,6 +82,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.btn_next_time).setOnClickListener(this);
         tvResult_first = view.findViewById(R.id.tv_result_first_line);
         tvResult_second = view.findViewById(R.id.tv_result_second_line);
+
+        // 为两条结果TextView添加长按监听（修改当天记录）
+        tvResult_first.setOnLongClickListener(this::onResultLongClick);
+        tvResult_second.setOnLongClickListener(this::onResultLongClick);
 
         // 定义文件位置及名称
         directory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/files";
@@ -145,6 +151,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
         tvResult_first.setText(line1);
         tvResult_second.setText(line2);
+
+        // 根据内容控制单行/双行布局
+        if (line2.isEmpty()) {
+            adjustSingleLineCenter();
+        } else {
+            adjustDoubleLineLayout();
+        }
 
         // 判断按钮显示
         if (lt.getHour() >= 21) {
@@ -217,6 +230,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // 更新UI为单餐结果，第二行清空
         tvResult_first.setText(getString(R.string.after_eat) + "：" + nowEat);
         tvResult_second.setText("");
+        adjustSingleLineCenter();
 
         // 记录当前时间并保存今日就餐记录
         lt = LocalTime.now();
@@ -289,6 +303,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         String pmNowEat = getString(R.string.pm_eat) + "：" + pmEat;
         tvResult_first.setText(amNowEat);
         tvResult_second.setText(pmNowEat);
+        adjustDoubleLineLayout();
         // 写入今日历史文件
         HistoryManager.saveTodayRecord(requireContext(), amNowEat + "：" + pmNowEat);
     }
@@ -383,7 +398,96 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     /**
-     * 校验两个店名是否相似（最长公共子串长度≥3判定相似）
+
+    /**
+     * 长按结果文本弹出修改弹窗（修改当天记录）
+     * 逻辑：读取当天历史记录回显到输入框 -> 用户修改 -> 保存并刷新UI
+     */
+    private boolean onResultLongClick(View view) {
+        // 加载修改弹窗布局（复用 history_dialog.xml）
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.history_dialog, null);
+        EditText etInputAmEat = dialogView.findViewById(R.id.et_input_am_eat);
+        EditText etInputPmEat = dialogView.findViewById(R.id.et_input_pm_eat);
+
+        // 读取当天历史记录回显到输入框
+        String todayFilePath = HistoryManager.getTodayFilePath(requireContext());
+        String content = FileUtil.openText(todayFilePath);
+        HistoryManager.Record todayRecord = HistoryManager.parseHistory(content);
+
+        if (!todayRecord.amEat.isEmpty() && !todayRecord.amEat.equals(getString(R.string.no_record))) {
+            etInputAmEat.setText(todayRecord.amEat);
+        }
+        if (!todayRecord.pmEat.isEmpty() && !todayRecord.pmEat.equals(getString(R.string.no_record))) {
+            etInputPmEat.setText(todayRecord.pmEat);
+        }
+
+        // 构建修改弹窗
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.main_change)
+                .setMessage(R.string.history_enter_change)
+                .setView(dialogView)
+                .setPositiveButton(R.string.history_confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String amEditEat = String.valueOf(etInputAmEat.getText());
+                        String pmEditEat = String.valueOf(etInputPmEat.getText());
+
+                        String changeHistory;
+                        if (amEditEat.isEmpty() && pmEditEat.isEmpty()) {
+                            // 早晚餐全部清空
+                            changeHistory = "null：没有记录：null：没有记录";
+                        } else if (amEditEat.isEmpty()) {
+                            // 仅保留晚餐
+                            changeHistory = getString(R.string.only_pm) + "：" + pmEditEat;
+                        } else if (pmEditEat.isEmpty()) {
+                            // 仅保留早餐
+                            changeHistory = getString(R.string.only_am) + "：" + amEditEat;
+                        } else {
+                            // 早晚餐均填写完整
+                            changeHistory = getString(R.string.am_eat) + "：" + amEditEat + "：" + getString(R.string.pm_eat) + "：" + pmEditEat;
+                        }
+
+                        // 保存到当天记录（注意：MainFragment操作的是当天，与HistoryActivity不同）
+                        HistoryManager.saveTodayRecord(requireContext(), changeHistory);
+                        // 刷新UI
+                        reloadShow();
+                    }
+                })
+                .setNegativeButton(getString(R.string.history_cancel_change), null)
+                .show();
+
+        return true;
+    }
+
+    /**
+     * 调整第一行垂直居中（仅单餐时使用）
+     */
+    private void adjustSingleLineCenter() {
+        tvResult_second.setVisibility(View.GONE);
+        androidx.constraintlayout.widget.ConstraintLayout.LayoutParams params =
+                (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) tvResult_first.getLayoutParams();
+        params.bottomToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+        params.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+        params.bottomToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+        params.verticalBias = 0.5f;
+        tvResult_first.setLayoutParams(params);
+    }
+
+    /**
+     * 恢复双行布局（双餐时使用）
+     */
+    private void adjustDoubleLineLayout() {
+        tvResult_second.setVisibility(View.VISIBLE);
+        androidx.constraintlayout.widget.ConstraintLayout.LayoutParams params =
+                (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) tvResult_first.getLayoutParams();
+        params.bottomToTop = R.id.tv_result_second_line;
+        params.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+        params.bottomToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+        params.verticalBias = 0.5f;
+        tvResult_first.setLayoutParams(params);
+    }
+
+     /** 校验两个店名是否相似（最长公共子串长度≥3判定相似）
      * @param str1 店名1
      * @param str2 店名2
      */

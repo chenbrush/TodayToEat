@@ -64,4 +64,5 @@
     <string name="history_change_pm">Enter dinner item</string>
     <string name="history_change_notice">If both fields are empty, no record will be saved. If only one field is filled, only one meal will be recorded.</string>
     <string name="similar">Duplicate shop names are not allowed</string>
+    <string name="main_change">Edit Today’s Meals</string>
 </resources>

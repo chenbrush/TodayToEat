@@ -64,4 +64,5 @@
     <string name="history_change_pm">输入晚上吃的</string>
     <string name="history_change_notice">两行留空则代表没有记录，仅留空一行则代表仅吃一餐</string>
     <string name="similar">不允许出现相似店名</string>
+    <string name="main_change">编辑今天吃的</string>
 </resources>

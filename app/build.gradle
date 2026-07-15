@@ -13,7 +13,7 @@ android {
         minSdk 26
         targetSdk 37
         versionCode 1
-        versionName "1.8.6"
+        versionName "1.8.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,4 +47,6 @@ dependencies {
     implementation libs.constraintlayout
     // To use constraintlayout in compose
     implementation libs.constraintlayout.compose
+
+    implementation libs.viewpager2
 }

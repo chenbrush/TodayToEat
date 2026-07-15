@@ -14,6 +14,7 @@ preference = "1.2.0"
 activityKtx = "1.8.0"
 sdpAndroidVersion = "1.1.0"
 sspAndroid = "1.1.1"
+viewpager2 = "1.0.0"
 
 [libraries]
 constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -30,7 +31,7 @@ preference = { group = "androidx.preference", name = "preference", version.ref =
 activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 sdp-android-v110 = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroidVersion" }
 ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid" }
+viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

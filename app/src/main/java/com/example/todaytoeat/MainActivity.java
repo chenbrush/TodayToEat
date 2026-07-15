@@ -1,7 +1,5 @@
 package com.example.todaytoeat;
 
-import static androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
-
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -14,11 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.todaytoeat.fragment.MainFragment;
-import com.example.todaytoeat.fragment.SettingFragment;
+import com.example.todaytoeat.adapter.ViewPagerAdapter;
 import com.example.todaytoeat.utils.GithubUpdateUtils;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,9 +24,8 @@ import java.io.IOException;
 
 // 没事做一个手机版的今天吃什么，核心代码没怎么动，算是学以致用
 public class MainActivity extends AppCompatActivity {
-    private final MainFragment mainFragment = new MainFragment();
-    private final SettingFragment settingFragment = new SettingFragment();
     private BottomNavigationView bottomNavigationView;
+    private ViewPager2 viewPager2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,25 +33,40 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.fl_main_content, mainFragment);
-            transaction.commit();
-        }
-
+        viewPager2 = findViewById(R.id.view_pager);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        // 设置 ViewPager2 适配器
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+        viewPager2.setAdapter(adapter);
+
+        // ViewPager2 页面切换时同步底部导航栏
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (position == 0) {
+                    bottomNavigationView.setSelectedItemId(R.id.nav_home);
+                } else if (position == 1) {
+                    bottomNavigationView.setSelectedItemId(R.id.nav_settings);
+                    checkUpdate();
+                }
+            }
+        });
+
+        // 底部导航栏点击时同步 ViewPager2
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 if (menuItem.getItemId() == R.id.nav_home) {
-                    switchFragment(mainFragment);
+                    viewPager2.setCurrentItem(0, true);
+                    return true;
                 } else if (menuItem.getItemId() == R.id.nav_settings) {
-                    switchFragment(settingFragment);
-                    // 切换到设置页面时也检查更新
+                    viewPager2.setCurrentItem(1, true);
                     checkUpdate();
+                    return true;
                 }
-
-                return true;
+                return false;
             }
         });
 
@@ -93,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             return;
         }
-        // 保留上一次的更新标志，避免网络失败时错误地清除
+        // 保留上一次的更新标记，避免网络失败时错误地清除
         final boolean previousHasNew = sharedPreferences.getBoolean("checkUpdate", false);
         final String finalVersion = currentVersion;
         new Thread(() -> {
@@ -106,13 +116,13 @@ public class MainActivity extends AppCompatActivity {
                     sharedPreferences.edit()
                             .putBoolean("checkUpdate", hasNew)
                             .apply();
-                    // 更新完毕后立即刷新 Badge 显示状态
+                    // 更新完毕后立刻刷新 Badge 显示状态
                     BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_settings);
                     badgeDrawable.setVisible(hasNew);
                 });
             } catch (IOException e) {
                 e.printStackTrace();
-                // 网络请求失败时，保留之前已有的更新标志和 Badge 状态，不要错误清除
+                // 网络请求失败时，保留之前已有的更新标记和 Badge 状态，不要错误清除
                 runOnUiThread(() -> {
                     BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_settings);
                     badgeDrawable.setVisible(previousHasNew);
@@ -121,10 +131,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    public void switchFragment(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fl_main_content, fragment);
-        transaction.setTransition(TRANSIT_FRAGMENT_FADE);
-        transaction.commit();
+    public void switchToPage(int page) {
+        viewPager2.setCurrentItem(page, true);
     }
 }

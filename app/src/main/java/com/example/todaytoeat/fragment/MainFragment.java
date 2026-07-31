@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -67,7 +69,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.top_root_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -137,8 +139,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         } else {
             String[] lines = content.split("：");
             if (lines.length == 2) {
-                if (content.contains(getString(R.string.only_eat))) {
-                    line1 = getString(R.string.after_eat) + "："+ lines[1];
+                if (content.contains(getString(R.string.only_am))) {
+                    line1 = getString(R.string.am_eat) + "："+ lines[1];
+                }else if (content.contains(getString(R.string.only_pm))){
+                    line1 = getString(R.string.only_pm) + "：" + lines[1];
                 } else {
                     line1 = getString(R.string.am_eat) + "："+ lines[0];
                     line2 = getString(R.string.pm_eat) + "："+ lines[1];
@@ -199,7 +203,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         String amEaten = yesterday.amEat;
         String pmEaten = yesterday.pmEat;
 
-        String nowEat = "";
+        String nowEat;
         int maxAttempts = 100;
         int attempts = 0;
         while (true) {
@@ -227,26 +231,51 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             break;
         }
 
-        // 更新UI为单餐结果，第二行清空
-        tvResult_first.setText(getString(R.string.after_eat) + "：" + nowEat);
-        tvResult_second.setText("");
-        adjustSingleLineCenter();
-
-        // 记录当前时间并保存今日就餐记录
+        // 根据时间自动判断用户是否需要选择，并且显示出相应的内容
         lt = LocalTime.now();
-        String desc;
-        if (lt.getHour() <= 14) {
-            desc = getString(R.string.only_am);
-        } else {
-            if (lt.getHour() >= 21) {
-                desc = getString(R.string.only_am);
-            } else {
-                desc = getString(R.string.only_pm);
-            }
+        if (lt.getHour() > 14 && lt.getHour() < 21){
+            showNextTimeResult(getString(R.string.pm_eat) + "：" + nowEat);
+        }else {
+            // 做一个提示框，让用户决定这个下一餐什么时候吃
+            String finalNowEat = nowEat;
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(getString(R.string.notice))
+                    .setMessage("这个下一餐什么打算时候吃？")
+                    .setPositiveButton("中午", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            showNextTimeResult(getString(R.string.only_am) + "：" + finalNowEat);
+                        }
+                    })
+                    .setNegativeButton("晚上", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            showNextTimeResult(getString(R.string.only_pm) + "：" + finalNowEat);
+                        }
+                    })
+                    .show();
         }
 
-        HistoryManager.saveTodayRecord(requireContext(), desc + "：" + nowEat);
     }
+
+    /**
+     * 显示下一餐结果并保存
+     */
+    @SuppressLint("SetTextI18n")
+    private void showNextTimeResult(String desc) {
+        // 这些是用来显示界面以及存储的
+        HistoryManager.saveTodayRecord(requireContext(), desc);
+        String[] lines = desc.split("：");
+        if (lines[0].equals(getString(R.string.only_am))){
+            tvResult_first.setText(getString(R.string.am_eat) + "："+ lines[1]);
+        }else {
+            tvResult_first.setText(getString(R.string.pm_eat) + "："+ lines[1]);
+        }
+
+        tvResult_second.setText("");
+        adjustSingleLineCenter();
+    }
+
     /**
      * 全天吃
      */
@@ -463,11 +492,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      */
     private void adjustSingleLineCenter() {
         tvResult_second.setVisibility(View.GONE);
-        androidx.constraintlayout.widget.ConstraintLayout.LayoutParams params =
-                (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) tvResult_first.getLayoutParams();
-        params.bottomToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
-        params.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
-        params.bottomToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+        ConstraintLayout.LayoutParams params =
+                (ConstraintLayout.LayoutParams) tvResult_first.getLayoutParams();
+        params.bottomToTop = ConstraintLayout.LayoutParams.UNSET;
+        params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
         params.verticalBias = 0.5f;
         tvResult_first.setLayoutParams(params);
     }
@@ -477,11 +506,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      */
     private void adjustDoubleLineLayout() {
         tvResult_second.setVisibility(View.VISIBLE);
-        androidx.constraintlayout.widget.ConstraintLayout.LayoutParams params =
-                (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) tvResult_first.getLayoutParams();
+        ConstraintLayout.LayoutParams params =
+                (ConstraintLayout.LayoutParams) tvResult_first.getLayoutParams();
         params.bottomToTop = R.id.tv_result_second_line;
-        params.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
-        params.bottomToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+        params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
         params.verticalBias = 0.5f;
         tvResult_first.setLayoutParams(params);
     }

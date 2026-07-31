@@ -43,6 +43,12 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        EdgeToEdge.enable(this);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.history_activity), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         // 筛选时间段单选组及对应按钮
         RadioGroup rgDateFilter = findViewById(R.id.rg_date_filter);
@@ -87,14 +93,6 @@ public class HistoryActivity extends AppCompatActivity {
             }
         });
 
-        // 全屏沉浸适配
-        EdgeToEdge.enable(this);
-        // 适配状态栏、导航栏内边距
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.history_activity), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         // 绑定列表控件并加载历史数据
         lvHistory = findViewById(R.id.lv_history);

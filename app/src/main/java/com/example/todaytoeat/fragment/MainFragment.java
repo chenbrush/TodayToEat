@@ -240,14 +240,14 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             String finalNowEat = nowEat;
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(getString(R.string.notice))
-                    .setMessage("这个下一餐什么打算时候吃？")
-                    .setPositiveButton("中午", new DialogInterface.OnClickListener() {
+                    .setMessage(R.string.notice_what_time_to_eat_next_time)
+                    .setPositiveButton(R.string.time_mid, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             showNextTimeResult(getString(R.string.only_am) + "：" + finalNowEat);
                         }
                     })
-                    .setNegativeButton("晚上", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.time_night, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             showNextTimeResult(getString(R.string.only_pm) + "：" + finalNowEat);

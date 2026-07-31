@@ -66,6 +66,9 @@
     <string name="history_change_notice">If both fields are empty, no record will be saved. If only one field is filled, only one meal will be recorded.</string>
     <string name="similar">Duplicate shop names are not allowed</string>
     <string name="main_change">Edit Today’s Meals</string>
+    <string name="notice_what_time_to_eat_next_time">"When do you plan to eat the next meal? "</string>
+    <string name="time_mid">midday</string>
+    <string name="time_night">evening</string>
 
 
 </resources>

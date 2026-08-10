@@ -25,26 +25,35 @@ public class HistoryManager {
         List<HistoryBean> list = new ArrayList<>();
         LocalDate localDate = LocalDate.now();
 
+        // 获取当前时间，判断是否超过了晚上九点
         LocalTime localTime = LocalTime.now();
         boolean isAfter21 = localTime.getHour() >= 21;
         localDate = isAfter21 ? localDate.plusDays(1) : localDate;
 
+        // 读取设置内容
         SharedPreferences sharedPreferences = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
         int historyDays = sharedPreferences.getInt("historyDays", 7);
 
+        // 读取历史记录
         for (int i = 0; i <= historyDays; i++) {
             String date = localDate.minusDays(i).toString();
+            // 读取内容的外部存储路径，因为多个程序要用，所以就写成了一个类
             String fileName = AppConstantsUtils.getDateFilePath(context, date);
+            // 根据读取的文件存储路径，打开文件
             String content = FileUtil.openText(fileName);
+            // 默认情况
             String amEatHis = context.getString(R.string.no_record);
             String pmEatHis = context.getString(R.string.no_record);
 
             File file = new File(fileName);
             if (file.exists()) {
+                // 这个方法是用来解析文件里面的内容的
                 Record record = parseHistory(context, content);
-                amEatHis = record.amEat;
-                pmEatHis = record.pmEat;
+                // 这里是判断文件内容是否为空，防止点击一餐时出现半边空的bug
+                amEatHis = record.amEat.isEmpty() ? context.getString(R.string.no_record) : record.amEat;
+                pmEatHis = record.pmEat.isEmpty() ? context.getString(R.string.no_record) : record.pmEat;
             }
+            // 添加记录
             list.add(new HistoryBean(date, pmEatHis, amEatHis));
         }
         return list;

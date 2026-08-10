@@ -139,10 +139,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         } else {
             String[] lines = content.split("：");
             if (lines.length == 2) {
-                if (content.contains(getString(R.string.only_am))) {
+                if (lines[0].equals(getString(R.string.only_am)) || lines[0].equals(getString(R.string.am_eat))) {
                     line1 = getString(R.string.am_eat) + "："+ lines[1];
-                }else if (content.contains(getString(R.string.only_pm))){
-                    line1 = getString(R.string.only_pm) + "：" + lines[1];
+                }else if (lines[0].equals(getString(R.string.only_pm)) || lines[0].equals(getString(R.string.pm_eat))){
+                    line1 = getString(R.string.pm_eat) + "：" + lines[1];
                 } else {
                     line1 = getString(R.string.am_eat) + "："+ lines[0];
                     line2 = getString(R.string.pm_eat) + "："+ lines[1];
@@ -164,11 +164,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
 
         // 判断按钮显示
-        if (lt.getHour() >= 21) {
-            allDay.setText(R.string.tomorrow_all_day);
-        } else {
-            allDay.setText(R.string.today_all_day);
-        }
+        allDay.setText(lt.getHour() >= 21 ? R.string.tomorrow_all_day : R.string.today_all_day);
     }
 
     // 读取店铺列表
@@ -234,7 +230,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // 根据时间自动判断用户是否需要选择，并且显示出相应的内容
         lt = LocalTime.now();
         if (lt.getHour() > 14 && lt.getHour() < 21){
-            showNextTimeResult(getString(R.string.pm_eat) + "：" + nowEat);
+            showNextTimeResult(getString(R.string.only_pm) + "：" + nowEat);
         }else {
             // 做一个提示框，让用户决定这个下一餐什么时候吃
             String finalNowEat = nowEat;
@@ -440,7 +436,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // 读取当天历史记录回显到输入框
         String todayFilePath = HistoryManager.getTodayFilePath(requireContext());
         String content = FileUtil.openText(todayFilePath);
-        HistoryManager.Record todayRecord = HistoryManager.parseHistory(content);
+        HistoryManager.Record todayRecord = HistoryManager.parseHistory(requireContext(), content);
 
         if (!todayRecord.amEat.isEmpty() && !todayRecord.amEat.equals(getString(R.string.no_record))) {
             etInputAmEat.setText(todayRecord.amEat);

@@ -41,7 +41,7 @@ public class HistoryManager {
 
             File file = new File(fileName);
             if (file.exists()) {
-                Record record = parseHistory(content);
+                Record record = parseHistory(context, content);
                 amEatHis = record.amEat;
                 pmEatHis = record.pmEat;
             }
@@ -51,11 +51,13 @@ public class HistoryManager {
     }
 
     /**
-     * 解析历史记录字符串（支持 "早餐：A：午餐：B" 和 "早餐：A：午餐：B" 两种格式）
+     * 解析历史记录字符串
+     * 支持双餐格式 "中饭吃：A：晚饭吃：B"，以及单餐格式 "仅吃中饭：A"/"仅吃晚饭：A"（兼容旧版 "中饭吃：A"/"晚饭吃：A"）
+     * @param context 上下文（用于获取文案标签）
      * @param content 文件读取的原始字符串
      * @return 解析结果
      */
-    public static Record parseHistory(String content) {
+    public static Record parseHistory(Context context, String content) {
         String amEat = "";
         String pmEat = "";
         if (content != null && !content.isEmpty()) {
@@ -64,8 +66,14 @@ public class HistoryManager {
                 amEat = eatArr[1];
                 pmEat = eatArr[3];
             } else if (eatArr.length == 2) {
-                amEat = eatArr[0];
-                pmEat = eatArr[1];
+                if (eatArr[0].equals(context.getString(R.string.only_am)) || eatArr[0].equals(context.getString(R.string.am_eat))) {
+                    amEat = eatArr[1];
+                } else if (eatArr[0].equals(context.getString(R.string.only_pm)) || eatArr[0].equals(context.getString(R.string.pm_eat))) {
+                    pmEat = eatArr[1];
+                } else {
+                    amEat = eatArr[0];
+                    pmEat = eatArr[1];
+                }
             }
         }
         return new Record(amEat, pmEat);
@@ -79,7 +87,7 @@ public class HistoryManager {
     public static Record getHistoryByDate(Context context, String date) {
         String filePath = AppConstantsUtils.getDateFilePath(context, date);
         String content = FileUtil.openText(filePath);
-        return parseHistory(content);
+        return parseHistory(context, content);
     }
 
     public static Record getYesterdayHistory(Context context) {
@@ -88,7 +96,7 @@ public class HistoryManager {
         LocalDate belongDate = isAfter21 ? today.plusDays(1) : today;
         String yesterdayPath = AppConstantsUtils.getDateFilePath(context, belongDate.minusDays(1).toString());
         String content = FileUtil.openText(yesterdayPath);
-        return parseHistory(content);
+        return parseHistory(context, content);
     }
 
     /**

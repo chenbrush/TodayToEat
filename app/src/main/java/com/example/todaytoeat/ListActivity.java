@@ -183,6 +183,35 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             }
         });
+
+        // 单点屏蔽商铺
+        lv_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MaterialCardView card = view.findViewById(R.id.card_root);
+
+                new MaterialAlertDialogBuilder(ListActivity.this)
+                        .setTitle("屏蔽商铺")
+                        .setMessage("当该商铺在最近一段时间没有营业，建议选择该选项\n" +
+                                "注意：选择确定后该商铺将不会进入到选择队列中，直到再次重新启用")
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i2) {
+                                String deleteShop = shopList.get(i);
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                // dialog结束后对效果进行恢复
+                                card.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
+                                card.setCardBackgroundColor(MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface));
+                            }
+                        })
+                        .show();
+            }
+        });
     }
 
     // 加载商铺名称

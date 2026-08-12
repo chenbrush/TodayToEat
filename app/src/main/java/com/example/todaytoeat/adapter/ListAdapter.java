@@ -71,47 +71,33 @@ public class ListAdapter extends BaseAdapter {
         // 设置店铺名称
         holder.tv_shop.setText(mShopList.get(i));
 
-        // Material按压效果
+        // Material按压效果：改用 OnTouchListener 实现并返回 false（不消费事件），
+        // 否则 item 会拦截触摸事件，导致 ListView 的 onItemClick / onItemLongClick 无法触发
         ViewHolder finalHolder = holder;
-
-        // 单次按下后按压效果
-        view.setOnClickListener(new View.OnClickListener() {
+        view.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onTouch(View v, MotionEvent event) {
                 MaterialCardView cardView = finalHolder.cardView;
-                cardView.setCardBackgroundColor(finalHolder.pressColor);
-                cardView.animate()
-                        .scaleX(0.97f)
-                        .scaleY(0.97f)
-                        .setDuration(80)
-                        .start();
-
-                view.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        cardView.setCardBackgroundColor(finalHolder.pressColor);
+                        cardView.animate()
+                                .scaleX(0.97f)
+                                .scaleY(0.97f)
+                                .setDuration(80)
+                                .start();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
                         cardView.setCardBackgroundColor(finalHolder.normalColor);
                         cardView.animate()
                                 .scaleX(1.00f)
                                 .scaleY(1.00f)
                                 .setDuration(80)
                                 .start();
-                    }
-                }, 200);
-            }
-        });
-
-        // 长按按压效果
-        view.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                MaterialCardView cardView = finalHolder.cardView;
-                cardView.setCardBackgroundColor(finalHolder.pressColor);
-                cardView.animate()
-                        .scaleX(0.97f)
-                        .scaleY(0.97f)
-                        .setDuration(80)
-                        .start();
-
+                        break;
+                }
+                // 返回 false，把触摸事件继续交给 ListView 处理
                 return false;
             }
         });

@@ -53,6 +53,16 @@ public class HistoryManager {
                 amEatHis = record.amEat.isEmpty() ? context.getString(R.string.no_record) : record.amEat;
                 pmEatHis = record.pmEat.isEmpty() ? context.getString(R.string.no_record) : record.pmEat;
             }
+
+            // 解决一餐的显示界面
+            if (amEatHis.equals(context.getString(R.string.no_record)) && !pmEatHis.equals(context.getString(R.string.no_record))){
+                amEatHis = context.getString(R.string.only_pm);
+            }else if (!amEatHis.equals(context.getString(R.string.no_record)) && pmEatHis.equals(context.getString(R.string.no_record))){
+                String temp = amEatHis;
+                amEatHis = context.getString(R.string.only_am);
+                pmEatHis = temp;
+            }
+
             // 添加记录
             list.add(new HistoryBean(date, pmEatHis, amEatHis));
         }

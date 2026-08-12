@@ -1,8 +1,10 @@
 package com.example.todaytoeat.adapter;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
+import android.content.SharedPreferences;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,6 +19,7 @@ import com.example.todaytoeat.R;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
+import java.util.Set;
 
 public class ListAdapter extends BaseAdapter {
     private final Context mContext;
@@ -61,6 +64,9 @@ public class ListAdapter extends BaseAdapter {
             mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorPrimaryVariant, typedValue, true);
             holder.pressColor = typedValue.data;
 
+            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorPrimaryContainer, typedValue, true);
+            holder.hideColor = typedValue.data;
+
             // 设置默认颜色
             holder.cardView.setCardBackgroundColor(holder.normalColor);
             view.setTag(holder);
@@ -69,11 +75,23 @@ public class ListAdapter extends BaseAdapter {
         }
 
         // 设置店铺名称
-        holder.tv_shop.setText(mShopList.get(i));
+        String shopNameAndStatus = mShopList.get(i);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("setting", MODE_PRIVATE);
+        Set<String> hideShopsSet = sharedPreferences.getStringSet("HideShops", null);
+
+        // 判断当前商铺是否处于屏蔽状态
+        boolean isBlocked = hideShopsSet != null && hideShopsSet.contains(shopNameAndStatus);
+
+        // 每次绑定都强制设置一次背景色：已屏蔽 -> 屏蔽色；未屏蔽 -> 正常色
+        // 避免 ListView 复用 item 视图时残留上一次的背景色
+        holder.cardView.setCardBackgroundColor(isBlocked ? holder.hideColor : holder.normalColor);
+
+        holder.tv_shop.setText(shopNameAndStatus);
 
         // Material按压效果：改用 OnTouchListener 实现并返回 false（不消费事件），
         // 否则 item 会拦截触摸事件，导致 ListView 的 onItemClick / onItemLongClick 无法触发
         ViewHolder finalHolder = holder;
+        final boolean finalBlocked = isBlocked;
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -89,7 +107,8 @@ public class ListAdapter extends BaseAdapter {
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        cardView.setCardBackgroundColor(finalHolder.normalColor);
+                        // 抬起后恢复颜色：已屏蔽的商铺恢复为屏蔽色，未屏蔽的恢复为正常色
+                        cardView.setCardBackgroundColor(finalBlocked ? finalHolder.hideColor : finalHolder.normalColor);
                         cardView.animate()
                                 .scaleX(1.00f)
                                 .scaleY(1.00f)
@@ -109,5 +128,6 @@ public class ListAdapter extends BaseAdapter {
         public MaterialCardView cardView;
         public int normalColor;
         public int pressColor;
+        public int hideColor;
     }
 }

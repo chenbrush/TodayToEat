@@ -1,14 +1,10 @@
 package com.example.todaytoeat;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -20,7 +16,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -28,20 +23,21 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.FileUtil;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class ListActivity extends AppCompatActivity implements View.OnClickListener {
     private final List<String> shopList = new ArrayList<>();
     private String path;
     private ListAdapter adapter;
     private SharedPreferences sharedPreferences;
+    Set<String> hideShopsSet = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +50,14 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             return insets;
         });
 
+        // shared preferences 相关设置
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+        // 加载历史屏蔽记录到内存集合，避免重启后丢失（getStringSet 可能为 null，需要判空）
+        Set<String> savedHideShops = sharedPreferences.getStringSet("HideShops", null);
+        if (savedHideShops != null) {
+            hideShopsSet.addAll(savedHideShops);
+        }
+
         ListView lv_list = findViewById(R.id.lv_list);
         CheckBox cb_repetition = findViewById(R.id.cb_repetition);
         CheckBox cb_similar = findViewById(R.id.cb_similar);
@@ -151,6 +154,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                                 // 获取需要删除的店铺并进行删除
                                 String deleteShop = shopList.get(i);
                                 shopList.remove(deleteShop);
+                                // 同步从屏蔽集合中移除并保存，避免残留屏蔽记录
+                                hideShopsSet.remove(deleteShop);
+                                sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
 
                                 // 对删除过后的店铺进行重新整理并且更新文件
                                 StringBuilder updateShops = new StringBuilder();
@@ -173,9 +179,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         .setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialogInterface) {
-                                // dialog结束后对效果进行恢复
+                                // dialog结束后只恢复按压动画（背景色统一由 ListAdapter 控制）
                                 card.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
-                                card.setCardBackgroundColor(MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface));
                             }
                         })
                         .show();
@@ -197,16 +202,19 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i2) {
-                                String deleteShop = shopList.get(i);
+                                hideShopsSet.add(shopList.get(i));
+                                sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
+                                loadShop();
+                                adapter.notifyDataSetChanged();
+
                             }
                         })
                         .setNegativeButton(getString(R.string.cancel), null)
                         .setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialogInterface) {
-                                // dialog结束后对效果进行恢复
+                                // dialog结束后只恢复按压动画（背景色统一由 ListAdapter 控制）
                                 card.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
-                                card.setCardBackgroundColor(MaterialColors.getColor(card, com.google.android.material.R.attr.colorSurface));
                             }
                         })
                         .show();
@@ -219,28 +227,25 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         shopList.clear();
         path = Objects.requireNonNull(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)) + "/files" + File.separatorChar + "shop_list.txt";
 
-        // 检测文件是否存在
+        // 检测文件是否存在，不存在则创建并写入初始提示文字
         File file = new File(path);
         if (!file.exists()){
             FileUtil.saveText(path, getString(R.string.none_shops));
         }
 
-        String context = FileUtil.openText(path);
-        String[] arr = context.split("[,，、]");
-        List<String> checkList = new ArrayList<>();
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i].isEmpty()){
-                continue;
-            }
-            checkList.add(arr[i]);
+        String content = FileUtil.openText(path);
+        // 文件为空或仍是“未添加任何商铺”的初始提示时，说明列表为空，直接返回
+        if (content.isEmpty() || content.equals(getString(R.string.none_shops))){
+            return;
         }
-        String[] checkArr = new String[checkList.size()];
-        for (int i = 0; i < checkList.size(); i++) {
-            checkArr[i] = checkList.get(i);
-        }
-        shopList.addAll(Arrays.asList(checkArr));
-        Log.d("shop", arr[0]);
 
+        // 用逗号/中文逗号/顿号拆分商铺名，并过滤掉空字符串
+        String[] arr = content.split("[,，、]");
+        for (String shopName : arr) {
+            if (!shopName.isEmpty()) {
+                shopList.add(shopName);
+            }
+        }
     }
 
     @Override

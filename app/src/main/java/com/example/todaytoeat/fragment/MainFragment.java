@@ -33,7 +33,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
@@ -50,6 +53,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences sharedPreferences;
     private boolean repStatus;
     private boolean similar;
+    // 缓存的被屏蔽商铺集合（在 reloadShop 中读取一次，供 checkHideShop 使用）
+    private Set<String> hideShopsSet;
 
     public MainFragment() {
         // Required empty public constructor
@@ -171,16 +176,42 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private void reloadShop() {
         String pathShop = directory + File.separatorChar + "shop_list.txt";
         File fileShop = new File(pathShop);
-        // 校验文件有效性
-        if (!fileShop.exists() || FileUtil.openText(pathShop).isEmpty() || FileUtil.openText(pathShop).equals(getString(R.string.none_shops))) {
+        String content = FileUtil.openText(pathShop);
+
+        // 校验文件有效性：文件不存在、内容为空或仍是初始提示文字，都视为没有店铺
+        if (!fileShop.exists() || content.isEmpty() || content.equals(getString(R.string.none_shops))) {
             shopsListExist = false;
             noticeToAddShops();
             return;
         }
 
+        // 读取被屏蔽的商铺集合（与 ListActivity 保存的键名保持一致），并缓存到字段供 checkHideShop 使用
+        SharedPreferences sp = requireActivity().getSharedPreferences("setting", MODE_PRIVATE);
+        hideShopsSet = sp.getStringSet("HideShops", null);
+
+        // 使用与 ListActivity 相同的分隔符拆分店名，并过滤空字符串与被屏蔽的商铺，
+        // 保证被屏蔽的商铺不会进入随机选择队列
+        String[] rawShops = content.split("[,，、]");
+        List<String> availableShops = new ArrayList<>();
+        for (String shopName : rawShops) {
+            if (shopName.isEmpty()) {
+                continue;
+            }
+            if (hideShopsSet != null && hideShopsSet.contains(shopName)) {
+                continue;
+            }
+            availableShops.add(shopName);
+        }
+
+        // 所有商铺都被屏蔽时，提示用户前往列表页重新启用
+        if (availableShops.isEmpty()) {
+            shopsListExist = false;
+            noticeAllShopsBlocked();
+            return;
+        }
+
         shopsListExist = true;
-        // 逗号分割店铺数组
-        shop = FileUtil.openText(pathShop).split(",");
+        shop = availableShops.toArray(new String[0]);
     }
 
     // 历史记录恢复
@@ -222,6 +253,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 Log.d("eat", nowEat);
                 continue;
             }
+
+            // 判断当前选择的商铺是不是隐藏商铺
+            if (!checkHideShop(nowEat)) continue;
 
             // 通过所有过滤条件
             break;
@@ -319,8 +353,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
             }
 
-            // 早晚店铺不能一致，满足则退出循环
-            if (!amEat.equals(pmEat)) break;
+            // 早晚店铺不能一致且并非隐藏商铺，满足则退出循环
+            if (!amEat.equals(pmEat) && checkHideShop(amEat) && checkHideShop(pmEat)) break;
         }
 
         // 更新页面双行结果
@@ -419,6 +453,23 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     intent.setClass(requireActivity(), ListActivity.class);
                     startActivity(intent);
                 })
+                .show();
+    }
+
+    /**
+     * 所有商铺都被屏蔽时的提示弹窗，引导用户前往列表页重新启用
+     */
+    private void noticeAllShopsBlocked() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.notice))
+                .setMessage("?")
+                .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
+                    // 跳转到商铺列表页，用户可以点击被屏蔽的商铺重新启用
+                    Intent intent = new Intent();
+                    intent.setClass(requireActivity(), ListActivity.class);
+                    startActivity(intent);
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
                 .show();
     }
 
@@ -534,5 +585,29 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
         // 最长公共连续字符≥3视为相似店名
         return maxLength >= 3;
+    }
+
+
+    /**
+     * 检查生成出的商铺是不是包含在被隐藏的商铺之中的
+     * 如果是，就返回false
+     * 不然返回true
+     * @param s 受检查的商铺
+     * */
+    private boolean checkHideShop(String s){
+        // 使用 reloadShop 时缓存的屏蔽集合，避免每次随机都重新读取 SharedPreferences
+        Set<String> hideShops = hideShopsSet;
+        if (hideShops == null){
+            return true;
+        }
+
+        // 从列表中查找并判断，如果是的话就直接return false
+        for (String hideShop : hideShops) {
+            if (s.equals(hideShop)){
+                return false;
+            }
+        }
+
+        return true;
     }
 }

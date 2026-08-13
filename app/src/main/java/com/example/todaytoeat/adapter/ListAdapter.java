@@ -92,31 +92,45 @@ public class ListAdapter extends BaseAdapter {
         // 否则 item 会拦截触摸事件，导致 ListView 的 onItemClick / onItemLongClick 无法触发
         ViewHolder finalHolder = holder;
         final boolean finalBlocked = isBlocked;
-        view.setOnTouchListener(new View.OnTouchListener() {
+
+        // 短按按压效果
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View view) {
                 MaterialCardView cardView = finalHolder.cardView;
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN:
-                        cardView.setCardBackgroundColor(finalHolder.pressColor);
-                        cardView.animate()
-                                .scaleX(0.97f)
-                                .scaleY(0.97f)
-                                .setDuration(80)
-                                .start();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        // 抬起后恢复颜色：已屏蔽的商铺恢复为屏蔽色，未屏蔽的恢复为正常色
+                cardView.setCardBackgroundColor(finalHolder.pressColor);
+                cardView.animate()
+                        .scaleX(0.97f)
+                        .scaleY(0.97f)
+                        .setDuration(80)
+                        .start();
+
+                view.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                         cardView.setCardBackgroundColor(finalBlocked ? finalHolder.hideColor : finalHolder.normalColor);
                         cardView.animate()
                                 .scaleX(1.00f)
                                 .scaleY(1.00f)
                                 .setDuration(80)
-                                .start();
-                        break;
-                }
-                // 返回 false，把触摸事件继续交给 ListView 处理
+                                .start();cardView.setBackgroundColor(finalHolder.normalColor);
+                    }
+                }, 200);
+            }
+        });
+
+        // 长按按压效果
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                MaterialCardView cardView = finalHolder.cardView;
+                cardView.setCardBackgroundColor(finalHolder.pressColor);
+                cardView.animate()
+                        .scaleX(0.97f)
+                        .scaleY(0.97f)
+                        .setDuration(80)
+                        .start();
+
                 return false;
             }
         });

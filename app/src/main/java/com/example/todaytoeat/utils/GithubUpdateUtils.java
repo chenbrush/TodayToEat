@@ -1,5 +1,7 @@
 package com.example.todaytoeat.utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.io.BufferedReader;
@@ -20,9 +22,11 @@ public class GithubUpdateUtils {
         String[] getApiData = getGithub();
 
         String githubVersion = "";
-        for (int i = 0; i < getApiData.length; i++) {
-            if (getApiData[i].contains("tag_name")) {
-                githubVersion = getApiData[i];
+        for (String getApiDatum : getApiData) {
+            String[] getApiDataContext = getApiDatum.split(":");
+            Log.d("githubContent", "getGithubUpdate: " + getApiDataContext[0]);
+            if (getApiDataContext[0].equals("\"name\"")) {
+                githubVersion = getApiDataContext[1];
                 break;
             }
         }
@@ -46,6 +50,7 @@ public class GithubUpdateUtils {
             stringBuilder.append(line);
         }
 
+        Log.d("github", stringBuilder.toString());
         return stringBuilder.toString().split(",");
     }
 

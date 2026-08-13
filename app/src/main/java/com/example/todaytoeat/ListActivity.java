@@ -185,6 +185,11 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         })
                         .show();
 
+                // 每次执行一次就重新加载商铺，防止出现界面样式上的bug
+                // 下面的单点也是一样的道理
+                loadShop();
+                adapter.notifyDataSetChanged();
+
                 return true;
             }
         });
@@ -203,6 +208,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     hideShopNotice(i);
                 }
+
+                loadShop();
+                adapter.notifyDataSetChanged();
 
             }
 
@@ -245,6 +253,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                                 loadShop();
                                 adapter.notifyDataSetChanged();
 
+
                             }
                         })
                         .setNegativeButton(getString(R.string.cancel), null)
@@ -256,6 +265,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         })
                         .show();
+
             }
         });
     }

@@ -191,18 +191,56 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
         // 单点屏蔽商铺
         lv_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            private MaterialCardView card;
+
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MaterialCardView card = view.findViewById(R.id.card_root);
+                card = view.findViewById(R.id.card_root);
 
+                // 检查当前商铺是否为被屏蔽商铺
+                if (hideShopsSet.contains(shopList.get(i))) {
+                    rehideShopNotice(i);
+                } else {
+                    hideShopNotice(i);
+                }
+
+            }
+
+            // 选择屏蔽商铺提示框
+            private void hideShopNotice(int i) {
                 new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle("屏蔽商铺")
-                        .setMessage("当该商铺在最近一段时间没有营业，建议选择该选项\n" +
-                                "注意：选择确定后该商铺将不会进入到选择队列中，直到再次重新启用")
+                        .setTitle(R.string.block_shop)
+                        .setMessage(R.string.block_shop_message)
                         .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i2) {
                                 hideShopsSet.add(shopList.get(i));
+                                sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
+                                loadShop();
+                                adapter.notifyDataSetChanged();
+
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                // dialog结束后只恢复按压动画（背景色统一由 ListAdapter 控制）
+                                card.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
+                            }
+                        })
+                        .show();
+            }
+
+            // 解除屏蔽提示框
+            private void rehideShopNotice(int i) {
+                new MaterialAlertDialogBuilder(ListActivity.this)
+                        .setTitle(R.string.unblock_shop)
+                        .setMessage(R.string.unblock_shop_message)
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i2) {
+                                hideShopsSet.remove(shopList.get(i));
                                 sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
                                 loadShop();
                                 adapter.notifyDataSetChanged();
@@ -292,11 +330,11 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
         String[] shopList = shops.split(",");
         StringBuilder checkShop = new StringBuilder();
-        for (int i = 0; i < shopList.length; i++) {
-            if (shopList[i].isEmpty()){
+        for (String s : shopList) {
+            if (s.isEmpty()) {
                 continue;
             }
-            checkShop.append(shopList[i]).append(",");
+            checkShop.append(s).append(",");
         }
         FileUtil.saveText(path, checkShop.toString());
     }

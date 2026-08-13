@@ -37,6 +37,11 @@
     <string name="notice_delete_shop_confirm">Are you sure you want to delete this shop?</string>
     <string name="none_shops">No shops added</string>
     <string name="notice_delete_shop_nagative_bottom">Forget it, it\'s still worth eating</string>
+    <string name="notice_all_shops_blocked_message">All shops are currently blocked. Please go to the shop list to re-enable them.</string>
+    <string name="block_shop">Block Shop</string>
+    <string name="block_shop_message">If this shop has not been open recently, we recommend blocking it.\nNote: Once blocked, this shop will no longer appear in the selection queue until you re-enable it.</string>
+    <string name="unblock_shop">Unblock Shop</string>
+    <string name="unblock_shop_message">Unblocking this shop will allow it to re-enter the selection queue. Continue?</string>
     <string name="add_shop">Add Shop</string>
     <string name="cancel">Cancel</string>
     <string name="current_vision_code">Current Version:</string>

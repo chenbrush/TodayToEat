@@ -50,6 +50,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     Random r = new Random();
     private String directory;
     boolean shopsListExist = true;
+    private boolean allShopsBlocked;
     private SharedPreferences sharedPreferences;
     private boolean repStatus;
     private boolean similar;
@@ -181,6 +182,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // 校验文件有效性：文件不存在、内容为空或仍是初始提示文字，都视为没有店铺
         if (!fileShop.exists() || content.isEmpty() || content.equals(getString(R.string.none_shops))) {
             shopsListExist = false;
+            allShopsBlocked = false;
             noticeToAddShops();
             return;
         }
@@ -206,11 +208,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // 所有商铺都被屏蔽时，提示用户前往列表页重新启用
         if (availableShops.isEmpty()) {
             shopsListExist = false;
+            allShopsBlocked = true;
             noticeAllShopsBlocked();
             return;
         }
 
         shopsListExist = true;
+        allShopsBlocked = false;
         shop = availableShops.toArray(new String[0]);
     }
 
@@ -373,7 +377,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         if (view.getId() == R.id.btn_next_time) {
             // 无店铺列表弹窗提示添加
             if (!shopsListExist) {
-                noticeToAddShops();
+                if (allShopsBlocked) {
+                    noticeAllShopsBlocked();
+                } else {
+                    noticeToAddShops();
+                }
                 return;
             }
             // 店铺少于等于2家且开启重复过滤，弹窗提示扩充店铺
@@ -387,7 +395,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // 全天随机按钮
         if (view.getId() == R.id.btn_all_day) {
             if (!shopsListExist) {
-                noticeToAddShops();
+                if (allShopsBlocked) {
+                    noticeAllShopsBlocked();
+                } else {
+                    noticeToAddShops();
+                }
                 return;
             }
             // 全天随机至少需要3家店铺
@@ -462,7 +474,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private void noticeAllShopsBlocked() {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.notice))
-                .setMessage("?")
+                .setMessage(R.string.notice_all_shops_blocked_message)
                 .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
                     // 跳转到商铺列表页，用户可以点击被屏蔽的商铺重新启用
                     Intent intent = new Intent();

@@ -6,8 +6,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:rippleColor="?attr/colorPrimary"
-    android:layout_margin="10sp">
+    android:layout_margin="10sp"
+    app:cardCornerRadius="10dp">
 
     <TextView
         android:id="@+id/tv_shop"

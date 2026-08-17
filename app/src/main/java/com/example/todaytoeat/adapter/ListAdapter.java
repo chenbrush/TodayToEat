@@ -113,7 +113,7 @@ public class ListAdapter extends BaseAdapter {
                                 .scaleX(1.00f)
                                 .scaleY(1.00f)
                                 .setDuration(80)
-                                .start();cardView.setBackgroundColor(finalHolder.normalColor);
+                                .start();
                     }
                 }, 200);
             }

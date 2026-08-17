@@ -73,24 +73,21 @@ public class HistoryActivity extends AppCompatActivity {
         }
 
         // 单选框切换监听：修改筛选天数并刷新列表
-        rgDateFilter.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                int days;
-                if (checkedId == R.id.rb_7days) {
-                    days = 7;
-                } else if (checkedId == R.id.rb_10days) {
-                    days = 10;
-                } else if (checkedId == R.id.rb_15days) {
-                    days = 15;
-                } else {
-                    days = 30;
-                }
-                // 保存新的筛选天数到本地配置
-                sharedPreferences.edit().putInt("historyDays", days).apply();
-                // 重新加载历史数据刷新列表
-                loadHistoryData();
+        rgDateFilter.setOnCheckedChangeListener((group, checkedId) -> {
+            int days;
+            if (checkedId == R.id.rb_7days) {
+                days = 7;
+            } else if (checkedId == R.id.rb_10days) {
+                days = 10;
+            } else if (checkedId == R.id.rb_15days) {
+                days = 15;
+            } else {
+                days = 30;
             }
+            // 保存新的筛选天数到本地配置
+            sharedPreferences.edit().putInt("historyDays", days).apply();
+            // 重新加载历史数据刷新列表
+            loadHistoryData();
         });
 
 
@@ -99,87 +96,73 @@ public class HistoryActivity extends AppCompatActivity {
         loadHistoryData();
 
         // 返回按钮点击事件：关闭当前页面回到首页
-        findViewById(R.id.ib_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        findViewById(R.id.ib_back).setOnClickListener(view -> finish());
 
         // ListView长按条目监听：弹出弹窗修改当日早/晚餐记录
-        lvHistory.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MaterialCardView cardView = view.findViewById(R.id.card_root);
-                // 加载修改弹窗布局
-                View dialogView = LayoutInflater.from(HistoryActivity.this).inflate(R.layout.history_dialog, null);
-                EditText et_input_am_eat = dialogView.findViewById(R.id.et_input_am_eat);
-                EditText et_input_pm_eat = dialogView.findViewById(R.id.et_input_pm_eat);
+        lvHistory.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            MaterialCardView cardView = view.findViewById(R.id.card_root);
+            // 加载修改弹窗布局
+            View dialogView = LayoutInflater.from(HistoryActivity.this).inflate(R.layout.history_dialog, null);
+            EditText et_input_am_eat = dialogView.findViewById(R.id.et_input_am_eat);
+            EditText et_input_pm_eat = dialogView.findViewById(R.id.et_input_pm_eat);
 
-                // 获取长按条目对应的日期，读取当天历史记录回显到输入框
-                TextView tv_his_date = view.findViewById(R.id.tv_his_date);
-                String getEditDate = tv_his_date.getText().toString();
-                HistoryManager.Record getLongPressDay = HistoryManager.getHistoryByDate(HistoryActivity.this, getEditDate);
+            // 获取长按条目对应的日期，读取当天历史记录回显到输入框
+            TextView tv_his_date = view.findViewById(R.id.tv_his_date);
+            String getEditDate = tv_his_date.getText().toString();
+            HistoryManager.Record getLongPressDay = HistoryManager.getHistoryByDate(HistoryActivity.this, getEditDate);
 
-                // 防止查询时一个不小心把没有记录给加进来了
-                if (!getLongPressDay.amEat.equals("没有记录")){
-                    et_input_am_eat.setText(getLongPressDay.amEat);
-                }
-
-                if (!getLongPressDay.pmEat.equals("没有记录")){
-                    et_input_pm_eat.setText(getLongPressDay.pmEat);
-                }
-
-
-                // 构建修改历史记录弹窗
-                new MaterialAlertDialogBuilder(HistoryActivity.this)
-                        .setTitle(R.string.history_change)
-                        .setMessage(R.string.history_enter_change)
-                        .setView(dialogView)
-                        // 确认修改按钮
-                        .setPositiveButton(R.string.history_confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i2) {
-                                // 获取弹窗输入框的早晚餐内容
-                                String amEditEat = String.valueOf(et_input_am_eat.getText());
-                                String pmEditEat = String.valueOf(et_input_pm_eat.getText());
-
-                                Log.d("date", getEditDate);
-                                String changeHistory;
-
-                                // 拼接修改后的记录文本，区分四种输入场景
-                                if (amEditEat.isEmpty() && pmEditEat.isEmpty()) {
-                                    // 早晚餐全部清空
-                                    changeHistory = "null：没有记录：null：没有记录";
-                                } else if (amEditEat.isEmpty()) {
-                                    // 仅保留晚餐
-                                    changeHistory = getString(R.string.only_pm) + "：" + pmEditEat;
-                                } else if (pmEditEat.isEmpty()) {
-                                    // 仅保留早餐
-                                    changeHistory = getString(R.string.only_am) + "：" + amEditEat;
-                                } else {
-                                    // 早晚餐均填写完整
-                                    changeHistory = getString(R.string.am_eat) + "：" + amEditEat + "：" + getString(R.string.pm_eat) + "：" + pmEditEat;
-                                }
-
-                                // 根据日期覆盖保存历史文件，刷新列表
-                                HistoryManager.saveHistoryByDate(HistoryActivity.this, getEditDate, changeHistory);
-                                loadHistoryData();
-                            }
-                        })
-                        // 取消按钮无操作
-                        .setNegativeButton(getString(R.string.history_cancel_change), null)
-                        // 弹窗关闭时恢复条目卡片原始样式
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                cardView.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
-                                cardView.setCardBackgroundColor(MaterialColors.getColor(cardView, com.google.android.material.R.attr.colorSurface));
-                            }
-                        })
-                        .show();
-                return false;
+            // 防止查询时一个不小心把没有记录给加进来了
+            if (!getLongPressDay.amEat.equals("没有记录")){
+                et_input_am_eat.setText(getLongPressDay.amEat);
             }
+
+            if (!getLongPressDay.pmEat.equals("没有记录")){
+                et_input_pm_eat.setText(getLongPressDay.pmEat);
+            }
+
+
+            // 构建修改历史记录弹窗
+            new MaterialAlertDialogBuilder(HistoryActivity.this)
+                    .setTitle(R.string.history_change)
+                    .setMessage(R.string.history_enter_change)
+                    .setView(dialogView)
+                    // 确认修改按钮
+                    .setPositiveButton(R.string.history_confirm, (dialogInterface, i2) -> {
+                        // 获取弹窗输入框的早晚餐内容
+                        String amEditEat = String.valueOf(et_input_am_eat.getText());
+                        String pmEditEat = String.valueOf(et_input_pm_eat.getText());
+
+                        Log.d("date", getEditDate);
+                        String changeHistory;
+
+                        // 拼接修改后的记录文本，区分四种输入场景
+                        if (amEditEat.isEmpty() && pmEditEat.isEmpty()) {
+                            // 早晚餐全部清空
+                            changeHistory = "null：没有记录：null：没有记录";
+                        } else if (amEditEat.isEmpty()) {
+                            // 仅保留晚餐
+                            changeHistory = getString(R.string.only_pm) + "：" + pmEditEat;
+                        } else if (pmEditEat.isEmpty()) {
+                            // 仅保留早餐
+                            changeHistory = getString(R.string.only_am) + "：" + amEditEat;
+                        } else {
+                            // 早晚餐均填写完整
+                            changeHistory = getString(R.string.am_eat) + "：" + amEditEat + "：" + getString(R.string.pm_eat) + "：" + pmEditEat;
+                        }
+
+                        // 根据日期覆盖保存历史文件，刷新列表
+                        HistoryManager.saveHistoryByDate(HistoryActivity.this, getEditDate, changeHistory);
+                        loadHistoryData();
+                    })
+                    // 取消按钮无操作
+                    .setNegativeButton(getString(R.string.history_cancel_change), null)
+                    // 弹窗关闭时恢复条目卡片原始样式
+                    .setOnDismissListener(dialogInterface -> {
+                        cardView.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
+                        cardView.setCardBackgroundColor(MaterialColors.getColor(cardView, com.google.android.material.R.attr.colorSurface));
+                    })
+                    .show();
+            return false;
         });
     }
 

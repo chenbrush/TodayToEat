@@ -124,7 +124,7 @@ public class HistoryAdapter extends BaseAdapter {
         return view;
     }
 
-    public final class ViewHolder {
+    public static final class ViewHolder {
         public TextView tv_his_date;
         public TextView tv_his_amEat;
         public TextView tv_his_pmEat;

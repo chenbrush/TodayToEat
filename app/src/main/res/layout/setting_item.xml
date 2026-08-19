@@ -8,7 +8,6 @@
     android:minHeight="60sp"
     android:layout_height="60dp"
     android:layout_margin="15sp"
-    app:rippleColor="?attr/colorPrimary"
     android:gravity="center" >
 
    <LinearLayout
@@ -23,8 +22,7 @@
            android:layout_weight="1"
            android:layout_height="36dp"
            android:layout_gravity="center"
-           android:src="@drawable/baseline_history_black_24"
-           app:tint="?attr/colorOnSurface" />
+           android:src="@drawable/baseline_history_black_24" />
 
        <TextView
            android:id="@+id/tv_list"
@@ -34,7 +32,6 @@
            android:layout_gravity="center"
            android:text="@string/history"
            android:textSize="26sp"
-           android:textColor="?attr/colorOnSurface"
            android:gravity="top" />
 
        <ImageView
@@ -52,8 +49,7 @@
            android:layout_weight="1"
            android:layout_height="30dp"
            android:layout_gravity="center"
-           android:src="@drawable/baseline_arrow_forward_ios_black_24"
-           app:tint="?attr/colorOnSurface"/>
+           android:src="@drawable/baseline_arrow_forward_ios_black_24"/>
 
    </LinearLayout>
 

@@ -22,7 +22,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/history_change_notice"
-        android:textColor="?attr/colorOnSurface"/>
+        android:text="@string/history_change_notice"/>
 
 </LinearLayout>

@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:text="@string/amEat"
         android:textSize="30sp"
-        android:textColor="?attr/colorOnSurface"
         android:layout_margin="10sp" />
 
 </com.google.android.material.card.MaterialCardView>

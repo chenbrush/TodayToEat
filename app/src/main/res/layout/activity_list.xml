@@ -84,7 +84,6 @@
         android:padding="10sp"
         app:layout_constraintTop_toBottomOf="@+id/ll_check_box_group"
         app:layout_constraintBottom_toTopOf="@+id/tv_notice"
-        android:listSelector="@drawable/item_selector"
         tools:ignore="MissingConstraints" />
 
     <TextView

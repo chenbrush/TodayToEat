@@ -1,25 +1,17 @@
 package com.example.todaytoeat.adapter;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
-
 import com.example.todaytoeat.R;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
-import java.util.Set;
 
 public class ListAdapter extends BaseAdapter {
     private final Context mContext;
@@ -56,19 +48,6 @@ public class ListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tv_shop = view.findViewById(R.id.tv_shop);
             holder.cardView = view.findViewById(R.id.card_root);
-            // 立即解析 theme 颜色
-            TypedValue typedValue = new TypedValue();
-            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
-            holder.normalColor = typedValue.data;
-
-            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurfaceContainerHighest, typedValue, true);
-            holder.pressColor = typedValue.data;
-
-            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorPrimaryContainer, typedValue, true);
-            holder.hideColor = typedValue.data;
-
-            // 设置默认颜色
-            holder.cardView.setCardBackgroundColor(holder.normalColor);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -76,29 +55,16 @@ public class ListAdapter extends BaseAdapter {
 
         // 设置店铺名称
         String shopNameAndStatus = mShopList.get(i);
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences("setting", MODE_PRIVATE);
-        Set<String> hideShopsSet = sharedPreferences.getStringSet("HideShops", null);
-
-        // 判断当前商铺是否处于屏蔽状态
-        boolean isBlocked = hideShopsSet != null && hideShopsSet.contains(shopNameAndStatus);
-
-        // 每次绑定都强制设置一次背景色：已屏蔽 -> 屏蔽色；未屏蔽 -> 正常色
-        // 避免 ListView 复用 item 视图时残留上一次的背景色
-        holder.cardView.setCardBackgroundColor(isBlocked ? holder.hideColor : holder.normalColor);
-
         holder.tv_shop.setText(shopNameAndStatus);
 
-        // Material按压效果：改用 OnTouchListener 实现并返回 false（不消费事件），
-        // 否则 item 会拦截触摸事件，导致 ListView 的 onItemClick / onItemLongClick 无法触发
+        // 按压效果：点击/长按时卡片缩小，随后恢复
         ViewHolder finalHolder = holder;
-        final boolean finalBlocked = isBlocked;
 
         // 短按按压效果
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MaterialCardView cardView = finalHolder.cardView;
-                cardView.setCardBackgroundColor(finalHolder.pressColor);
                 cardView.animate()
                         .scaleX(0.97f)
                         .scaleY(0.97f)
@@ -108,7 +74,6 @@ public class ListAdapter extends BaseAdapter {
                 view.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        cardView.setCardBackgroundColor(finalBlocked ? finalHolder.hideColor : finalHolder.normalColor);
                         cardView.animate()
                                 .scaleX(1.00f)
                                 .scaleY(1.00f)
@@ -124,7 +89,6 @@ public class ListAdapter extends BaseAdapter {
             @Override
             public boolean onLongClick(View view) {
                 MaterialCardView cardView = finalHolder.cardView;
-                cardView.setCardBackgroundColor(finalHolder.pressColor);
                 cardView.animate()
                         .scaleX(0.97f)
                         .scaleY(0.97f)
@@ -140,8 +104,5 @@ public class ListAdapter extends BaseAdapter {
     public static class ViewHolder {
         public TextView tv_shop;
         public MaterialCardView cardView;
-        public int normalColor;
-        public int pressColor;
-        public int hideColor;
     }
 }

@@ -23,7 +23,6 @@ import com.example.todaytoeat.adapter.HistoryAdapter;
 import com.example.todaytoeat.beans.HistoryBean;
 import com.example.todaytoeat.utils.HistoryManager;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
@@ -159,7 +158,6 @@ public class HistoryActivity extends AppCompatActivity {
                     // 弹窗关闭时恢复条目卡片原始样式
                     .setOnDismissListener(dialogInterface -> {
                         cardView.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
-                        cardView.setCardBackgroundColor(MaterialColors.getColor(cardView, com.google.android.material.R.attr.colorSurface));
                     })
                     .show();
             return false;

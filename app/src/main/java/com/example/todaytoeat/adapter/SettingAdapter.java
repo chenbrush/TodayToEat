@@ -7,7 +7,6 @@ import static android.view.View.VISIBLE;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -60,16 +59,6 @@ public class SettingAdapter extends BaseAdapter {
             holder.iv_red_dot = view.findViewById(R.id.iv_red_dot);
             holder.cardView = view.findViewById(R.id.card_root);
 
-            // 解析themes颜色
-            TypedValue typedValue = new TypedValue();
-            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
-            holder.normalColor = typedValue.data;
-
-            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurfaceContainerHighest, typedValue, true);
-            holder.pressColor = typedValue.data;
-
-            // 设置默认颜色
-            holder.cardView.setCardBackgroundColor(holder.normalColor);
             view.setTag(holder);
         }else {
             holder = (ViewHolder) view.getTag();
@@ -95,7 +84,6 @@ public class SettingAdapter extends BaseAdapter {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 MaterialCardView card = finalHolder.cardView;
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                    card.setCardBackgroundColor(finalHolder.pressColor);
                     card.animate()
                             .scaleX(0.97f)
                             .scaleY(0.97f)
@@ -105,7 +93,6 @@ public class SettingAdapter extends BaseAdapter {
                     view.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            card.setCardBackgroundColor(finalHolder.normalColor);
                             card.animate()
                                     .scaleX(1.00f)
                                     .scaleY(1.00f)
@@ -126,8 +113,6 @@ public class SettingAdapter extends BaseAdapter {
         public TextView tv_list;
         public ImageView iv_next;
         public ImageView iv_red_dot;
-        public int normalColor;
-        public int pressColor;
         public MaterialCardView cardView;
     }
 }

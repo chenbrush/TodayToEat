@@ -1,7 +1,6 @@
 package com.example.todaytoeat.adapter;
 
 import android.content.Context;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,14 +56,6 @@ public class HistoryAdapter extends BaseAdapter {
             holder.tv_his_pmEat = view.findViewById(R.id.tv_his_pmEat);
             holder.cardView = view.findViewById(R.id.card_root);
 
-            TypedValue typedValue = new TypedValue();
-            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
-            holder.normalColor = typedValue.data;
-
-            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurfaceContainerHighest, typedValue, true);
-            holder.pressColor = typedValue.data;
-
-            holder.cardView.setCardBackgroundColor(holder.normalColor);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -80,7 +71,6 @@ public class HistoryAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 MaterialCardView cardView = finalHolder.cardView;
-                cardView.setCardBackgroundColor(finalHolder.pressColor);
                 cardView.animate()
                         .scaleX(0.97f)
                         .scaleY(0.97f)
@@ -90,7 +80,6 @@ public class HistoryAdapter extends BaseAdapter {
                 view.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        cardView.setCardBackgroundColor(finalHolder.normalColor);
                         cardView.animate()
                                 .scaleX(1.00f)
                                 .scaleY(1.00f)
@@ -106,7 +95,6 @@ public class HistoryAdapter extends BaseAdapter {
             @Override
             public boolean onLongClick(View view) {
                 MaterialCardView cardView = finalHolder.cardView;
-                cardView.setCardBackgroundColor(finalHolder.pressColor);
                 cardView.animate()
                         .scaleX(0.97f)
                         .scaleY(0.97f)
@@ -129,7 +117,5 @@ public class HistoryAdapter extends BaseAdapter {
         public TextView tv_his_amEat;
         public TextView tv_his_pmEat;
         public MaterialCardView cardView;
-        public int normalColor;
-        public int pressColor;
     }
 }

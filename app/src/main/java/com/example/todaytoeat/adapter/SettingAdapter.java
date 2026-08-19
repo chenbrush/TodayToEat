@@ -65,7 +65,7 @@ public class SettingAdapter extends BaseAdapter {
             mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
             holder.normalColor = typedValue.data;
 
-            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorPrimaryVariant, typedValue, true);
+            mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurfaceContainerHighest, typedValue, true);
             holder.pressColor = typedValue.data;
 
             // 设置默认颜色

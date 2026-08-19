@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,12 +19,11 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:clipToPadding="false"
-        app:itemIconTint="@color/title_color"
+        app:itemIconTint="?attr/colorOnPrimary"
         app:itemIconSize="30dp"
         app:itemRippleColor="@android:color/transparent"
-        app:itemTextColor="@color/title_color"
+        app:itemTextColor="?attr/colorOnPrimary"
         app:labelVisibilityMode="labeled"
-        app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
         app:menu="@menu/bottom_nav_menu" />
 
 </LinearLayout>

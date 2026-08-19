@@ -8,6 +8,8 @@
     android:minHeight="60sp"
     android:layout_height="60dp"
     android:layout_margin="15sp"
+    android:outlineAmbientShadowColor="@android:color/transparent"
+    android:outlineSpotShadowColor="@android:color/transparent"
     android:gravity="center" >
 
    <LinearLayout

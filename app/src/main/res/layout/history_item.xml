@@ -8,7 +8,9 @@
     android:orientation="vertical"
     android:minHeight="100sp"
     android:layout_margin="10sp"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="10dp"
+    android:outlineAmbientShadowColor="@android:color/transparent"
+    android:outlineSpotShadowColor="@android:color/transparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

@@ -31,6 +31,8 @@
             app:cardCornerRadius="10sp"
             android:layout_margin="30sp"
             app:cardElevation="3sp"
+            android:outlineAmbientShadowColor="@android:color/transparent"
+            android:outlineSpotShadowColor="@android:color/transparent"
             app:layout_constraintBottom_toTopOf="@+id/btn_all_day"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

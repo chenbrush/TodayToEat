@@ -7,7 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10sp"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="10dp"
+    android:outlineAmbientShadowColor="@android:color/transparent"
+    android:outlineSpotShadowColor="@android:color/transparent">
 
     <TextView
         android:id="@+id/tv_shop"

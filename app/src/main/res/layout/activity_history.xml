@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:src="@drawable/baseline_arrow_back_ios_new_24"
-            />
+            android:backgroundTint="@color/transparent"/>
 
         <TextView
             android:layout_width="0dp"
@@ -42,8 +42,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:cardCornerRadius="10sp"
-        android:outlineAmbientShadowColor="@android:color/transparent"
-        android:outlineSpotShadowColor="@android:color/transparent"
         android:layout_margin="10sp"
         app:layout_constraintTop_toBottomOf="@id/ll_history_header">
 
@@ -123,6 +121,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="5sp"
         android:dividerHeight="10sp"
+        android:divider="@color/transparent"
         android:orientation="vertical"
         android:padding="10sp"
         app:layout_constraintTop_toBottomOf="@+id/card_history_filter"

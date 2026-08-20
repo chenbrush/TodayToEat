@@ -9,6 +9,7 @@
     android:minHeight="100sp"
     android:layout_margin="10sp"
     app:cardCornerRadius="10dp"
+    app:cardElevation="3sp"
     android:outlineAmbientShadowColor="@android:color/transparent"
     android:outlineSpotShadowColor="@android:color/transparent">
 

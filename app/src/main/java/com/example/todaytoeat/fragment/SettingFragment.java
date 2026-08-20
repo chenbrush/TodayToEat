@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.todaytoeat.HistoryActivity;
@@ -26,7 +25,7 @@ import com.example.todaytoeat.beans.SettingsBean;
 import java.util.List;
 
 
-public class SettingFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class SettingFragment extends Fragment {
 
     public SettingFragment() {
         // Required empty public constructor
@@ -56,16 +55,14 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemClick
         });
 
         ListView lv_setting = view.findViewById(R.id.lv_setting);
-        lv_setting.setOnItemClickListener(this);
         List<SettingsBean> settingsBeanList = SettingsBean.getDefaultList(getContext());
-        SettingAdapter adapter = new SettingAdapter(getContext(), settingsBeanList);
+        SettingAdapter adapter = new SettingAdapter(getContext(), settingsBeanList, this::openSettingPage);
         lv_setting.setAdapter(adapter);
     }
 
-    // 查询哪个按钮被点击
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        switch (i){
+    // 处理设置项点击，根据位置跳转到对应页面
+    private void openSettingPage(int position) {
+        switch (position){
             case 0:
                 // 历史记录
                 Intent intentHistory = new Intent();

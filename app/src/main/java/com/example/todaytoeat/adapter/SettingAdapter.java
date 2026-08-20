@@ -25,10 +25,13 @@ import java.util.List;
 public class SettingAdapter extends BaseAdapter {
     private Context mContext;
     private List<SettingsBean> mSettingBeanList = new ArrayList<>();
+    private OnSettingItemClickListener mOnSettingItemClickListener;
 
-    public SettingAdapter(Context mContext, List<SettingsBean> mSettingBeanList) {
+    public SettingAdapter(Context mContext, List<SettingsBean> mSettingBeanList,
+                          OnSettingItemClickListener onSettingItemClickListener) {
         this.mContext = mContext;
         this.mSettingBeanList = mSettingBeanList;
+        this.mOnSettingItemClickListener = onSettingItemClickListener;
     }
 
     @Override
@@ -89,23 +92,33 @@ public class SettingAdapter extends BaseAdapter {
                             .scaleY(0.97f)
                             .setDuration(80)
                             .start();
-
-                    view.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            card.animate()
-                                    .scaleX(1.00f)
-                                    .scaleY(1.00f)
-                                    .setDuration(80)
-                                    .start();
-                        }
-                    }, 200);
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP
+                        || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
+                    card.animate()
+                            .scaleX(1.00f)
+                            .scaleY(1.00f)
+                            .setDuration(80)
+                            .start();
                 }
                 return false;
             }
         });
 
+        // 由卡片自身处理点击，既保留按压状态层，也避免与 ListView 的条目点击冲突
+        view.setOnClickListener(v -> {
+            if (mOnSettingItemClickListener != null) {
+                mOnSettingItemClickListener.onSettingItemClick(i);
+            }
+        });
+
         return view;
+    }
+
+    /**
+     * 设置项点击回调，由页面负责具体的页面跳转
+     */
+    public interface OnSettingItemClickListener {
+        void onSettingItemClick(int position);
     }
 
     public static final class ViewHolder{

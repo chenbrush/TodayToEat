@@ -24,7 +24,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:src="@drawable/baseline_arrow_back_ios_new_24"
-            />
+            android:backgroundTint="@color/transparent"/>
 
         <TextView
             android:layout_width="0dp"

@@ -3,7 +3,6 @@ package com.example.todaytoeat.fragment;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -192,7 +191,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         hideShopsSet = sp.getStringSet("HideShops", null);
 
         // 使用与 ListActivity 相同的分隔符拆分店名，并过滤空字符串与被屏蔽的商铺，
-        // 保证被屏蔽的商铺不会进入随机选择队列
+        // 保证已经屏蔽的商铺不会进入随机选择队列
         String[] rawShops = content.split("[,，、]");
         List<String> availableShops = new ArrayList<>();
         for (String shopName : rawShops) {
@@ -275,18 +274,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(getString(R.string.notice))
                     .setMessage(R.string.notice_what_time_to_eat_next_time)
-                    .setPositiveButton(R.string.time_mid, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            showNextTimeResult(getString(R.string.only_am) + "：" + finalNowEat);
-                        }
-                    })
-                    .setNegativeButton(R.string.time_night, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            showNextTimeResult(getString(R.string.only_pm) + "：" + finalNowEat);
-                        }
-                    })
+                    .setPositiveButton(R.string.time_mid, (dialogInterface, i) -> showNextTimeResult(getString(R.string.only_am) + "：" + finalNowEat))
+                    .setNegativeButton(R.string.time_night, (dialogInterface, i) -> showNextTimeResult(getString(R.string.only_pm) + "：" + finalNowEat))
                     .show();
         }
 
@@ -513,32 +502,29 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 .setTitle(R.string.main_change)
                 .setMessage(R.string.history_enter_change)
                 .setView(dialogView)
-                .setPositiveButton(R.string.history_confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String amEditEat = String.valueOf(etInputAmEat.getText());
-                        String pmEditEat = String.valueOf(etInputPmEat.getText());
+                .setPositiveButton(R.string.history_confirm, (dialogInterface, i) -> {
+                    String amEditEat = String.valueOf(etInputAmEat.getText());
+                    String pmEditEat = String.valueOf(etInputPmEat.getText());
 
-                        String changeHistory;
-                        if (amEditEat.isEmpty() && pmEditEat.isEmpty()) {
-                            // 早晚餐全部清空
-                            changeHistory = "null：没有记录：null：没有记录";
-                        } else if (amEditEat.isEmpty()) {
-                            // 仅保留晚餐
-                            changeHistory = getString(R.string.only_pm) + "：" + pmEditEat;
-                        } else if (pmEditEat.isEmpty()) {
-                            // 仅保留早餐
-                            changeHistory = getString(R.string.only_am) + "：" + amEditEat;
-                        } else {
-                            // 早晚餐均填写完整
-                            changeHistory = getString(R.string.am_eat) + "：" + amEditEat + "：" + getString(R.string.pm_eat) + "：" + pmEditEat;
-                        }
-
-                        // 保存到当天记录（注意：MainFragment操作的是当天，与HistoryActivity不同）
-                        HistoryManager.saveTodayRecord(requireContext(), changeHistory);
-                        // 刷新UI
-                        reloadShow();
+                    String changeHistory;
+                    if (amEditEat.isEmpty() && pmEditEat.isEmpty()) {
+                        // 早晚餐全部清空
+                        changeHistory = "null：没有记录：null：没有记录";
+                    } else if (amEditEat.isEmpty()) {
+                        // 仅保留晚餐
+                        changeHistory = getString(R.string.only_pm) + "：" + pmEditEat;
+                    } else if (pmEditEat.isEmpty()) {
+                        // 仅保留早餐
+                        changeHistory = getString(R.string.only_am) + "：" + amEditEat;
+                    } else {
+                        // 早晚餐均填写完整
+                        changeHistory = getString(R.string.am_eat) + "：" + amEditEat + "：" + getString(R.string.pm_eat) + "：" + pmEditEat;
                     }
+
+                    // 保存到当天记录（注意：MainFragment操作的是当天，与HistoryActivity不同）
+                    HistoryManager.saveTodayRecord(requireContext(), changeHistory);
+                    // 刷新UI
+                    reloadShow();
                 })
                 .setNegativeButton(getString(R.string.history_cancel_change), null)
                 .show();

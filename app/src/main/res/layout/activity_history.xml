@@ -71,8 +71,7 @@
                 android:layout_marginEnd="10sp"
                 android:layout_marginTop="5sp"
                 android:layout_marginBottom="5sp"
-                android:gravity="center"
-                tools:ignore="MissingConstraints">
+                android:gravity="center">
 
                 <RadioButton
                     android:id="@+id/rb_7days"
@@ -125,8 +124,7 @@
         android:orientation="vertical"
         android:padding="10sp"
         app:layout_constraintTop_toBottomOf="@+id/card_history_filter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

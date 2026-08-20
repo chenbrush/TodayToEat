@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.FileUtil;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
@@ -38,6 +39,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DynamicColors.applyToActivitiesIfAvailable(this.getApplication());
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_list);

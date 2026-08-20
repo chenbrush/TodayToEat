@@ -23,6 +23,7 @@ import com.example.todaytoeat.adapter.HistoryAdapter;
 import com.example.todaytoeat.beans.HistoryBean;
 import com.example.todaytoeat.utils.HistoryManager;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DynamicColors.applyToActivitiesIfAvailable(this.getApplication());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         EdgeToEdge.enable(this);

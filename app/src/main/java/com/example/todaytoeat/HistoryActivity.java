@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -34,7 +35,7 @@ import java.util.List;
 public class HistoryActivity extends AppCompatActivity {
 
     // 历史记录列表控件
-    private ListView lvHistory;
+    private ListView lv_history;
     // 历史列表适配器
     private HistoryAdapter historyAdapter;
 
@@ -48,7 +49,7 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.history_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
 
@@ -94,14 +95,35 @@ public class HistoryActivity extends AppCompatActivity {
 
 
         // 绑定列表控件并加载历史数据
-        lvHistory = findViewById(R.id.lv_history);
+        lv_history = findViewById(R.id.lv_history);
+
+        // 单独处理 ListView 的底部导航栏 Insets
+        // 防止最后一条历史记录被系统手势区域遮挡
+        ViewCompat.setOnApplyWindowInsetsListener(
+                lv_history,
+                (v, insets) -> {
+                    Insets navigationBars = insets.getInsets(
+                            WindowInsetsCompat.Type.navigationBars()
+                    );
+
+                    v.setPadding(
+                            v.getPaddingLeft(),
+                            v.getPaddingTop(),
+                            v.getPaddingRight(),
+                            navigationBars.bottom
+                    );
+
+                    return insets;
+                }
+        );
+
         loadHistoryData();
 
         // 返回按钮点击事件：关闭当前页面回到首页
         findViewById(R.id.ib_back).setOnClickListener(view -> finish());
 
         // ListView长按条目监听：弹出弹窗修改当日早/晚餐记录
-        lvHistory.setOnItemLongClickListener((adapterView, view, i, l) -> {
+        lv_history.setOnItemLongClickListener((adapterView, view, i, l) -> {
             MaterialCardView cardView = view.findViewById(R.id.card_root);
             // 加载修改弹窗布局
             View dialogView = LayoutInflater.from(HistoryActivity.this).inflate(R.layout.history_dialog, null);
@@ -176,7 +198,7 @@ public class HistoryActivity extends AppCompatActivity {
         if (historyAdapter == null) {
             // 首次加载，初始化适配器并绑定列表
             historyAdapter = new HistoryAdapter(this, list);
-            lvHistory.setAdapter(historyAdapter);
+            lv_history.setAdapter(historyAdapter);
         } else {
             // 已有适配器，刷新数据源更新UI
             historyAdapter.refreshData(list);

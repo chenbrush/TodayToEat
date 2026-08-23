@@ -3,5 +3,6 @@
     <style name="Theme.TodayToEat" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <!-- 关闭按钮导航的对比度遮罩：避免切换页面时导航栏短暂变黑/变暗（主题级设置，窗口创建即生效） -->
         <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
     </style>
 </resources>

@@ -18,7 +18,6 @@ public class SystemBarUtils {
      * 4. 主题中已通过 android:enforceNavigationBarContrast=false 提前关闭遮罩
      *    （窗口创建即生效），此处代码调用作为补充，避免切换页面时导航栏短暂变黑。
      */
-    @SuppressWarnings("deprecation")
     public static void setTransparentNavigationBar(Activity activity) {
         // 关闭三键导航的对比度遮罩，让导航栏真正透明（API 29+；API 35 起该调用被忽略，无副作用）
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

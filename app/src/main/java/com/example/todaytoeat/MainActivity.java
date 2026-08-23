@@ -3,6 +3,8 @@ package com.example.todaytoeat;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -19,6 +21,7 @@ import com.example.todaytoeat.utils.GithubUpdateUtils;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.io.IOException;
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        // 让系统导航栏与应用底部导航栏使用同一背景色
+        syncSystemNavigationBarColor();
 
         viewPager2 = findViewById(R.id.view_pager);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -79,6 +84,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         checkUpdate();
+    }
+
+    /**
+     * 让系统导航栏与应用底部导航栏使用同一背景色（基于主题 colorSurfaceContainer）。
+     * 兼容处理说明：
+     * 1. 关闭系统导航栏对比度遮罩（API 29+），避免系统在三键导航下叠加半透明遮罩；
+     * 2. Android 15（API 35）起系统强制边到边，导航栏颜色设置对全面屏手势导航无效，
+     *    此时由底部导航栏背景延伸到屏幕底部（底部 padding）实现同色。
+     */
+    @SuppressWarnings("deprecation")
+    private void syncSystemNavigationBarColor() {
+        // 关闭系统导航栏对比度遮罩，避免其叠加半透明色块导致颜色不一致（API 29+）
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
+        // Android 15 起忽略该颜色设置，手势导航下由底部导航栏背景延伸覆盖系统导航栏区域
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            // 直接复用底部导航栏的背景色（colorSurfaceContainer），保证深浅色模式下颜色一致
+            getWindow().setNavigationBarColor(
+                    MaterialColors.getColor(this,
+                            com.google.android.material.R.attr.colorSurfaceContainer, Color.TRANSPARENT));
+        }
     }
 
     @Override

@@ -42,8 +42,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/amEat"
-                android:textSize="25sp"
-                />
+                android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/tv_his_pmEat"
@@ -51,8 +50,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/amEat"
-                android:textSize="25sp"
-                />
+                android:textSize="25sp" />
 
         </LinearLayout>
 

@@ -11,6 +11,8 @@
     android:layout_margin="15sp"
     android:clickable="true"
     android:focusable="true"
+    app:cardCornerRadius="10sp"
+    app:cardElevation="3sp"
     android:outlineAmbientShadowColor="@android:color/transparent"
     android:outlineSpotShadowColor="@android:color/transparent"
     android:gravity="center" >

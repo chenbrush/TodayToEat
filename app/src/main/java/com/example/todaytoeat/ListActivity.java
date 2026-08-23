@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.FileUtil;
+import com.example.todaytoeat.utils.SystemBarUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -42,6 +43,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         DynamicColors.applyToActivitiesIfAvailable(this.getApplication());
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        // 系统导航栏设为透明（Android 文档推荐做法）
+        SystemBarUtils.setTransparentNavigationBar(this);
         setContentView(R.layout.activity_list);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.list_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

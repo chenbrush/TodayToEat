@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.todaytoeat.adapter.HistoryAdapter;
 import com.example.todaytoeat.beans.HistoryBean;
 import com.example.todaytoeat.utils.HistoryManager;
+import com.example.todaytoeat.utils.SystemBarUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -43,6 +44,8 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         EdgeToEdge.enable(this);
+        // 系统导航栏设为透明（Android 文档推荐做法）
+        SystemBarUtils.setTransparentNavigationBar(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.history_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

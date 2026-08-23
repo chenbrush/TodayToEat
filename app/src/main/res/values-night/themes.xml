@@ -46,8 +46,6 @@
         <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer</item>
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
-        <!-- 系统导航栏与应用底部导航栏使用同一颜色（底部导航栏背景为 colorSurfaceContainer） -->
-        <item name="android:navigationBarColor">?attr/colorSurfaceContainer</item>
         <item name="android:windowLightNavigationBar">false</item>
     </style>
 </resources>

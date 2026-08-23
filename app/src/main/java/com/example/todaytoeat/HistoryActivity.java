@@ -42,10 +42,10 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         DynamicColors.applyToActivitiesIfAvailable(this.getApplication());
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
         EdgeToEdge.enable(this);
         // 系统导航栏设为透明（Android 文档推荐做法）
         SystemBarUtils.setTransparentNavigationBar(this);
+        setContentView(R.layout.activity_history);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.history_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

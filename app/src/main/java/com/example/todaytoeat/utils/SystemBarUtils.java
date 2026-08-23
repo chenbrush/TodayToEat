@@ -15,6 +15,8 @@ public class SystemBarUtils {
      * 2. 三键导航下系统默认会在导航栏背后叠加半透明遮罩，
      *    文档建议通过 setNavigationBarContrastEnforced(false) 移除该遮罩；
      * 3. 应用内容（如底部导航栏）应通过 WindowInsets 延伸到系统导航栏后方绘制。
+     * 4. 主题中已通过 android:enforceNavigationBarContrast=false 提前关闭遮罩
+     *    （窗口创建即生效），此处代码调用作为补充，避免切换页面时导航栏短暂变黑。
      */
     @SuppressWarnings("deprecation")
     public static void setTransparentNavigationBar(Activity activity) {

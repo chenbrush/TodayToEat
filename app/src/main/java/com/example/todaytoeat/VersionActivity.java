@@ -22,7 +22,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.todaytoeat.utils.GithubUpdateUtils;
 import com.example.todaytoeat.utils.SystemBarUtils;
-import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
@@ -37,7 +36,6 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DynamicColors.applyToActivitiesIfAvailable(this.getApplication());
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         // 系统导航栏设为透明（Android 文档推荐做法）

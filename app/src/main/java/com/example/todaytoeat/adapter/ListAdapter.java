@@ -30,9 +30,9 @@ public class ListAdapter extends BaseAdapter {
     public ListAdapter(Context mContext, List<String> mShopList) {
         this.mContext = mContext;
         this.mShopList = mShopList;
-        // 从当前主题解析 ?attr/colorOnSurfaceVariant 对应的实际颜色值
+        // 从当前主题解析被指定屏蔽颜色对应的实际颜色值(colorOutline)
         TypedValue typedValue = new TypedValue();
-        mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurfaceVariant, typedValue, true);
+        mContext.getTheme().resolveAttribute(com.google.android.material.R.attr.colorOutline, typedValue, true);
         blockedTextColor = typedValue.data;
     }
 

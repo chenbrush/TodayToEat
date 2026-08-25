@@ -237,7 +237,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         .show();
             }
 
-            // 弹窗结束后恢复按压动画与背景色（背景色与 ListAdapter 保持一致：屏蔽商铺恢复屏蔽色）
+            // 弹窗结束后恢复按压动画与背景色
             private void restoreCardAfterDialog(MaterialCardView card, String shopName) {
                 card.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
             }

@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SettingAdapter extends BaseAdapter {
-    private Context mContext;
+    private final Context mContext;
     private List<SettingsBean> mSettingBeanList = new ArrayList<>();
-    private OnSettingItemClickListener mOnSettingItemClickListener;
+    private final OnSettingItemClickListener mOnSettingItemClickListener;
 
     public SettingAdapter(Context mContext, List<SettingsBean> mSettingBeanList,
                           OnSettingItemClickListener onSettingItemClickListener) {

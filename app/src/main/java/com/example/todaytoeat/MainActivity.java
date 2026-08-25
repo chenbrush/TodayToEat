@@ -58,19 +58,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 底部导航栏点击时同步 ViewPager2
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.nav_home) {
-                    viewPager2.setCurrentItem(0, true);
-                    return true;
-                } else if (menuItem.getItemId() == R.id.nav_settings) {
-                    viewPager2.setCurrentItem(1, true);
-                    checkUpdate();
-                    return true;
-                }
-                return false;
+        bottomNavigationView.setOnItemSelectedListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.nav_home) {
+                viewPager2.setCurrentItem(0, true);
+                return true;
+            } else if (menuItem.getItemId() == R.id.nav_settings) {
+                viewPager2.setCurrentItem(1, true);
+                checkUpdate();
+                return true;
             }
+            return false;
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(bottomNavigationView, (v, insets) -> {

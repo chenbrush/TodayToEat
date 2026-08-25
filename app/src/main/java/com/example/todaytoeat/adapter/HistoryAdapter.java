@@ -4,8 +4,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.beans.HistoryBean;
@@ -14,108 +16,101 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryAdapter extends BaseAdapter {
-    private Context mContext;
-    private List<HistoryBean> mHistoryBeanList = new ArrayList<>();
+/**
+ * 历史记录列表适配器（RecyclerView 版本）
+ * 负责展示每日早/晚餐记录，提供短按/长按按压效果，长按时回调页面弹出修改弹窗
+ */
+public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
-    public HistoryAdapter(Context mContext, List<HistoryBean> list) {
-        this.mContext = mContext;
+    // 长按条目回调：由页面（HistoryActivity）实现，用于弹出修改单日就餐记录弹窗
+    public interface OnItemLongClickListener {
+        void onItemLongClick(HistoryBean historyBean, ViewHolder viewHolder);
+    }
+
+    private final Context mContext;
+    private List<HistoryBean> mHistoryBeanList = new ArrayList<>();
+    private OnItemLongClickListener onItemLongClickListener;
+
+    public HistoryAdapter(Context context, List<HistoryBean> list) {
+        this.mContext = context;
         this.mHistoryBeanList = list;
     }
 
+    // 设置长按条目回调
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        this.onItemLongClickListener = listener;
+    }
+
+    // 刷新列表数据
     public void refreshData(List<HistoryBean> list) {
         this.mHistoryBeanList = list;
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return mHistoryBeanList.size();
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.history_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public Object getItem(int i) {
-        return mHistoryBeanList.get(i);
-    }
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        HistoryBean historyBean = mHistoryBeanList.get(position);
 
-    @Override
-    public long getItemId(int i) {
-        return i;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-
-        if (view == null) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.history_item, viewGroup, false);
-
-            holder = new ViewHolder();
-            holder.tv_his_date = view.findViewById(R.id.tv_his_date);
-            holder.tv_his_amEat = view.findViewById(R.id.tv_his_amEat);
-            holder.tv_his_pmEat = view.findViewById(R.id.tv_his_pmEat);
-            holder.cardView = view.findViewById(R.id.card_root);
-
-            view.setTag(holder);
-        } else {
-            holder = (ViewHolder) view.getTag();
-        }
-
-        HistoryBean historyBean = mHistoryBeanList.get(i);
-
-        // 按压效果
-        ViewHolder finalHolder = holder;
-
-        // 单次按下后按压效果
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MaterialCardView cardView = finalHolder.cardView;
-                cardView.animate()
-                        .scaleX(0.97f)
-                        .scaleY(0.97f)
-                        .setDuration(80)
-                        .start();
-
-                view.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        cardView.animate()
-                                .scaleX(1.00f)
-                                .scaleY(1.00f)
-                                .setDuration(80)
-                                .start();
-                    }
-                }, 200);
-            }
-        });
-
-        // 长按按压效果
-        view.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                MaterialCardView cardView = finalHolder.cardView;
-                cardView.animate()
-                        .scaleX(0.97f)
-                        .scaleY(0.97f)
-                        .setDuration(80)
-                        .start();
-
-                return false;
-            }
-        });
-
+        // 绑定日期与早/晚餐记录
         holder.tv_his_date.setText(historyBean.date);
         holder.tv_his_amEat.setText(historyBean.amEatHis);
         holder.tv_his_pmEat.setText(historyBean.pmEatHis);
 
-        return view;
+        // 短按按压效果：卡片缩小后自动恢复
+        holder.itemView.setOnClickListener(v -> {
+            holder.cardView.animate()
+                    .scaleX(0.97f)
+                    .scaleY(0.97f)
+                    .setDuration(80)
+                    .start();
+            v.postDelayed(() -> holder.cardView.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(80)
+                    .start(), 200);
+        });
+
+        // 长按：卡片缩小并回调页面弹出修改弹窗（弹窗关闭时由页面恢复大小）
+        holder.itemView.setOnLongClickListener(v -> {
+            holder.cardView.animate()
+                    .scaleX(0.97f)
+                    .scaleY(0.97f)
+                    .setDuration(80)
+                    .start();
+            if (onItemLongClickListener != null) {
+                onItemLongClickListener.onItemLongClick(historyBean, holder);
+            }
+            return true;
+        });
     }
 
-    public static final class ViewHolder {
+    @Override
+    public int getItemCount() {
+        return mHistoryBeanList.size();
+    }
+
+    /**
+     * 条目 ViewHolder：缓存条目内控件引用
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tv_his_date;
         public TextView tv_his_amEat;
         public TextView tv_his_pmEat;
         public MaterialCardView cardView;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tv_his_date = itemView.findViewById(R.id.tv_his_date);
+            tv_his_amEat = itemView.findViewById(R.id.tv_his_amEat);
+            tv_his_pmEat = itemView.findViewById(R.id.tv_his_pmEat);
+            cardView = itemView.findViewById(R.id.card_root);
+        }
     }
 }

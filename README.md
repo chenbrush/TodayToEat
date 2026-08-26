@@ -41,6 +41,8 @@
 
 欢迎 Star、Fork、交流学习！
 
+本项目使用 [Apache License 2.0](./LICENSE) 开源协议发布，第三方依赖的许可证声明见 [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md)。
+
 ---
 ## 下载链接 \- Download Link
 

@@ -31,22 +31,14 @@ android {
 }
 
 dependencies {
-    implementation libs.material.v1140
-    implementation libs.activity.ktx
-    implementation libs.appcompat
     implementation libs.material
+    implementation libs.appcompat
     implementation libs.activity
     implementation libs.constraintlayout
-    implementation libs.preference
     implementation libs.sdp.android
+    implementation libs.viewpager2
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
-    implementation libs.sdp.android.v110
-    implementation libs.ssp.android
-    implementation libs.constraintlayout
-    // To use constraintlayout in compose
-    implementation libs.constraintlayout.compose
-
-    implementation libs.viewpager2
 }

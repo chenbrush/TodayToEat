@@ -10,24 +10,20 @@
 
 ## 2. 第三方依赖清单
 
-以下依赖来自 app/build.gradle 与 gradle/libs.versions.toml。AndroidX / Material 系列组件均基于 Apache-2.0；Intuit sdp/ssp 基于 MIT；JUnit 基于 EPL-1.0。
+以下依赖来自 app/build.gradle 与 gradle/libs.versions.toml。AndroidX / Material 系列组件均基于 Apache-2.0；Intuit sdp 基于 MIT；JUnit 基于 EPL-1.0。
 
 ### 2.1 运行时依赖（随 APK 分发）
 
 | 依赖 | 有效版本 | 许可证 | 说明 |
 | --- | --- | --- | --- |
-| com.google.android.material:material | 1.14.0 | Apache-2.0 | Material Design 组件（build.gradle 同时声明 1.10.0，Gradle 解析取 1.14.0） |
+| com.google.android.material:material | 1.14.0 | Apache-2.0 | Material Design 组件 |
 | androidx.appcompat:appcompat | 1.6.1 | Apache-2.0 | 向后兼容支持库 |
 | androidx.activity:activity | 1.8.0 | Apache-2.0 | Activity 组件 |
-| androidx.activity:activity-ktx | 1.8.0 | Apache-2.0 | Activity 扩展 |
 | androidx.constraintlayout:constraintlayout | 2.1.4 | Apache-2.0 | 约束布局 |
-| androidx.constraintlayout:constraintlayout-compose | 1.1.1 | Apache-2.0 | Compose 约束布局（引入 Compose 等传递依赖） |
-| androidx.preference:preference | 1.2.0 | Apache-2.0 | 设置界面组件 |
 | androidx.viewpager2:viewpager2 | 1.0.0 | Apache-2.0 | ViewPager2 分页组件 |
-| com.intuit.sdp:sdp-android | 1.1.1 | MIT | 自适应尺寸单位（build.gradle 同时声明 1.1.0，取 1.1.1） |
-| com.intuit.ssp:ssp-android | 1.1.1 | MIT | 自适应字号单位 |
+| com.intuit.sdp:sdp-android | 1.1.1 | MIT | 自适应尺寸单位 |
 
-> 说明：AndroidX 系列传递依赖（androidx.core、androidx.recyclerview、androidx.fragment、androidx.compose.* 等）同样基于 Apache-2.0，未逐一列出。
+> 说明：AndroidX 系列传递依赖（androidx.core、androidx.recyclerview、androidx.fragment 等）同样基于 Apache-2.0，未逐一列出。
 
 ### 2.2 测试依赖（仅编译/测试使用，不随 APK 分发）
 
@@ -261,7 +257,7 @@
 
 ### 3.2 MIT License
 
-适用于 com.intuit.sdp:sdp-android 与 com.intuit.ssp:ssp-android。
+适用于 com.intuit.sdp:sdp-android。
 
 The MIT License (MIT)
 
@@ -507,7 +503,6 @@ in any resulting litigation.
 
 - Apache License 2.0 官方文本：https://www.apache.org/licenses/LICENSE-2.0.txt
 - intuit/sdp：https://github.com/intuit/sdp
-- intuit/ssp：https://github.com/intuit/ssp
 - junit4：https://github.com/junit-team/junit4
 - Material Design Icons：https://github.com/google/material-design-icons
 - 各依赖的许可证声明：Google Maven（maven.google.com）与 Maven Central（repo1.maven.org）POM 元数据

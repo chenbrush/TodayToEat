@@ -17,3 +17,7 @@ AGENTS.md
 /app/release
 /app/src/androidTest
 /app/src/test
+
+# 签名密钥与密钥目录，禁止提交到仓库
+*.jks
+/jks/

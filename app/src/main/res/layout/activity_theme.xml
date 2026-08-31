@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|start"
             android:layout_weight="9"
-            android:text="主题管理"
+            android:text="@string/theme_title"
             android:textSize="30sp"
             tools:ignore="MissingConstraints" />
 
@@ -57,7 +57,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="颜色模式管理"
+                android:text="@string/color_mode"
                 android:textSize="20sp" />
 
             <RadioGroup
@@ -71,7 +71,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="浅色"
+                    android:text="@string/light"
                     android:textSize="20sp"
                     android:gravity="center_vertical" />
 
@@ -80,7 +80,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="深色"
+                    android:text="@string/dark"
                     android:textSize="20sp"
                     android:gravity="center_vertical" />
 
@@ -89,7 +89,7 @@
                     android:layout_width="0sp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="跟随系统"
+                    android:text="@string/follow_system"
                     android:textSize="20sp"
                     android:gravity="center_vertical"/>
 
@@ -116,7 +116,7 @@
             android:id="@+id/sw_color_manager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="是否使用自动配色"
+            android:text="@string/dynamic_color"
             android:textSize="20sp"
             android:layout_margin="10sp"/>
 

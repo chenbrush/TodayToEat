@@ -33,6 +33,7 @@ import android.widget.ListView;
 import com.example.todaytoeat.HistoryActivity;
 import com.example.todaytoeat.ListActivity;
 import com.example.todaytoeat.R;
+import com.example.todaytoeat.ThemeActivity;
 import com.example.todaytoeat.VersionActivity;
 import com.example.todaytoeat.adapter.SettingAdapter;
 import com.example.todaytoeat.beans.SettingsBean;
@@ -90,6 +91,13 @@ public class SettingFragment extends Fragment {
                 Intent intentList = new Intent();
                 intentList.setClass(requireContext(), ListActivity.class);
                 startActivity(intentList);
+                break;
+
+            case 2:
+                // 主题管理
+                Intent intentTheme = new Intent();
+                intentTheme.setClass(requireContext(), ThemeActivity.class);
+                startActivity(intentTheme);
                 break;
 
             default:

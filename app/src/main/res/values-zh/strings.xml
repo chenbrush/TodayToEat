@@ -88,4 +88,11 @@
     <string name="notice_what_time_to_eat_next_time">这个下一餐什么打算时候吃？</string>
     <string name="time_mid">中午</string>
     <string name="time_night">晚上</string>
+    <string name="theme">主题</string>
+    <string name="theme_title">主题管理</string>
+    <string name="color_mode">颜色模式管理</string>
+    <string name="light">浅色</string>
+    <string name="dark">深色</string>
+    <string name="follow_system">跟随系统</string>
+    <string name="dynamic_color">是否使用自动配色</string>
 </resources>

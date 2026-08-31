@@ -100,6 +100,8 @@ public class ThemeActivity extends AppCompatActivity {
             card_color_manager.setVisibility(View.GONE);
         }
 
+        findViewById(R.id.ib_back).setOnClickListener(view -> finish() );
+
     }
 
     /**

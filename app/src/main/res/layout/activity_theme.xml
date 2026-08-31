@@ -46,7 +46,7 @@
         android:outlineSpotShadowColor="@android:color/transparent"
         android:layout_margin="10sp"
         app:layout_constraintTop_toBottomOf="@id/ll_theme_header"
-        app:layout_constraintBottom_toTopOf="@id/card_color_manager">
+        tools:ignore="MissingConstraints">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -109,7 +109,7 @@
         android:outlineAmbientShadowColor="@android:color/transparent"
         android:outlineSpotShadowColor="@android:color/transparent"
         android:layout_margin="10sp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/card_dark_or_light">
 
         <com.google.android.material.switchmaterial.SwitchMaterial

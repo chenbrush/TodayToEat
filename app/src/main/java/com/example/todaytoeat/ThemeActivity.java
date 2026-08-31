@@ -24,10 +24,6 @@ public class ThemeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
-        // 对主题模式进行管理
-        int themeMode = ThemesMangerUtils.getColorThemesChoice(ThemeActivity.this);
-        ThemesMangerUtils.setColorTheme(themeMode);
         setContentView(R.layout.activity_theme);
         // 保持系统导航栏透明，避免关闭动态配色后出现对比度遮罩
         SystemBarUtils.setTransparentNavigationBar(this);
@@ -47,6 +43,7 @@ public class ThemeActivity extends AppCompatActivity {
 
         // 根据设置的默认主题对RadioButton 进行设置
         // 为防止出现奇怪的问题，default 和 SYSTEM 一起设置
+        int themeMode = ThemesMangerUtils.getColorThemesChoice(ThemeActivity.this);
         switch (themeMode){
             case ThemesMangerUtils.LIGHT:
                 rb_light.setChecked(true);

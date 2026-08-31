@@ -24,11 +24,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.example.todaytoeat.HistoryActivity;
 import com.example.todaytoeat.ListActivity;
@@ -69,7 +70,9 @@ public class SettingFragment extends Fragment {
             return insets;
         });
 
-        ListView lv_setting = view.findViewById(R.id.lv_setting);
+        RecyclerView lv_setting = view.findViewById(R.id.lv_setting);
+        // RecyclerView 需要设置纵向布局管理器
+        lv_setting.setLayoutManager(new LinearLayoutManager(getContext()));
         List<SettingsBean> settingsBeanList = SettingsBean.getDefaultList(getContext());
         SettingAdapter adapter = new SettingAdapter(getContext(), settingsBeanList, this::openSettingPage);
         lv_setting.setAdapter(adapter);

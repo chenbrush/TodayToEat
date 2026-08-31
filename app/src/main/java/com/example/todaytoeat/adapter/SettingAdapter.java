@@ -26,9 +26,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.beans.SettingsBean;
@@ -37,7 +39,11 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingAdapter extends BaseAdapter {
+/**
+ * 设置项列表适配器（RecyclerView 版本）
+ * 负责展示设置项并回调页面进行页面跳转
+ */
+public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHolder> {
     private final Context mContext;
     private List<SettingsBean> mSettingBeanList = new ArrayList<>();
     private final OnSettingItemClickListener mOnSettingItemClickListener;
@@ -49,59 +55,33 @@ public class SettingAdapter extends BaseAdapter {
         this.mOnSettingItemClickListener = onSettingItemClickListener;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return mSettingBeanList.size();
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.setting_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public Object getItem(int i) {
-        return mSettingBeanList.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return i;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if (view == null){
-            view = LayoutInflater.from(mContext).inflate(R.layout.setting_item, viewGroup, false);
-
-            holder = new ViewHolder();
-            holder.iv_icon = view.findViewById(R.id.iv_icon);
-            holder.tv_list = view.findViewById(R.id.tv_list);
-            holder.iv_next = view.findViewById(R.id.iv_next);
-            holder.iv_red_dot = view.findViewById(R.id.iv_red_dot);
-            holder.cardView = view.findViewById(R.id.card_root);
-
-            view.setTag(holder);
-        }else {
-            holder = (ViewHolder) view.getTag();
-        }
-
-        SettingsBean settingsBean = mSettingBeanList.get(i);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        SettingsBean settingsBean = mSettingBeanList.get(position);
 
         holder.tv_list.setText(settingsBean.name);
         holder.iv_icon.setImageResource(settingsBean.icon);
         holder.iv_next.setImageResource(R.drawable.baseline_arrow_forward_ios_black_24);
 
-        if (settingsBean.icon == R.drawable.baseline_info_24){
+        if (settingsBean.icon == R.drawable.baseline_info_24) {
             SharedPreferences sharedPreferences = mContext.getSharedPreferences("setting", MODE_PRIVATE);
             holder.iv_red_dot.setVisibility(sharedPreferences.getBoolean("checkUpdate", false) ? VISIBLE : INVISIBLE);
         }
 
-        ViewHolder finalHolder = holder;
-
-        // 设置触摸效果
-        view.setOnTouchListener(new View.OnTouchListener() {
+        // 设置触摸按压效果
+        holder.itemView.setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                MaterialCardView card = finalHolder.cardView;
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+                MaterialCardView card = holder.cardView;
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     card.animate()
                             .scaleX(0.97f)
                             .scaleY(0.97f)
@@ -119,14 +99,17 @@ public class SettingAdapter extends BaseAdapter {
             }
         });
 
-        // 由卡片自身处理点击，既保留按压状态层，也避免与 ListView 的条目点击冲突
-        view.setOnClickListener(v -> {
+        // 设置项点击：回调页面进行页面跳转
+        holder.itemView.setOnClickListener(v -> {
             if (mOnSettingItemClickListener != null) {
-                mOnSettingItemClickListener.onSettingItemClick(i);
+                mOnSettingItemClickListener.onSettingItemClick(position);
             }
         });
+    }
 
-        return view;
+    @Override
+    public int getItemCount() {
+        return mSettingBeanList.size();
     }
 
     /**
@@ -136,11 +119,23 @@ public class SettingAdapter extends BaseAdapter {
         void onSettingItemClick(int position);
     }
 
-    public static final class ViewHolder{
+    /**
+     * 条目 ViewHolder：缓存条目内控件引用
+     */
+    public static final class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView iv_icon;
         public TextView tv_list;
         public ImageView iv_next;
         public ImageView iv_red_dot;
         public MaterialCardView cardView;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            iv_icon = itemView.findViewById(R.id.iv_icon);
+            tv_list = itemView.findViewById(R.id.tv_list);
+            iv_next = itemView.findViewById(R.id.iv_next);
+            iv_red_dot = itemView.findViewById(R.id.iv_red_dot);
+            cardView = itemView.findViewById(R.id.card_root);
+        }
     }
 }

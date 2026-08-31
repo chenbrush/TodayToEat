@@ -20,10 +20,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -31,6 +29,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.FileUtil;
@@ -73,13 +73,17 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             hideShopsSet.addAll(savedHideShops);
         }
 
-        ListView lv_list = findViewById(R.id.lv_list);
+        RecyclerView lv_list = findViewById(R.id.lv_list);
         CheckBox cb_repetition = findViewById(R.id.cb_repetition);
         CheckBox cb_similar = findViewById(R.id.cb_similar);
 
         loadShop();
 
+        // RecyclerView 需要设置纵向布局管理器
+        lv_list.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ListAdapter(this, shopList);
+        // 设置长按回调：弹出商铺操作菜单（屏蔽/解除屏蔽/删除）
+        adapter.setOnItemLongClickListener(this::onShopItemLongClick);
         lv_list.setAdapter(adapter);
 
         findViewById(R.id.ib_back).setOnClickListener(this);
@@ -139,127 +143,116 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     .show();
 
         });
-
-        // 长按商铺：弹出操作菜单（屏蔽/解除屏蔽/删除）
-        lv_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MaterialCardView card = view.findViewById(R.id.card_root);
-                showShopOptions(i, card);
-
-                return true;
-            }
-
-            // 长按商铺弹出的操作菜单：屏蔽/解除屏蔽/删除
-            private void showShopOptions(int i, MaterialCardView card) {
-                String shopName = shopList.get(i);
-                boolean isBlocked = hideShopsSet.contains(shopName);
-                String[] options;
-                if (isBlocked) {
-                    options = new String[]{getString(R.string.unblock_shop), getString(R.string.notice_delete_shop)};
-                } else {
-                    options = new String[]{getString(R.string.block_shop), getString(R.string.notice_delete_shop)};
-                }
-
-                new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle(shopName)
-                        .setItems(options, (dialogInterface, which) -> {
-                            if (isBlocked) {
-                                if (which == 0) {
-                                    rehideShopNotice(i, card);
-                                } else {
-                                    deleteShopNotice(i, card);
-                                }
-                            } else {
-                                if (which == 0) {
-                                    hideShopNotice(i, card);
-                                } else {
-                                    deleteShopNotice(i, card);
-                                }
-                            }
-                        })
-                        .setOnDismissListener(dialogInterface -> restoreCardAfterDialog(card, shopName))
-                        .show();
-            }
-
-            // 选择屏蔽商铺提示框
-            private void hideShopNotice(int i, MaterialCardView card) {
-                String shopName = shopList.get(i);
-                new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle(R.string.block_shop)
-                        .setMessage(R.string.block_shop_message)
-                        .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
-                            hideShopsSet.add(shopName);
-                            sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
-                            loadShop();
-                            adapter.notifyDataSetChanged();
-
-                        })
-                        .setNegativeButton(getString(R.string.cancel), null)
-                        .setOnDismissListener(dialogInterface -> restoreCardAfterDialog(card, shopName))
-                        .show();
-            }
-
-            // 解除屏蔽提示框
-            private void rehideShopNotice(int i, MaterialCardView card) {
-                String shopName = shopList.get(i);
-                new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle(R.string.unblock_shop)
-                        .setMessage(R.string.unblock_shop_message)
-                        .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
-                            hideShopsSet.remove(shopName);
-                            sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
-                            loadShop();
-                            adapter.notifyDataSetChanged();
-
-                        })
-                        .setNegativeButton(getString(R.string.cancel), null)
-                        .setOnDismissListener(dialogInterface -> restoreCardAfterDialog(card, shopName))
-                        .show();
-            }
-
-            // 删除商铺提示框
-            private void deleteShopNotice(int i, MaterialCardView card) {
-                String shopName = shopList.get(i);
-                new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle(R.string.notice_delete_shop)
-                        .setMessage(R.string.notice_delete_shop_confirm)
-                        .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
-                            // 获取需要删除的店铺并进行删除
-                            shopList.remove(shopName);
-                            // 同步从屏蔽集合中移除并保存，避免残留屏蔽记录
-                            hideShopsSet.remove(shopName);
-                            sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
-
-                            // 对删除过后的店铺进行重新整理并且更新文件
-                            StringBuilder updateShops = new StringBuilder();
-                            // 如果商铺全都没了，那就换回初始值
-                            if (shopList.isEmpty()) {
-                                updateShops.append(getString(R.string.none_shops));
-                            } else {
-                                for (int i1 = 0; i1 < shopList.size(); i1++) {
-                                    updateShops.append(shopList.get(i1)).append(",");
-                                }
-                            }
-
-                            FileUtil.saveText(path, updateShops.toString());
-                            loadShop();
-                            adapter.notifyDataSetChanged();
-
-                        })
-                        .setNegativeButton(R.string.notice_delete_shop_nagative_bottom, null)
-                        .setOnDismissListener(dialogInterface -> restoreCardAfterDialog(card, shopName))
-                        .show();
-            }
-
-            // 弹窗结束后恢复按压动画与背景色
-            private void restoreCardAfterDialog(MaterialCardView card, String shopName) {
-                card.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
-            }
-        });
     }
 
+    // 长按商铺条目：弹出操作菜单
+    private void onShopItemLongClick(int position, MaterialCardView card) {
+        showShopOptions(position, card);
+    }
 
+    // 长按商铺弹出的操作菜单：屏蔽/解除屏蔽/删除
+    private void showShopOptions(int position, MaterialCardView card) {
+        String shopName = shopList.get(position);
+        boolean isBlocked = hideShopsSet.contains(shopName);
+        String[] options;
+        if (isBlocked) {
+            options = new String[]{getString(R.string.unblock_shop), getString(R.string.notice_delete_shop)};
+        } else {
+            options = new String[]{getString(R.string.block_shop), getString(R.string.notice_delete_shop)};
+        }
+
+        new MaterialAlertDialogBuilder(ListActivity.this)
+                .setTitle(shopName)
+                .setItems(options, (dialogInterface, which) -> {
+                    if (isBlocked) {
+                        if (which == 0) {
+                            rehideShopNotice(position, card);
+                        } else {
+                            deleteShopNotice(position, card);
+                        }
+                    } else {
+                        if (which == 0) {
+                            hideShopNotice(position, card);
+                        } else {
+                            deleteShopNotice(position, card);
+                        }
+                    }
+                })
+                .setOnDismissListener(dialogInterface -> restoreCardAfterDialog(card))
+                .show();
+    }
+
+    // 选择屏蔽商铺提示框
+    private void hideShopNotice(int position, MaterialCardView card) {
+        String shopName = shopList.get(position);
+        new MaterialAlertDialogBuilder(ListActivity.this)
+                .setTitle(R.string.block_shop)
+                .setMessage(R.string.block_shop_message)
+                .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
+                    hideShopsSet.add(shopName);
+                    sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
+                    loadShop();
+                    adapter.notifyDataSetChanged();
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setOnDismissListener(dialogInterface -> restoreCardAfterDialog(card))
+                .show();
+    }
+
+    // 解除屏蔽提示框
+    private void rehideShopNotice(int position, MaterialCardView card) {
+        String shopName = shopList.get(position);
+        new MaterialAlertDialogBuilder(ListActivity.this)
+                .setTitle(R.string.unblock_shop)
+                .setMessage(R.string.unblock_shop_message)
+                .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
+                    hideShopsSet.remove(shopName);
+                    sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
+                    loadShop();
+                    adapter.notifyDataSetChanged();
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setOnDismissListener(dialogInterface -> restoreCardAfterDialog(card))
+                .show();
+    }
+
+    // 删除商铺提示框
+    private void deleteShopNotice(int position, MaterialCardView card) {
+        String shopName = shopList.get(position);
+        new MaterialAlertDialogBuilder(ListActivity.this)
+                .setTitle(R.string.notice_delete_shop)
+                .setMessage(R.string.notice_delete_shop_confirm)
+                .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
+                    // 获取需要删除的店铺并进行删除
+                    shopList.remove(shopName);
+                    // 同步从屏蔽集合中移除并保存，避免残留屏蔽记录
+                    hideShopsSet.remove(shopName);
+                    sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
+
+                    // 对删除过后的店铺进行重新整理并且更新文件
+                    StringBuilder updateShops = new StringBuilder();
+                    // 如果商铺全都没了，那就换回初始值
+                    if (shopList.isEmpty()) {
+                        updateShops.append(getString(R.string.none_shops));
+                    } else {
+                        for (int i = 0; i < shopList.size(); i++) {
+                            updateShops.append(shopList.get(i)).append(",");
+                        }
+                    }
+
+                    FileUtil.saveText(path, updateShops.toString());
+                    loadShop();
+                    adapter.notifyDataSetChanged();
+                })
+                .setNegativeButton(R.string.notice_delete_shop_nagative_bottom, null)
+                .setOnDismissListener(dialogInterface -> restoreCardAfterDialog(card))
+                .show();
+    }
+
+    // 弹窗结束后恢复按压动画
+    private void restoreCardAfterDialog(MaterialCardView card) {
+        card.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
+    }
 
     // 加载商铺名称
     private void loadShop() {
@@ -304,7 +297,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                         // 获取输入的文本
                         String content = etInput.getText().toString().trim();
-                        // 后续：保存到文件、刷新ListView
+                        // 后续：保存到文件、刷新列表
                         if (content.isEmpty()) {
                             return;
                         }

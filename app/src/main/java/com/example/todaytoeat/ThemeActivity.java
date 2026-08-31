@@ -1,6 +1,8 @@
 package com.example.todaytoeat;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioGroup;
@@ -82,8 +84,8 @@ public class ThemeActivity extends AppCompatActivity {
 
             // 将改变的数据存入sharedPreferences
             sharedPreferences.edit().putInt("theme_mode", themeModeChange).apply();
-            // 重新创建当前页面，让新的主题模式立即生效
-            recreate();
+            // 使用淡入淡出动画重启当前页面，让主题切换更平滑
+            restartWithFade();
         });
 
         // 动态配色仅在 Android 12 及以上可用，低版本直接隐藏该配置
@@ -92,11 +94,31 @@ public class ThemeActivity extends AppCompatActivity {
             sw_color_manager.setChecked(ThemesMangerUtils.getDynamicColorStatus(ThemeActivity.this));
             sw_color_manager.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 ThemesMangerUtils.setDynamicColorStatus(ThemeActivity.this, isChecked);
-                recreate();
+                restartWithFade();
             });
         } else {
             card_color_manager.setVisibility(View.GONE);
         }
 
+    }
+
+    /**
+     * 以淡入淡出动画重启主题管理页。
+     * 相比直接 recreate，能避免切换深浅色时出现生硬闪烁。
+     */
+    @SuppressWarnings("deprecation")
+    private void restartWithFade() {
+        finish();
+        startActivity(new Intent(this, ThemeActivity.class));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(
+                    OVERRIDE_TRANSITION_OPEN,
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out,
+                    android.R.color.transparent
+            );
+        } else {
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
     }
 }

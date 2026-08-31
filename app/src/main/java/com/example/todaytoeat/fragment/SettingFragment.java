@@ -66,13 +66,19 @@ public class SettingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.setting_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
 
         RecyclerView lv_setting = view.findViewById(R.id.lv_setting);
         // RecyclerView 需要设置纵向布局管理器
         lv_setting.setLayoutManager(new LinearLayoutManager(getContext()));
+        // 单独处理列表底部导航栏 Insets，防止最后一条被系统手势区域遮挡
+        ViewCompat.setOnApplyWindowInsetsListener(lv_setting, (v, insets) -> {
+            Insets navigationBars = insets.getInsets(WindowInsetsCompat.Type.systemGestures());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), navigationBars.bottom);
+            return insets;
+        });
         List<SettingsBean> settingsBeanList = SettingsBean.getDefaultList(getContext());
         SettingAdapter adapter = new SettingAdapter(getContext(), settingsBeanList, this::openSettingPage);
         lv_setting.setAdapter(adapter);

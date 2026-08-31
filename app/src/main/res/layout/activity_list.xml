@@ -94,7 +94,7 @@
         android:id="@+id/lv_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="10sp"
+        android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@+id/ll_check_box_group"
         app:layout_constraintBottom_toTopOf="@+id/tv_notice"

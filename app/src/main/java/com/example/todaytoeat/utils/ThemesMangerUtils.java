@@ -12,6 +12,7 @@ public class ThemesMangerUtils {
     private static final String PREFS_NAME = "setting";
     private static final String KEY_THEME_MODE = "theme_mode";
     private static final String KEY_DYNAMIC_STATUS = "dynamic_status";
+    private static final String KEY_THEME_VERSION = "theme_version";
 
     /**
      * 0 -> light
@@ -35,6 +36,18 @@ public class ThemesMangerUtils {
      */
     public static int getColorThemesChoice(Context context) {
         return getSharedPreferences(context).getInt(KEY_THEME_MODE, SYSTEM);
+    }
+
+    /**
+     * 保存主题颜色选项，并递增主题版本号，用于通知其他页面重建。
+     */
+    public static void setColorThemesChoice(Context context, int mode) {
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        int nextVersion = sharedPreferences.getInt(KEY_THEME_VERSION, 0) + 1;
+        sharedPreferences.edit()
+                .putInt(KEY_THEME_MODE, mode)
+                .putInt(KEY_THEME_VERSION, nextVersion)
+                .apply();
     }
 
     /**
@@ -73,9 +86,21 @@ public class ThemesMangerUtils {
     }
 
     /**
-     * 保存动态配色开关状态。
+     * 保存动态配色开关状态，并递增主题版本号，用于通知其他页面重建。
      */
     public static void setDynamicColorStatus(Context context, boolean enabled) {
-        getSharedPreferences(context).edit().putBoolean(KEY_DYNAMIC_STATUS, enabled).apply();
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        int nextVersion = sharedPreferences.getInt(KEY_THEME_VERSION, 0) + 1;
+        sharedPreferences.edit()
+                .putBoolean(KEY_DYNAMIC_STATUS, enabled)
+                .putInt(KEY_THEME_VERSION, nextVersion)
+                .apply();
+    }
+
+    /**
+     * 获取当前主题版本号。主题模式或动态配色变化时该值会递增。
+     */
+    public static int getThemeVersion(Context context) {
+        return getSharedPreferences(context).getInt(KEY_THEME_VERSION, 0);
     }
 }

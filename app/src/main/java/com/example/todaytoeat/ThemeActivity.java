@@ -1,7 +1,6 @@
 package com.example.todaytoeat;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -71,7 +70,6 @@ public class ThemeActivity extends AppCompatActivity {
         }
 
         rg_color_mode_manager.setOnCheckedChangeListener((radioGroup, i) -> {
-            SharedPreferences sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
             // 读取改变按钮
             int themeModeChange;
             if (i == R.id.rb_light){
@@ -82,8 +80,9 @@ public class ThemeActivity extends AppCompatActivity {
                 themeModeChange = ThemesMangerUtils.SYSTEM;
             }
 
-            // 将改变的数据存入sharedPreferences
-            sharedPreferences.edit().putInt("theme_mode", themeModeChange).apply();
+            // 保存主题模式，并立即更新全局深浅色模式
+            ThemesMangerUtils.setColorThemesChoice(ThemeActivity.this, themeModeChange);
+            ThemesMangerUtils.setColorTheme(themeModeChange);
             // 使用淡入淡出动画重启当前页面，让主题切换更平滑
             restartWithFade();
         });

@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|start"
             android:layout_weight="9"
-            android:text="@string/theme_title"
+            android:text="@string/theme"
             android:textSize="30sp"
             tools:ignore="MissingConstraints" />
 

@@ -88,8 +88,8 @@
     <string name="notice_what_time_to_eat_next_time">"When do you plan to eat the next meal? "</string>
     <string name="time_mid">midday</string>
     <string name="time_night">evening</string>
-    <string name="theme">Theme</string>
-    <string name="theme_title">Theme Management</string>
+
+    <string name="theme">Theme Management</string>
     <string name="color_mode">Color Mode</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>

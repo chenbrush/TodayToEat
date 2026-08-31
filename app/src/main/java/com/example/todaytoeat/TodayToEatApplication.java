@@ -25,6 +25,9 @@ import androidx.annotation.Nullable;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.color.DynamicColors;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 应用入口 Application。
  * 在所有 Activity 创建前根据用户设置应用动态配色或静态配色，
@@ -32,9 +35,15 @@ import com.google.android.material.color.DynamicColors;
  */
 public class TodayToEatApplication extends Application {
 
+    // 记录每个 Activity 创建时的主题版本，设置变化后用于重建过期页面
+    private final Map<Activity, Integer> activityThemeVersions = new HashMap<>();
+
     @Override
     public void onCreate() {
         super.onCreate();
+        // 在首个 Activity 创建前应用全局深浅色模式，避免只有主题页才生效
+        ThemesMangerUtils.setColorTheme(ThemesMangerUtils.getColorThemesChoice(this));
+
         // 在每个 Activity 创建前根据用户设置应用动态配色或回退到静态配色
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
@@ -44,6 +53,7 @@ public class TodayToEatApplication extends Application {
 
             @Override
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+                activityThemeVersions.put(activity, ThemesMangerUtils.getThemeVersion(TodayToEatApplication.this));
             }
 
             @Override
@@ -52,6 +62,11 @@ public class TodayToEatApplication extends Application {
 
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
+                int currentThemeVersion = ThemesMangerUtils.getThemeVersion(TodayToEatApplication.this);
+                Integer createdThemeVersion = activityThemeVersions.get(activity);
+                if (createdThemeVersion != null && createdThemeVersion != currentThemeVersion) {
+                    activity.recreate();
+                }
             }
 
             @Override
@@ -68,6 +83,7 @@ public class TodayToEatApplication extends Application {
 
             @Override
             public void onActivityDestroyed(@NonNull Activity activity) {
+                activityThemeVersions.remove(activity);
             }
         });
     }

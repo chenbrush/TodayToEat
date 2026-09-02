@@ -3,8 +3,10 @@ package com.example.todaytoeat;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +34,6 @@ public class ThemeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
 
         SwitchMaterial sw_color_manager = findViewById(R.id.sw_color_manager);
         MaterialCardView card_color_manager = findViewById(R.id.card_color_manager);
@@ -96,7 +97,25 @@ public class ThemeActivity extends AppCompatActivity {
             card_color_manager.setVisibility(View.GONE);
         }
 
-        findViewById(R.id.ib_back).setOnClickListener(view -> finish() );
+        findViewById(R.id.ib_back).setOnClickListener(view -> finish());
+
+        SeekBar sb_change_color_elevation = findViewById(R.id.sb_change_card_elevation);
+        sb_change_color_elevation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                Log.d("seekbar", "onProgressChanged: " + i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.d("seekbar", "stop");
+            }
+        });
 
     }
 

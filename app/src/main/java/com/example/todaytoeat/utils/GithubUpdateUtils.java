@@ -15,7 +15,9 @@
  */
 package com.example.todaytoeat.utils;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -73,12 +75,17 @@ public class GithubUpdateUtils {
      * version1 是 GitHub 最新版本，version2 是当前版本
      * 如果 version1 > version2 返回 true（有新版本）
      */
-    public static boolean compareVersion(String version1, String version2) {
+    public static boolean compareVersion(String version1, String version2, Context context) {
         String[] version1Split = version1.split("\\.");
         String[] version2Split = version2.split("\\.");
 
         for (int i = 0; i < Math.min(version1Split.length, version2Split.length); i++) {
-            int version1Int = Integer.parseInt(version1Split[i]);
+            int version1Int = 0;
+            try {
+                version1Int = Integer.parseInt(version1Split[i]);
+            } catch (NumberFormatException e) {
+                Toast.makeText(context, "若需要检查更新，请到项目主页面进行检查！", Toast.LENGTH_SHORT).show();
+            }
             int version2Int = Integer.parseInt(version2Split[i]);
 
             if (version1Int > version2Int) {

@@ -102,7 +102,7 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
                     try {
                         String githubLatestVersion = GithubUpdateUtils.getGithubUpdate();
                         // 确认是否有更新
-                        if (GithubUpdateUtils.compareVersion(githubLatestVersion, currentVersion)) {
+                        if (GithubUpdateUtils.compareVersion(githubLatestVersion, currentVersion, VersionActivity.this)) {
                             Log.d("version", githubLatestVersion);
                             // 当前版本为旧版本
                             runOnUiThread(new Runnable() {
@@ -154,7 +154,7 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
 
                         // 检查更新传递到BottomNavigation中
                         sharedPreferences.edit().
-                                putBoolean("checkUpdate", GithubUpdateUtils.compareVersion(githubLatestVersion, currentVersion)).
+                                putBoolean("checkUpdate", GithubUpdateUtils.compareVersion(githubLatestVersion, currentVersion, VersionActivity.this)).
                                 apply();
                     } catch (IOException e) {
                         e.printStackTrace();

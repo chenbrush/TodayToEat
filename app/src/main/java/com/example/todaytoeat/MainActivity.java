@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String latestVersion = GithubUpdateUtils.getGithubUpdate();
                 assert finalVersion != null;
-                boolean hasNew = GithubUpdateUtils.compareVersion(latestVersion, finalVersion);
+                boolean hasNew = GithubUpdateUtils.compareVersion(latestVersion, finalVersion, MainActivity.this);
 
                 runOnUiThread(() -> {
                     sharedPreferences.edit()

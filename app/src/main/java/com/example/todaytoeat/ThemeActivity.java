@@ -36,6 +36,11 @@ public class ThemeActivity extends AppCompatActivity {
             return insets;
         });
 
+        ThemesMangerUtils.setAllCardElevation(ThemeActivity.this,
+                findViewById(R.id.card_color_manager),
+                findViewById(R.id.card_change_card_elevation),
+                findViewById(R.id.card_dark_or_light));
+
         SwitchMaterial sw_color_manager = findViewById(R.id.sw_color_manager);
         MaterialCardView card_color_manager = findViewById(R.id.card_color_manager);
         RadioGroup rg_color_mode_manager = findViewById(R.id.rg_color_mode_manager);
@@ -102,13 +107,17 @@ public class ThemeActivity extends AppCompatActivity {
 
         SeekBar sb_change_color_elevation = findViewById(R.id.sb_change_card_elevation);
         TextView tv_change_card_result = findViewById(R.id.tv_change_card_result);
-        MaterialCardView card_change_card_elevation = findViewById(R.id.card_change_card_elevation);
+
+        int progressValue = ThemesMangerUtils.getCardElevationValue(ThemeActivity.this);
+        sb_change_color_elevation.setProgress(progressValue);
+        tv_change_card_result.setText(progressValue + "");
+
         sb_change_color_elevation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 Log.d("seekbar", "onProgressChanged: " + i);
                 tv_change_card_result.setText(i + "");
-                card_change_card_elevation.setCardElevation(i * 3);
+                ThemesMangerUtils.putAllCardElevation(ThemeActivity.this, i);
             }
 
             @Override
@@ -119,6 +128,7 @@ public class ThemeActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d("seekbar", "stop");
+                restartWithFade();
             }
         });
 

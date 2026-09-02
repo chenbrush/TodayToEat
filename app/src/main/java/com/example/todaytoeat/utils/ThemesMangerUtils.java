@@ -5,14 +5,19 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
+
+import com.google.android.material.card.MaterialCardView;
 
 public class ThemesMangerUtils {
     private static final String PREFS_NAME = "setting";
     private static final String KEY_THEME_MODE = "theme_mode";
     private static final String KEY_DYNAMIC_STATUS = "dynamic_status";
     private static final String KEY_THEME_VERSION = "theme_version";
+    private static final String KEY_CARD_ELEVATION = "card_elevation";
+    public static final int CARD_ELEVATION_NORMAL_VALUE = 3;
 
     /**
      * 0 -> light
@@ -102,5 +107,32 @@ public class ThemesMangerUtils {
      */
     public static int getThemeVersion(Context context) {
         return getSharedPreferences(context).getInt(KEY_THEME_VERSION, 0);
+    }
+
+    /**
+     * 设置当前 activity 中 card 高度设置
+     */
+    public static void setAllCardElevation(Context context, MaterialCardView... cardViews){
+        for (MaterialCardView cardView : cardViews) {
+            int elevation = getCardElevationValue(context) * CARD_ELEVATION_NORMAL_VALUE;
+            Log.d("elevation", "setAllCardElevation: " + elevation);
+            cardView.setCardElevation(elevation);
+        }
+    }
+
+    /**
+     * 获取当前card all elevation's value
+     * */
+    public static int getCardElevationValue(Context context){
+        return getSharedPreferences(context).getInt(KEY_CARD_ELEVATION, 1);
+    }
+
+    /**
+     * 设置所有 card 的高度值
+     * @param value 设置的高度值
+     * */
+    public static void putAllCardElevation(Context context, int value){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        sharedPreferences.edit().putInt(KEY_CARD_ELEVATION, value).apply();
     }
 }

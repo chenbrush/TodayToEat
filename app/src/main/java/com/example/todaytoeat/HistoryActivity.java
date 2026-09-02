@@ -37,6 +37,7 @@ import com.example.todaytoeat.adapter.HistoryAdapter;
 import com.example.todaytoeat.beans.HistoryBean;
 import com.example.todaytoeat.utils.HistoryManager;
 import com.example.todaytoeat.utils.SystemBarUtils;
+import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -65,6 +66,8 @@ public class HistoryActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
+        // 应用卡片高度设置：本页静态筛选卡片（列表条目由 HistoryAdapter 应用）
+        ThemesMangerUtils.applyAllCardElevation(this, findViewById(R.id.history_activity));
 
         // 筛选时间段单选组及对应按钮
         RadioGroup rgDateFilter = findViewById(R.id.rg_date_filter);

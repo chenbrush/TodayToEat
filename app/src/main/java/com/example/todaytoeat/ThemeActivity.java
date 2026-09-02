@@ -36,10 +36,8 @@ public class ThemeActivity extends AppCompatActivity {
             return insets;
         });
 
-        ThemesMangerUtils.setAllCardElevation(ThemeActivity.this,
-                findViewById(R.id.card_color_manager),
-                findViewById(R.id.card_change_card_elevation),
-                findViewById(R.id.card_dark_or_light));
+        // 应用用户设置的卡片高度值到本页所有卡片
+        ThemesMangerUtils.applyAllCardElevation(ThemeActivity.this, findViewById(R.id.theme_activity));
 
         SwitchMaterial sw_color_manager = findViewById(R.id.sw_color_manager);
         MaterialCardView card_color_manager = findViewById(R.id.card_color_manager);

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -110,13 +112,27 @@ public class ThemesMangerUtils {
     }
 
     /**
-     * 设置当前 activity 中 card 高度设置
+     * 设置 root（页面根布局）内所有卡片的高度值。
+     * 递归遍历子 View，页面后续新增卡片时无需再逐个修改调用处。
      */
-    public static void setAllCardElevation(Context context, MaterialCardView... cardViews){
-        for (MaterialCardView cardView : cardViews) {
-            int elevation = getCardElevationValue(context) * CARD_ELEVATION_NORMAL_VALUE;
-            Log.d("elevation", "setAllCardElevation: " + elevation);
-            cardView.setCardElevation(elevation);
+    public static void applyAllCardElevation(Context context, View root){
+        int elevation = getCardElevationValue(context) * CARD_ELEVATION_NORMAL_VALUE;
+        Log.d("elevation", "applyAllCardElevation: " + elevation);
+        applyCardElevation(root, elevation);
+    }
+
+    /**
+     * 递归遍历 View 树，为所有 MaterialCardView 应用卡片高度值。
+     */
+    private static void applyCardElevation(View view, int elevation) {
+        if (view instanceof MaterialCardView) {
+            ((MaterialCardView) view).setCardElevation(elevation);
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                applyCardElevation(viewGroup.getChildAt(i), elevation);
+            }
         }
     }
 
@@ -132,7 +148,12 @@ public class ThemesMangerUtils {
      * @param value 设置的高度值
      * */
     public static void putAllCardElevation(Context context, int value){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        sharedPreferences.edit().putInt(KEY_CARD_ELEVATION, value).apply();
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        // 同时递增主题版本号，通知停留在后台的其他页面回到前台时重建并应用新高度
+        int nextVersion = sharedPreferences.getInt(KEY_THEME_VERSION, 0) + 1;
+        sharedPreferences.edit()
+                .putInt(KEY_CARD_ELEVATION, value)
+                .putInt(KEY_THEME_VERSION, nextVersion)
+                .apply();
     }
 }

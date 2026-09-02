@@ -43,6 +43,7 @@ import com.example.todaytoeat.ListActivity;
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.HistoryManager;
+import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
@@ -114,6 +115,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         // 校验昨日历史记录文件，不存在则自动创建
         HistoryManager.ensureYesterdayFileExists(requireContext());
+
+        // 应用卡片高度设置到主页卡片
+        ThemesMangerUtils.applyAllCardElevation(requireContext(), view);
 
         // 加载全部数据：历史、UI、店铺列表、配置
         reload();

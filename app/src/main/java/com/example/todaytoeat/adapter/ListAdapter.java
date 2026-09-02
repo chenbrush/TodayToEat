@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.R;
+import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
@@ -121,6 +122,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             }
             return true;
         });
+
+        // 应用用户设置的卡片高度（每次绑定都设置，避免复用旧高度的条目）
+        ThemesMangerUtils.applyAllCardElevation(mContext, holder.cardView);
     }
 
     @Override

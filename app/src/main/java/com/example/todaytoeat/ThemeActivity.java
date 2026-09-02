@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -100,10 +101,14 @@ public class ThemeActivity extends AppCompatActivity {
         findViewById(R.id.ib_back).setOnClickListener(view -> finish());
 
         SeekBar sb_change_color_elevation = findViewById(R.id.sb_change_card_elevation);
+        TextView tv_change_card_result = findViewById(R.id.tv_change_card_result);
+        MaterialCardView card_change_card_elevation = findViewById(R.id.card_change_card_elevation);
         sb_change_color_elevation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 Log.d("seekbar", "onProgressChanged: " + i);
+                tv_change_card_result.setText(i + "");
+                card_change_card_elevation.setCardElevation(i * 3);
             }
 
             @Override

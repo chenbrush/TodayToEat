@@ -151,7 +151,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
-                android:max="10" />
+                android:layout_marginBottom="10sp"
+                android:max="20"
+                android:min="1"/>
+
+            <TextView
+                android:id="@+id/tv_change_card_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="当前高度:"
+                android:textSize="20sp"/>
+
 
         </LinearLayout>
 

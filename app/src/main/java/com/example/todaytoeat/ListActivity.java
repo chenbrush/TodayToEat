@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.FileUtil;
+import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -66,9 +67,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         // shared preferences 相关设置
-        sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
         // 加载历史屏蔽记录到内存集合，避免重启后丢失（getStringSet 可能为 null，需要判空）
-        Set<String> savedHideShops = sharedPreferences.getStringSet("HideShops", null);
+        Set<String> savedHideShops = sharedPreferences.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
         if (savedHideShops != null) {
             hideShopsSet.addAll(savedHideShops);
         }
@@ -90,18 +91,18 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.ib_edit).setOnClickListener(this);
 
         // 设置初始状态，在设置监听之前，避免触发 onCheckedChanged
-        cb_repetition.setChecked(sharedPreferences.getBoolean("repStatus", false));
-        cb_similar.setChecked(sharedPreferences.getBoolean("similar", false));
+        cb_repetition.setChecked(sharedPreferences.getBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false));
+        cb_similar.setChecked(sharedPreferences.getBoolean(PreferenceKeys.KEY_SIMILAR, false));
 
         cb_repetition.setOnCheckedChangeListener((compoundButton, b) -> {
-            sharedPreferences.edit().putBoolean("repStatus", b).apply();
+            sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_REPETITION_STATUS, b).apply();
             // 如果商铺小于四个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
             if (b && shopList.size() < 4) {
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
                         .setTitle(getString(R.string.notice))
                         .setMessage(R.string.notice_repeat_boom_message)
                         .setPositiveButton(R.string.notice_repeat_boom_positive_botton, (dialogInterface, i) -> {
-                            sharedPreferences.edit().putBoolean("repStatus", false).apply();
+                            sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false).apply();
                             cb_repetition.setChecked(false);
                         });
 
@@ -114,14 +115,14 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         cb_similar.setOnCheckedChangeListener((compoundButton, b) -> {
             // 还有一个取消
             if (!b) {
-                sharedPreferences.edit().putBoolean("similar", false).apply();
+                sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, false).apply();
                 return;
             }
 
             // 如果商铺小于3个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
             if (shopList.size() < 3) {
                 // 直接更改
-                sharedPreferences.edit().putBoolean("similar", false).apply();
+                sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, false).apply();
                 cb_repetition.setChecked(false);
 
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
@@ -138,7 +139,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             new MaterialAlertDialogBuilder(ListActivity.this)
                     .setTitle(getString(R.string.notice))
                     .setMessage(R.string.list_notice_similar_message)
-                    .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> sharedPreferences.edit().putBoolean("similar", true).apply())
+                    .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, true).apply())
                     .setNegativeButton(getString(R.string.cancel), null)
                     .show();
 
@@ -190,7 +191,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 .setMessage(R.string.block_shop_message)
                 .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
                     hideShopsSet.add(shopName);
-                    sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
+                    sharedPreferences.edit().putStringSet(PreferenceKeys.KEY_HIDE_SHOPS, hideShopsSet).apply();
                     loadShop();
                     adapter.notifyDataSetChanged();
                 })
@@ -207,7 +208,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 .setMessage(R.string.unblock_shop_message)
                 .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
                     hideShopsSet.remove(shopName);
-                    sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
+                    sharedPreferences.edit().putStringSet(PreferenceKeys.KEY_HIDE_SHOPS, hideShopsSet).apply();
                     loadShop();
                     adapter.notifyDataSetChanged();
                 })
@@ -227,7 +228,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     shopList.remove(shopName);
                     // 同步从屏蔽集合中移除并保存，避免残留屏蔽记录
                     hideShopsSet.remove(shopName);
-                    sharedPreferences.edit().putStringSet("HideShops", hideShopsSet).apply();
+                    sharedPreferences.edit().putStringSet(PreferenceKeys.KEY_HIDE_SHOPS, hideShopsSet).apply();
 
                     // 对删除过后的店铺进行重新整理并且更新文件
                     StringBuilder updateShops = new StringBuilder();

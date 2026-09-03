@@ -36,6 +36,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.todaytoeat.utils.GithubUpdateUtils;
+import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -65,7 +66,7 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
         // 应用卡片高度设置到本页卡片
         ThemesMangerUtils.applyAllCardElevation(this, findViewById(R.id.main));
 
-        sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
 
         // 设置当前版本信息
         TextView tv_current_vision = findViewById(R.id.tv_current_version);
@@ -83,10 +84,10 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.ib_back).setOnClickListener(this);
         findViewById(R.id.btn_enter_program).setOnClickListener(this);
         tv_auto_update = findViewById(R.id.tv_auto_update);
-        tv_auto_update.setText(sharedPreferences.getString("lastUpdateDate", ""));
+        tv_auto_update.setText(sharedPreferences.getString(PreferenceKeys.KEY_LAST_UPDATE_DATE, ""));
 
         // 有更新时自动更改按钮文字，达到提示效果
-        if (!sharedPreferences.getBoolean("checkUpdate", false)) {
+        if (!sharedPreferences.getBoolean(PreferenceKeys.KEY_CHECK_UPDATE, false)) {
             btn_check_update.setText(R.string.update_button);
         } else {
             btn_check_update.setText(R.string.update_button_have);
@@ -152,12 +153,12 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
                             }
                         });
                         sharedPreferences.edit().
-                                putString("lastUpdateDate", lastCheckUpdate).
+                                putString(PreferenceKeys.KEY_LAST_UPDATE_DATE, lastCheckUpdate).
                                 apply();
 
                         // 检查更新传递到BottomNavigation中
                         sharedPreferences.edit().
-                                putBoolean("checkUpdate", GithubUpdateUtils.compareVersion(githubLatestVersion, currentVersion, VersionActivity.this)).
+                                putBoolean(PreferenceKeys.KEY_CHECK_UPDATE, GithubUpdateUtils.compareVersion(githubLatestVersion, currentVersion, VersionActivity.this)).
                                 apply();
                     } catch (IOException e) {
                         e.printStackTrace();

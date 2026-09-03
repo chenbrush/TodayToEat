@@ -14,11 +14,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.google.android.material.card.MaterialCardView;
 
 public class ThemesMangerUtils {
-    private static final String PREFS_NAME = "setting";
-    private static final String KEY_THEME_MODE = "theme_mode";
-    private static final String KEY_DYNAMIC_STATUS = "dynamic_status";
-    private static final String KEY_THEME_VERSION = "theme_version";
-    private static final String KEY_CARD_ELEVATION = "card_elevation";
     public static final int CARD_ELEVATION_NORMAL_VALUE = 3;
 
     /**
@@ -35,14 +30,15 @@ public class ThemesMangerUtils {
      * 统一使用 applicationContext，避免 Activity 生命周期导致的内存泄漏。
      */
     private static SharedPreferences getSharedPreferences(Context context) {
-        return context.getApplicationContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return context.getApplicationContext()
+                .getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
     }
 
     /**
      * 获取主题颜色选项
      */
     public static int getColorThemesChoice(Context context) {
-        return getSharedPreferences(context).getInt(KEY_THEME_MODE, SYSTEM);
+        return getSharedPreferences(context).getInt(PreferenceKeys.KEY_THEME_MODE, SYSTEM);
     }
 
     /**
@@ -50,10 +46,10 @@ public class ThemesMangerUtils {
      */
     public static void setColorThemesChoice(Context context, int mode) {
         SharedPreferences sharedPreferences = getSharedPreferences(context);
-        int nextVersion = sharedPreferences.getInt(KEY_THEME_VERSION, 0) + 1;
+        int nextVersion = sharedPreferences.getInt(PreferenceKeys.KEY_THEME_VERSION, 0) + 1;
         sharedPreferences.edit()
-                .putInt(KEY_THEME_MODE, mode)
-                .putInt(KEY_THEME_VERSION, nextVersion)
+                .putInt(PreferenceKeys.KEY_THEME_MODE, mode)
+                .putInt(PreferenceKeys.KEY_THEME_VERSION, nextVersion)
                 .apply();
     }
 
@@ -89,7 +85,7 @@ public class ThemesMangerUtils {
      * 读取用户是否开启了动态配色。
      */
     public static boolean getDynamicColorStatus(Context context) {
-        return getSharedPreferences(context).getBoolean(KEY_DYNAMIC_STATUS, true);
+        return getSharedPreferences(context).getBoolean(PreferenceKeys.KEY_DYNAMIC_STATUS, true);
     }
 
     /**
@@ -97,10 +93,10 @@ public class ThemesMangerUtils {
      */
     public static void setDynamicColorStatus(Context context, boolean enabled) {
         SharedPreferences sharedPreferences = getSharedPreferences(context);
-        int nextVersion = sharedPreferences.getInt(KEY_THEME_VERSION, 0) + 1;
+        int nextVersion = sharedPreferences.getInt(PreferenceKeys.KEY_THEME_VERSION, 0) + 1;
         sharedPreferences.edit()
-                .putBoolean(KEY_DYNAMIC_STATUS, enabled)
-                .putInt(KEY_THEME_VERSION, nextVersion)
+                .putBoolean(PreferenceKeys.KEY_DYNAMIC_STATUS, enabled)
+                .putInt(PreferenceKeys.KEY_THEME_VERSION, nextVersion)
                 .apply();
     }
 
@@ -108,7 +104,7 @@ public class ThemesMangerUtils {
      * 获取当前主题版本号。主题模式或动态配色变化时该值会递增。
      */
     public static int getThemeVersion(Context context) {
-        return getSharedPreferences(context).getInt(KEY_THEME_VERSION, 0);
+        return getSharedPreferences(context).getInt(PreferenceKeys.KEY_THEME_VERSION, 0);
     }
 
     /**
@@ -140,7 +136,7 @@ public class ThemesMangerUtils {
      * 获取当前card all elevation's value
      * */
     public static int getCardElevationValue(Context context){
-        return getSharedPreferences(context).getInt(KEY_CARD_ELEVATION, 1);
+        return getSharedPreferences(context).getInt(PreferenceKeys.KEY_CARD_ELEVATION, 1);
     }
 
     /**
@@ -150,10 +146,10 @@ public class ThemesMangerUtils {
     public static void putAllCardElevation(Context context, int value){
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         // 同时递增主题版本号，通知停留在后台的其他页面回到前台时重建并应用新高度
-        int nextVersion = sharedPreferences.getInt(KEY_THEME_VERSION, 0) + 1;
+        int nextVersion = sharedPreferences.getInt(PreferenceKeys.KEY_THEME_VERSION, 0) + 1;
         sharedPreferences.edit()
-                .putInt(KEY_CARD_ELEVATION, value)
-                .putInt(KEY_THEME_VERSION, nextVersion)
+                .putInt(PreferenceKeys.KEY_CARD_ELEVATION, value)
+                .putInt(PreferenceKeys.KEY_THEME_VERSION, nextVersion)
                 .apply();
     }
 }

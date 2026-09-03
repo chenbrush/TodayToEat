@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todaytoeat.adapter.HistoryAdapter;
 import com.example.todaytoeat.beans.HistoryBean;
 import com.example.todaytoeat.utils.HistoryManager;
+import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.card.MaterialCardView;
@@ -77,8 +78,8 @@ public class HistoryActivity extends AppCompatActivity {
         RadioButton rb30Days = findViewById(R.id.rb_30days);
 
         // 读取本地存储的历史展示天数配置
-        SharedPreferences sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
-        int historyDays = sharedPreferences.getInt("historyDays", 7);
+        SharedPreferences sharedPreferences = getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
+        int historyDays = sharedPreferences.getInt(PreferenceKeys.KEY_HISTORY_DAYS, 7);
 
         // 根据存储值默认选中对应天数单选框
         if (historyDays == 7) {
@@ -104,7 +105,7 @@ public class HistoryActivity extends AppCompatActivity {
                 days = 30;
             }
             // 保存新筛选天数到本地配置
-            sharedPreferences.edit().putInt("historyDays", days).apply();
+            sharedPreferences.edit().putInt(PreferenceKeys.KEY_HISTORY_DAYS, days).apply();
             // 重新加载历史数据刷新列表
             loadHistoryData();
         });

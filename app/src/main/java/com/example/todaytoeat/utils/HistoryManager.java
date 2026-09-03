@@ -46,8 +46,8 @@ public class HistoryManager {
         localDate = isAfter21 ? localDate.plusDays(1) : localDate;
 
         // 读取设置内容
-        SharedPreferences sharedPreferences = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
-        int historyDays = sharedPreferences.getInt("historyDays", 7);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PreferenceKeys.PREFS_NAME, Context.MODE_PRIVATE);
+        int historyDays = sharedPreferences.getInt(PreferenceKeys.KEY_HISTORY_DAYS, 7);
 
         // 读取历史记录
         for (int i = 0; i <= historyDays; i++) {

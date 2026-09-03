@@ -43,6 +43,7 @@ import com.example.todaytoeat.ListActivity;
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.HistoryManager;
+import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -139,11 +140,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     // 恢复设置内容
     private void reloadSettings() {
-        sharedPreferences = requireActivity().getSharedPreferences("setting", MODE_PRIVATE);
+        sharedPreferences = requireActivity().getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
         // 获取是否禁止昨日重复店铺，默认关闭false
-        repStatus = sharedPreferences.getBoolean("repStatus", false);
+        repStatus = sharedPreferences.getBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false);
         // 获取是否过滤相似店名，默认关闭false
-        similar = sharedPreferences.getBoolean("similar", false);
+        similar = sharedPreferences.getBoolean(PreferenceKeys.KEY_SIMILAR, false);
         Log.d("get settings rep status", repStatus + "");
         Log.d("get settings similar", similar + "");
     }
@@ -206,8 +207,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
 
         // 读取被屏蔽的商铺集合（与 ListActivity 保存的键名保持一致），并缓存到字段供 checkHideShop 使用
-        SharedPreferences sp = requireActivity().getSharedPreferences("setting", MODE_PRIVATE);
-        hideShopsSet = sp.getStringSet("HideShops", null);
+        SharedPreferences sp = requireActivity().getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
+        hideShopsSet = sp.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
 
         // 使用与 ListActivity 相同的分隔符拆分店名，并过滤空字符串与被屏蔽的商铺，
         // 保证已经屏蔽的商铺不会进入随机选择队列
@@ -352,7 +353,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     }
                 } else {
                     // 店铺不足3家，自动关闭重复过滤开关
-                    sharedPreferences.edit().putBoolean("repStatus", false).apply();
+                    sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false).apply();
                 }
             }
 

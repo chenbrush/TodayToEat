@@ -31,6 +31,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.todaytoeat.adapter.ViewPagerAdapter;
 import com.example.todaytoeat.utils.GithubUpdateUtils;
+import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkUpdate() {
         // 检查更新
-        SharedPreferences sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
         PackageManager pm = this.getPackageManager();
         String currentVersion = "";
         try {
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         // 保留上一次的更新标记，避免网络失败时错误地清除
-        final boolean previousHasNew = sharedPreferences.getBoolean("checkUpdate", false);
+        final boolean previousHasNew = sharedPreferences.getBoolean(PreferenceKeys.KEY_CHECK_UPDATE, false);
         final String finalVersion = currentVersion;
         new Thread(() -> {
             try {
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
                 runOnUiThread(() -> {
                     sharedPreferences.edit()
-                            .putBoolean("checkUpdate", hasNew)
+                            .putBoolean(PreferenceKeys.KEY_CHECK_UPDATE, hasNew)
                             .apply();
                     // 更新完毕后立刻刷新 Badge 显示状态
                     BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_settings);

@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.beans.SettingsBean;
+import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.card.MaterialCardView;
 
@@ -72,8 +73,8 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
         holder.iv_next.setImageResource(R.drawable.baseline_arrow_forward_ios_black_24);
 
         if (settingsBean.icon == R.drawable.baseline_info_24) {
-            SharedPreferences sharedPreferences = mContext.getSharedPreferences("setting", MODE_PRIVATE);
-            holder.iv_red_dot.setVisibility(sharedPreferences.getBoolean("checkUpdate", false) ? VISIBLE : INVISIBLE);
+            SharedPreferences sharedPreferences = mContext.getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
+            holder.iv_red_dot.setVisibility(sharedPreferences.getBoolean(PreferenceKeys.KEY_CHECK_UPDATE, false) ? VISIBLE : INVISIBLE);
         }
 
         // 设置触摸按压效果

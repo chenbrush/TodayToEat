@@ -143,7 +143,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="卡片高度设置"
+                android:text="@string/card_height_setting"
                 android:textSize="20sp"/>
 
             <androidx.appcompat.widget.AppCompatSeekBar
@@ -159,7 +159,7 @@
                 android:id="@+id/tv_change_card_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="当前高度:"
+                android:text="@string/card_height_current"
                 android:textSize="20sp"/>
 
 

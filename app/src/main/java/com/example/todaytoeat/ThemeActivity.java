@@ -1,5 +1,6 @@
 package com.example.todaytoeat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class ThemeActivity extends AppCompatActivity {
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,13 +110,16 @@ public class ThemeActivity extends AppCompatActivity {
 
         int progressValue = ThemesMangerUtils.getCardElevationValue(ThemeActivity.this);
         sb_change_color_elevation.setProgress(progressValue);
-        tv_change_card_result.setText(progressValue + "");
+        tv_change_card_result.setText(getString(R.string.card_height_current) + progressValue);
+        MaterialCardView card_change_card_elevation = findViewById(R.id.card_change_card_elevation);
 
         sb_change_color_elevation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 Log.d("seekbar", "onProgressChanged: " + i);
-                tv_change_card_result.setText(i + "");
+                tv_change_card_result.setText(getString(R.string.card_height_current) + i);
+                card_change_card_elevation.setCardElevation(i * ThemesMangerUtils.CARD_ELEVATION_NORMAL_VALUE);
                 ThemesMangerUtils.putAllCardElevation(ThemeActivity.this, i);
             }
 

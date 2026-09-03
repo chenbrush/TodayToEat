@@ -37,6 +37,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.todaytoeat.utils.GithubUpdateUtils;
 import com.example.todaytoeat.utils.SystemBarUtils;
+import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
@@ -61,6 +62,8 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        // 应用卡片高度设置到本页卡片
+        ThemesMangerUtils.applyAllCardElevation(this, findViewById(R.id.main));
 
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
 

@@ -5,14 +5,21 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatDelegate;
+
+import com.google.android.material.card.MaterialCardView;
 
 public class ThemesMangerUtils {
     private static final String PREFS_NAME = "setting";
     private static final String KEY_THEME_MODE = "theme_mode";
     private static final String KEY_DYNAMIC_STATUS = "dynamic_status";
     private static final String KEY_THEME_VERSION = "theme_version";
+    private static final String KEY_CARD_ELEVATION = "card_elevation";
+    public static final int CARD_ELEVATION_NORMAL_VALUE = 3;
 
     /**
      * 0 -> light
@@ -102,5 +109,51 @@ public class ThemesMangerUtils {
      */
     public static int getThemeVersion(Context context) {
         return getSharedPreferences(context).getInt(KEY_THEME_VERSION, 0);
+    }
+
+    /**
+     * 设置 root（页面根布局）内所有卡片的高度值。
+     * 递归遍历子 View，页面后续新增卡片时无需再逐个修改调用处。
+     */
+    public static void applyAllCardElevation(Context context, View root){
+        int elevation = getCardElevationValue(context) * CARD_ELEVATION_NORMAL_VALUE;
+        Log.d("elevation", "applyAllCardElevation: " + elevation);
+        applyCardElevation(root, elevation);
+    }
+
+    /**
+     * 递归遍历 View 树，为所有 MaterialCardView 应用卡片高度值。
+     */
+    private static void applyCardElevation(View view, int elevation) {
+        if (view instanceof MaterialCardView) {
+            ((MaterialCardView) view).setCardElevation(elevation);
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                applyCardElevation(viewGroup.getChildAt(i), elevation);
+            }
+        }
+    }
+
+    /**
+     * 获取当前card all elevation's value
+     * */
+    public static int getCardElevationValue(Context context){
+        return getSharedPreferences(context).getInt(KEY_CARD_ELEVATION, 1);
+    }
+
+    /**
+     * 设置所有 card 的高度值
+     * @param value 设置的高度值
+     * */
+    public static void putAllCardElevation(Context context, int value){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        // 同时递增主题版本号，通知停留在后台的其他页面回到前台时重建并应用新高度
+        int nextVersion = sharedPreferences.getInt(KEY_THEME_VERSION, 0) + 1;
+        sharedPreferences.edit()
+                .putInt(KEY_CARD_ELEVATION, value)
+                .putInt(KEY_THEME_VERSION, nextVersion)
+                .apply();
     }
 }

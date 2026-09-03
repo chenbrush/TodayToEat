@@ -95,4 +95,6 @@
     <string name="dark">深色</string>
     <string name="follow_system">跟随系统</string>
     <string name="dynamic_color">是否使用自动配色</string>
+    <string name="card_height_setting">卡片高度设置</string>
+    <string name="card_height_current">当前高度：</string>
 </resources>

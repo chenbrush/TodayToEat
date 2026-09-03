@@ -1,10 +1,14 @@
 package com.example.todaytoeat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +24,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class ThemeActivity extends AppCompatActivity {
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +38,8 @@ public class ThemeActivity extends AppCompatActivity {
             return insets;
         });
 
+        // 应用用户设置的卡片高度值到本页所有卡片
+        ThemesMangerUtils.applyAllCardElevation(ThemeActivity.this, findViewById(R.id.theme_activity));
 
         SwitchMaterial sw_color_manager = findViewById(R.id.sw_color_manager);
         MaterialCardView card_color_manager = findViewById(R.id.card_color_manager);
@@ -96,7 +103,37 @@ public class ThemeActivity extends AppCompatActivity {
             card_color_manager.setVisibility(View.GONE);
         }
 
-        findViewById(R.id.ib_back).setOnClickListener(view -> finish() );
+        findViewById(R.id.ib_back).setOnClickListener(view -> finish());
+
+        SeekBar sb_change_color_elevation = findViewById(R.id.sb_change_card_elevation);
+        TextView tv_change_card_result = findViewById(R.id.tv_change_card_result);
+
+        int progressValue = ThemesMangerUtils.getCardElevationValue(ThemeActivity.this);
+        sb_change_color_elevation.setProgress(progressValue);
+        tv_change_card_result.setText(getString(R.string.card_height_current) + progressValue);
+        MaterialCardView card_change_card_elevation = findViewById(R.id.card_change_card_elevation);
+
+        sb_change_color_elevation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                Log.d("seekbar", "onProgressChanged: " + i);
+                tv_change_card_result.setText(getString(R.string.card_height_current) + i);
+                card_change_card_elevation.setCardElevation(i * ThemesMangerUtils.CARD_ELEVATION_NORMAL_VALUE);
+                ThemesMangerUtils.putAllCardElevation(ThemeActivity.this, i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.d("seekbar", "stop");
+                restartWithFade();
+            }
+        });
 
     }
 

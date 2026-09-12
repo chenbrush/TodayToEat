@@ -39,10 +39,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
+        <!-- 结果卡片：高度改为自适应，避免英文等较长文案换行后被裁切 -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_text"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="wrap_content"
+            android:minHeight="160dp"
             app:cardCornerRadius="10sp"
             android:layout_margin="30sp"
             app:cardElevation="3sp"
@@ -59,15 +61,22 @@
                 android:orientation="vertical"
                 android:layout_margin="10sp">
 
+                <!-- 两行结果文字：宽度占满卡片并居中，文字过长时自动缩小，避免显示不全 -->
                 <TextView
                     android:id="@+id/tv_result_first_line"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:minLines="2"
                     android:text="@string/result"
                     android:textSize="30sp"
+                    app:autoSizeMaxTextSize="30sp"
+                    app:autoSizeMinTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     app:layout_constraintBottom_toTopOf="@id/tv_result_second_line"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -75,12 +84,18 @@
 
                 <TextView
                     android:id="@+id/tv_result_second_line"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:minLines="2"
                     android:text=""
                     android:textSize="30sp"
+                    app:autoSizeMaxTextSize="30sp"
+                    app:autoSizeMinTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -91,14 +106,20 @@
         </com.google.android.material.card.MaterialCardView>
 
 
+        <!-- 两个功能按钮：文字过长（如 Tomorrow All Day）时自动缩小，保持单行完整显示 -->
         <Button
             android:id="@+id/btn_all_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="250dp"
             android:layout_marginBottom="30dp"
+            android:maxLines="1"
             android:text="@string/all_day"
             android:textSize="40sp"
+            app:autoSizeMaxTextSize="40sp"
+            app:autoSizeMinTextSize="22sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toTopOf="@+id/btn_next_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -111,8 +132,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
+            android:maxLines="1"
             android:text="@string/next_time"
             android:textSize="40sp"
+            app:autoSizeMaxTextSize="40sp"
+            app:autoSizeMinTextSize="22sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

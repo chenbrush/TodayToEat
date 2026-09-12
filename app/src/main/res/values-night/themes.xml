@@ -62,6 +62,8 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
         <item name="android:navigationBarColor">@color/transparent</item>
+        <!-- 对话框主题：按钮文字按控件宽度自动缩放，避免英文长文案被省略号截断 -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.TodayToEat.MaterialAlertDialog</item>
     </style>
 
     <style name="Theme.TodayToEat" parent="@style/Theme.TodayToEatBase" />

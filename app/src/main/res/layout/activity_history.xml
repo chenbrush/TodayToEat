@@ -45,8 +45,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|start"
             android:layout_weight="9"
+            android:maxLines="1"
             android:text="@string/history"
             android:textSize="30sp"
+            app:autoSizeMaxTextSize="30sp"
+            app:autoSizeMinTextSize="18sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
             tools:ignore="MissingConstraints" />
 
     </LinearLayout>
@@ -72,8 +77,13 @@
                 android:id="@+id/tv_history_filter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:text="@string/history_save_time"
                 android:textSize="20sp"
+                app:autoSizeMaxTextSize="20sp"
+                app:autoSizeMinTextSize="14sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform"
                 android:gravity="start"
                 android:layout_marginStart="10sp"
                 android:layout_marginTop="10sp"
@@ -96,8 +106,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
                     android:text="@string/filter_7_days"
                     android:textSize="16sp"
+                    app:autoSizeMaxTextSize="16sp"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:gravity="center" />
 
                 <RadioButton
@@ -105,8 +120,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
                     android:text="@string/filter_10_days"
                     android:textSize="16sp"
+                    app:autoSizeMaxTextSize="16sp"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:gravity="center" />
 
                 <RadioButton
@@ -114,8 +134,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
                     android:text="@string/filter_15_days"
                     android:textSize="16sp"
+                    app:autoSizeMaxTextSize="16sp"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:gravity="center" />
 
                 <RadioButton
@@ -123,8 +148,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
                     android:text="@string/filter_30_days"
                     android:textSize="16sp"
+                    app:autoSizeMaxTextSize="16sp"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:gravity="center" />
             </RadioGroup>
 

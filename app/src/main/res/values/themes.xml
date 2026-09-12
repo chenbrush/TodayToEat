@@ -62,9 +62,27 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
         <item name="android:navigationBarColor">@color/transparent</item>
+        <!-- 对话框主题：按钮文字按控件宽度自动缩放，避免英文长文案被省略号截断 -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.TodayToEat.MaterialAlertDialog</item>
     </style>
 
     <style name="Theme.TodayToEat" parent="@style/Theme.TodayToEatBase" />
 
     <style name="Theme.TodayToEat.Static" parent="@style/Theme.TodayToEatBase" />
+
+    <!-- 覆盖 Material 对话框按钮样式 -->
+    <style name="ThemeOverlay.TodayToEat.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.TodayToEat.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.TodayToEat.DialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.TodayToEat.DialogButton</item>
+    </style>
+
+    <!-- 对话框按钮文字自适应：空间不够时自动缩小，保证完整显示 -->
+    <style name="Widget.TodayToEat.DialogButton" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:maxLines">1</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">10sp</item>
+        <item name="autoSizeMaxTextSize">14sp</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+    </style>
 </resources>

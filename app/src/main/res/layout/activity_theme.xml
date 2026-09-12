@@ -57,8 +57,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:maxLines="1"
                 android:text="@string/color_mode"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                app:autoSizeMaxTextSize="20sp"
+                app:autoSizeMinTextSize="14sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
 
             <RadioGroup
                 android:id="@+id/rg_color_mode_manager"
@@ -71,8 +76,13 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:text="@string/light"
                     android:textSize="20sp"
+                    app:autoSizeMaxTextSize="20sp"
+                    app:autoSizeMinTextSize="12sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:gravity="center_vertical" />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
@@ -80,8 +90,13 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:text="@string/dark"
                     android:textSize="20sp"
+                    app:autoSizeMaxTextSize="20sp"
+                    app:autoSizeMinTextSize="12sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:gravity="center_vertical" />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
@@ -89,8 +104,13 @@
                     android:layout_width="0sp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:text="@string/follow_system"
                     android:textSize="20sp"
+                    app:autoSizeMaxTextSize="20sp"
+                    app:autoSizeMinTextSize="12sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:gravity="center_vertical"/>
 
             </RadioGroup>
@@ -143,8 +163,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:text="@string/card_height_setting"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                app:autoSizeMaxTextSize="20sp"
+                app:autoSizeMinTextSize="14sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform"/>
 
             <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/sb_change_card_elevation"
@@ -159,8 +184,13 @@
                 android:id="@+id/tv_change_card_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:text="@string/card_height_current"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                app:autoSizeMaxTextSize="20sp"
+                app:autoSizeMinTextSize="14sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform"/>
 
 
         </LinearLayout>

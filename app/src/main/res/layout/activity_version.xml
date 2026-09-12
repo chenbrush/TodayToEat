@@ -46,8 +46,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|start"
             android:layout_weight="9"
+            android:maxLines="1"
             android:text="@string/version"
             android:textSize="30sp"
+            app:autoSizeMaxTextSize="30sp"
+            app:autoSizeMinTextSize="18sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
             tools:ignore="MissingConstraints" />
 
     </LinearLayout>
@@ -82,8 +87,13 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/current_vision"
                     android:textSize="25sp"
+                    app:autoSizeMaxTextSize="25sp"
+                    app:autoSizeMinTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:gravity="center_vertical"
                     tools:ignore="MissingConstraints" />
 
@@ -92,7 +102,12 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:textSize="25sp"
+                    app:autoSizeMaxTextSize="25sp"
+                    app:autoSizeMinTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
                     android:textStyle="bold"
                     android:layout_marginEnd="10sp"
                     android:gravity="center|end"/>
@@ -116,7 +131,12 @@
                 android:id="@+id/tv_auto_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="2"
                 android:text=""
+                app:autoSizeMaxTextSize="14sp"
+                app:autoSizeMinTextSize="11sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintTop_toBottomOf="@+id/btn_check_update"
                 android:layout_margin="10sp"
                 tools:ignore="MissingConstraints" />

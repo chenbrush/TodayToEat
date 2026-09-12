@@ -47,6 +47,7 @@ import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.HistoryManager;
 import com.example.todaytoeat.utils.PreferenceKeys;
+import com.example.todaytoeat.utils.ShopListUtils;
 import com.example.todaytoeat.utils.TemporaryBlockUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -253,7 +254,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         String content = FileUtil.openText(pathShop);
 
         // 校验文件有效性：文件不存在、内容为空或仍是初始提示文字，都视为没有店铺
-        if (!fileShop.exists() || content.isEmpty() || content.equals(getString(R.string.none_shops))) {
+        // 空内容统一走 ShopListUtils 判断，兼容切换系统语言后旧数据里写入的其它语种提示文字
+        if (!fileShop.exists() || ShopListUtils.isEmptyContent(requireContext(), content)) {
             return null;
         }
 

@@ -46,6 +46,7 @@ import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.HistoryManager;
 import com.example.todaytoeat.utils.PreferenceKeys;
+import com.example.todaytoeat.utils.TemporaryBlockUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -75,6 +76,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private boolean similar;
     // 缓存的被屏蔽商铺集合（在 reloadShop 中读取一次，供 checkHideShop 使用）
     private Set<String> hideShopsSet;
+    // 缓存的临时屏蔽商铺（同样在 reloadShop 中读取，跨天后会自动失效）
+    private String tempBlockedShop;
 
     public MainFragment() {
         // Required empty public constructor
@@ -212,6 +215,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // 读取被屏蔽的商铺集合（与 ListActivity 保存的键名保持一致），并缓存到字段供 checkHideShop 使用
         SharedPreferences sp = requireActivity().getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
         hideShopsSet = sp.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
+        // 读取当前生效的临时屏蔽商铺（已跨天的记录会在读取时自动清除）
+        tempBlockedShop = TemporaryBlockUtils.getTempBlockedShop(requireContext());
 
         // 使用与 ListActivity 相同的分隔符拆分店名，并过滤空字符串与被屏蔽的商铺，
         // 保证已经屏蔽的商铺不会进入随机选择队列
@@ -560,12 +565,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     /**
      * 执行临时屏蔽
-     * 目前只把选中的商铺名抛出来，后续在这里写入当天的屏蔽数据并让随机选店生效
+     * 记录商铺名与所属就餐日，跨天后由 TemporaryBlockUtils 自动解除
      *
      * @param shopName 下拉框中选中的商铺名
      * */
     private void temporaryBlockShop(String shopName) {
-        Log.d("tempBlock", "选中的商铺：" + shopName);
+        Log.d("tempBlock", "临时屏蔽商铺：" + shopName);
+        TemporaryBlockUtils.setTempBlockedShop(requireContext(), shopName);
+        // 同步刷新缓存，保证本次会话内的随机选店立即生效
+        tempBlockedShop = shopName;
     }
 
 
@@ -686,19 +694,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      * @param s 受检查的商铺
      * */
     private boolean checkHideShop(String s){
-        // 使用 reloadShop 时缓存的屏蔽集合，避免每次随机都重新读取 SharedPreferences
-        Set<String> hideShops = hideShopsSet;
-        if (hideShops == null){
-            return true;
+        // 永久屏蔽：只查 reloadShop 缓存的集合，不修改它
+        if (hideShopsSet != null && hideShopsSet.contains(s)) {
+            return false;
         }
 
-        // 从列表中查找并判断，如果是的话就直接return false
-        for (String hideShop : hideShops) {
-            if (s.equals(hideShop)){
-                return false;
-            }
-        }
-
-        return true;
+        // 临时屏蔽：s 为 null 时 equals 返回 false，即未被临时屏蔽
+        return !s.equals(tempBlockedShop);
     }
 }

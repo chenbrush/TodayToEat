@@ -40,6 +40,12 @@ public final class PreferenceKeys {
     /** 被屏蔽（隐藏）的店铺名称集合（StringSet） */
     public static final String KEY_HIDE_SHOPS = "HideShops";
 
+    /** 被临时屏蔽的店铺名称 */
+    public static final String KEY_TEMP_HIDE_SHOP = "tempHideShop";
+
+    /** 临时屏蔽所属的就餐日（String，格式 yyyy-MM-dd），跨天后自动解除 */
+    public static final String KEY_TEMP_HIDE_SHOP_DATE = "tempHideShopDate";
+
     // ==================== 历史记录 ====================
 
     /** 历史记录保留天数（int，默认 7） */

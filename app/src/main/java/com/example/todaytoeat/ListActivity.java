@@ -37,6 +37,7 @@ import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
+import com.example.todaytoeat.utils.TemporaryBlockUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -155,7 +156,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     // 长按商铺弹出的操作菜单：屏蔽/解除屏蔽/删除
     private void showShopOptions(int position, MaterialCardView card) {
         String shopName = shopList.get(position);
-        boolean isBlocked = hideShopsSet.contains(shopName);
+        // 永久屏蔽与当天的临时屏蔽都视为已屏蔽，避免临时屏蔽的商铺还能被再屏蔽一次
+        boolean isBlocked = hideShopsSet.contains(shopName)
+                || TemporaryBlockUtils.isTempBlocked(this, shopName);
         String[] options;
         if (isBlocked) {
             options = new String[]{getString(R.string.unblock_shop), getString(R.string.notice_delete_shop)};
@@ -211,6 +214,10 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 .setPositiveButton(getString(R.string.ok), (dialogInterface, i2) -> {
                     hideShopsSet.remove(shopName);
                     sharedPreferences.edit().putStringSet(PreferenceKeys.KEY_HIDE_SHOPS, hideShopsSet).apply();
+                    // 若是临时屏蔽的商铺，一并解除，否则当天依旧抽不到这家店
+                    if (TemporaryBlockUtils.isTempBlocked(ListActivity.this, shopName)) {
+                        TemporaryBlockUtils.clearTempBlock(ListActivity.this);
+                    }
                     loadShop();
                     adapter.notifyDataSetChanged();
                 })

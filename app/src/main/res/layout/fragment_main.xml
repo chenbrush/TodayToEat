@@ -39,12 +39,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <!-- 结果卡片：高度改为自适应，避免英文等较长文案换行后被裁切 -->
+        <!-- 结果卡片：保持固定高度，单行/双行由 MainFragment 动态调整约束居中 -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="160dp"
+            android:layout_height="160dp"
             app:cardCornerRadius="10sp"
             android:layout_margin="30sp"
             app:cardElevation="3sp"
@@ -70,7 +69,6 @@
                     android:layout_marginBottom="10dp"
                     android:gravity="center"
                     android:maxLines="2"
-                    android:minLines="2"
                     android:text="@string/result"
                     android:textSize="30sp"
                     app:autoSizeMaxTextSize="30sp"
@@ -89,7 +87,6 @@
                     android:layout_marginBottom="10dp"
                     android:gravity="center"
                     android:maxLines="2"
-                    android:minLines="2"
                     android:text=""
                     android:textSize="30sp"
                     app:autoSizeMaxTextSize="30sp"

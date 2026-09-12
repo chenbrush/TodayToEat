@@ -97,5 +97,6 @@
     <string name="dynamic_color">Use Dynamic Color</string>
     <string name="card_height_setting">Card Height Setting</string>
     <string name="card_height_current">Current Height:</string>
+
 </resources>
 

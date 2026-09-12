@@ -15,6 +15,7 @@
  */
 package com.example.todaytoeat;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
@@ -184,6 +185,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // 选择屏蔽商铺提示框
+    @SuppressLint("NotifyDataSetChanged")
     private void hideShopNotice(int position, MaterialCardView card) {
         String shopName = shopList.get(position);
         new MaterialAlertDialogBuilder(ListActivity.this)

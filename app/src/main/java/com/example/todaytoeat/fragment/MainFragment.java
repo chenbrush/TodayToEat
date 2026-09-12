@@ -18,6 +18,7 @@ package com.example.todaytoeat.fragment;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,8 +36,10 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.todaytoeat.ListActivity;
@@ -50,6 +53,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.io.File;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -108,8 +112,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         tvResult_second = view.findViewById(R.id.tv_result_second_line);
 
         // 为两条结果TextView添加长按监听（修改当天记录）
-        tvResult_first.setOnLongClickListener(this::onResultLongClick);
-        tvResult_second.setOnLongClickListener(this::onResultLongClick);
+        tvResult_first.setOnLongClickListener(this::onTextLongClickChoice);
+        tvResult_second.setOnLongClickListener(this::onTextLongClickChoice);
 
         // 定义文件位置及名称
         directory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/files";
@@ -494,12 +498,64 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 .show();
     }
 
+    /**
+     * 设置长按选择弹窗，根据弹窗进行操作的选择
+     * */
+    private boolean onTextLongClickChoice(View view){
+        String[] options = {getString(R.string.main_change), "临时屏蔽"};
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("选择需要执行的操作")
+                .setItems(options, (dialogInterface, i) -> {
+                    if (i == 0){
+                        onResultLongClick();
+                    }else {
+                        onTemporaryBlockShop();
+                    }
+                })
+                .show();
+
+        return true;
+    }
+
+    /**
+     * 临时屏蔽商铺
+     * */
+    private void onTemporaryBlockShop(){
+        // 没有可选商铺时（未添加店铺或全部被屏蔽），直接弹提示引导到列表页
+        if (shop == null || shop.length == 0) {
+            if (allShopsBlocked) {
+                noticeAllShopsBlocked();
+            } else {
+                noticeToAddShops();
+            }
+            return;
+        }
+
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.temporary_block_dialog, null);
+        Spinner sp_temp_block = dialogView.findViewById(R.id.sp_temp_block);
+
+        // shop 已在 reloadShop 中过滤掉被屏蔽的商铺，这里直接作为下拉选项
+        List<String> normalShops = new ArrayList<>(Arrays.asList(shop));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(), android.R.layout.simple_spinner_item, normalShops);
+        // 下拉展开时的条目布局
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_temp_block.setAdapter(adapter);
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setView(dialogView)
+                .setTitle("临时锁定商铺")
+                .setMessage("临时锁定商铺可以在当天内只锁定该商铺一次")
+                .show();
+    }
+
 
     /**
      * 长按结果文本弹出修改弹窗（修改当天记录）
      * 逻辑：读取当天历史记录回显到输入框 -> 用户修改 -> 保存并刷新UI
      */
-    private boolean onResultLongClick(View view) {
+    private void onResultLongClick() {
         // 加载修改弹窗布局（复用 history_dialog.xml）
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.history_dialog, null);
         EditText etInputAmEat = dialogView.findViewById(R.id.et_input_am_eat);
@@ -549,7 +605,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 .setNegativeButton(getString(R.string.history_cancel_change), null)
                 .show();
 
-        return true;
     }
 
     /**

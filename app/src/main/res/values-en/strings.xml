@@ -97,4 +97,9 @@
     <string name="dynamic_color">Use Dynamic Color</string>
     <string name="card_height_setting">Card Height Setting</string>
     <string name="card_height_current">Current Height:</string>
+    <string name="temp_block_menu_item">Temporarily Block</string>
+    <string name="temp_block_choice_title">Choose an action</string>
+    <string name="temp_block_title">Temporarily Block Shop</string>
+    <string name="temp_block_message">A temporarily blocked shop is skipped when picking for the rest of the day. The block is released automatically when the new day starts (after 9:00 PM).</string>
+    <string name="temp_block_success">Temporarily blocked: %1$s</string>
 </resources>

@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.PreferenceKeys;
+import com.example.todaytoeat.utils.TemporaryBlockUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.card.MaterialCardView;
 
@@ -86,10 +87,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         String shopNameAndStatus = mShopList.get(position);
         holder.tv_shop.setText(shopNameAndStatus);
 
-        // 设置屏蔽商铺颜色
+        // 设置屏蔽商铺颜色：永久屏蔽集合只做读取，不能修改 getStringSet 返回的实例
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
         Set<String> hideShopsSet = sp.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
-        if (hideShopsSet != null && hideShopsSet.contains(shopNameAndStatus)) {
+        // 临时屏蔽的商铺同样显示置灰，跨天后会自动解除
+        boolean isBlocked = (hideShopsSet != null && hideShopsSet.contains(shopNameAndStatus))
+                || TemporaryBlockUtils.isTempBlocked(mContext, shopNameAndStatus);
+
+        if (isBlocked) {
             // 被屏蔽的商铺显示置灰颜色
             holder.tv_shop.setTextColor(blockedTextColor);
         } else {

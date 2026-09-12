@@ -35,6 +35,7 @@ import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.AppConstantsUtils;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.PreferenceKeys;
+import com.example.todaytoeat.utils.ShopListUtils;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -277,8 +278,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         String content = FileUtil.openText(path);
         // 文件为空或仍是“未添加任何商铺”的初始提示时，说明还没有商铺，
         // 此时放入一条提示数据，保证首次安装也能看到“未添加任何商铺”的卡片
-        if (content.isEmpty() || content.equals(getString(R.string.none_shops))) {
-            emptyHintText = getString(R.string.none_shops);
+        if (ShopListUtils.isEmptyContent(this, content)) {
+            emptyHintText = ShopListUtils.getNoShopsText(this);
             shopList.add(emptyHintText);
             // 清理历史遗留的屏蔽记录，避免提示卡片被当作商铺显示成置灰样式
             if (hideShopsSet.remove(emptyHintText)) {
@@ -332,7 +333,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void addNewShop(String shopName) {
         String shops = FileUtil.openText(path);
 
-        if (shops.equals(getString(R.string.none_shops)) || shops.isEmpty()) {
+        if (ShopListUtils.isEmptyContent(this, shops)) {
             shops = shopName + ",";
         } else {
             shops += shopName + ",";

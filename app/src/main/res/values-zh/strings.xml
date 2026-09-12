@@ -97,4 +97,10 @@
     <string name="dynamic_color">是否使用自动配色</string>
     <string name="card_height_setting">卡片高度设置</string>
     <string name="card_height_current">当前高度：</string>
+
+    <string name="temp_block_menu_item">临时屏蔽</string>
+    <string name="temp_block_choice_title">选择需要执行的操作</string>
+    <string name="temp_block_title">临时锁定商铺</string>
+    <string name="temp_block_message">临时锁定商铺可以在当天内只锁定该商铺一次，晚上21点进入新的一天后会自动解除</string>
+    <string name="temp_block_success">已临时屏蔽：%1$s</string>
 </resources>

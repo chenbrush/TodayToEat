@@ -40,6 +40,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.todaytoeat.ListActivity;
 import com.example.todaytoeat.R;
@@ -54,6 +55,7 @@ import java.io.File;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -74,10 +76,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences sharedPreferences;
     private boolean repStatus;
     private boolean similar;
-    // 缓存的被屏蔽商铺集合（在 reloadShop 中读取一次，供 checkHideShop 使用）
+    // 缓存的被屏蔽商铺集合（在 loadAvailableShops 中读取一次，供 isShopBlocked 使用）
     private Set<String> hideShopsSet;
-    // 缓存的临时屏蔽商铺（同样在 reloadShop 中读取，跨天后会自动失效）
-    private String tempBlockedShop;
+    // 缓存的当天临时屏蔽商铺集合（同样在 reloadShop 中读取，跨天后会自动失效）
+    private Set<String> tempBlockedShops = Collections.emptySet();
 
     public MainFragment() {
         // Required empty public constructor
@@ -200,49 +202,76 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     // 读取店铺列表
     private void reloadShop() {
-        String pathShop = directory + File.separatorChar + "shop_list.txt";
-        File fileShop = new File(pathShop);
-        String content = FileUtil.openText(pathShop);
+        refreshAvailableShops();
 
-        // 校验文件有效性：文件不存在、内容为空或仍是初始提示文字，都视为没有店铺
-        if (!fileShop.exists() || content.isEmpty() || content.equals(getString(R.string.none_shops))) {
+        // 重算后没有可抽取的商铺，提示用户去列表页处理
+        if (!shopsListExist) {
+            if (allShopsBlocked) {
+                noticeAllShopsBlocked();
+            } else {
+                noticeToAddShops();
+            }
+        }
+    }
+
+    /**
+     * 重新计算可抽取的商铺，结果写入 shop、shopsListExist、allShopsBlocked
+     * 屏蔽或删除商铺后调用它可以立即刷新随机队列，且不弹任何提示
+     */
+    private void refreshAvailableShops() {
+        List<String> availableShops = loadAvailableShops();
+
+        // 店铺文件不存在或内容无效，视为没有店铺
+        if (availableShops == null) {
             shopsListExist = false;
             allShopsBlocked = false;
-            noticeToAddShops();
+            shop = null;
             return;
         }
 
-        // 读取被屏蔽的商铺集合（与 ListActivity 保存的键名保持一致），并缓存到字段供 checkHideShop 使用
-        SharedPreferences sp = requireActivity().getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
-        hideShopsSet = sp.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
-        // 读取当前生效的临时屏蔽商铺（已跨天的记录会在读取时自动清除）
-        tempBlockedShop = TemporaryBlockUtils.getTempBlockedShop(requireContext());
-
-        // 使用与 ListActivity 相同的分隔符拆分店名，并过滤空字符串与被屏蔽的商铺，
-        // 保证已经屏蔽的商铺不会进入随机选择队列
-        String[] rawShops = content.split("[,，、]");
-        List<String> availableShops = new ArrayList<>();
-        for (String shopName : rawShops) {
-            if (shopName.isEmpty()) {
-                continue;
-            }
-            if (hideShopsSet != null && hideShopsSet.contains(shopName)) {
-                continue;
-            }
-            availableShops.add(shopName);
-        }
-
-        // 所有商铺都被屏蔽时，提示用户前往列表页重新启用
+        // 所有商铺都被屏蔽，随机队列为空
         if (availableShops.isEmpty()) {
             shopsListExist = false;
             allShopsBlocked = true;
-            noticeAllShopsBlocked();
+            shop = null;
             return;
         }
 
         shopsListExist = true;
         allShopsBlocked = false;
         shop = availableShops.toArray(new String[0]);
+    }
+
+    /**
+     * 读取店铺文件，过滤掉空店名、永久屏蔽以及当天临时屏蔽的商铺
+     *
+     * @return 可抽取的商铺列表；店铺文件不存在或内容无效时返回 null
+     */
+    private List<String> loadAvailableShops() {
+        String pathShop = directory + File.separatorChar + "shop_list.txt";
+        File fileShop = new File(pathShop);
+        String content = FileUtil.openText(pathShop);
+
+        // 校验文件有效性：文件不存在、内容为空或仍是初始提示文字，都视为没有店铺
+        if (!fileShop.exists() || content.isEmpty() || content.equals(getString(R.string.none_shops))) {
+            return null;
+        }
+
+        // 读取屏蔽数据：永久屏蔽集合（与 ListActivity 保存的键名保持一致）
+        // 与当天有效的临时屏蔽集合（跨天的记录会在读取时自动清除）
+        SharedPreferences sp = requireActivity().getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
+        hideShopsSet = sp.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
+        tempBlockedShops = TemporaryBlockUtils.getTempBlockedShops(requireContext());
+
+        // 使用与 ListActivity 相同的分隔符拆分店名，保证已经屏蔽的商铺不会进入随机选择队列
+        List<String> availableShops = new ArrayList<>();
+        for (String shopName : content.split("[,，、]")) {
+            if (shopName.isEmpty() || isShopBlocked(shopName)) {
+                continue;
+            }
+            availableShops.add(shopName);
+        }
+        return availableShops;
     }
 
     // 历史记录恢复
@@ -285,8 +314,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 continue;
             }
 
-            // 判断当前选择的商铺是不是隐藏商铺
-            if (!checkHideShop(nowEat)) continue;
+            // 判断当前选择的商铺是不是已屏蔽的商铺
+            if (isShopBlocked(nowEat)) continue;
 
             // 通过所有过滤条件
             break;
@@ -374,8 +403,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
             }
 
-            // 早晚店铺不能一致且并非隐藏商铺，满足则退出循环
-            if (!amEat.equals(pmEat) && checkHideShop(amEat) && checkHideShop(pmEat)) break;
+            // 早晚店铺不能一致且都不是已屏蔽的商铺，满足则退出循环
+            if (!amEat.equals(pmEat) && !isShopBlocked(amEat) && !isShopBlocked(pmEat)) break;
         }
 
         // 更新页面双行结果
@@ -506,10 +535,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      * 设置长按选择弹窗，根据弹窗进行操作的选择
      * */
     private boolean onTextLongClickChoice(View view){
-        String[] options = {getString(R.string.main_change), "临时屏蔽"};
+        String[] options = {getString(R.string.main_change), getString(R.string.temp_block_menu_item)};
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("选择需要执行的操作")
+                .setTitle(R.string.temp_block_choice_title)
                 .setItems(options, (dialogInterface, i) -> {
                     if (i == 0){
                         onResultLongClick();
@@ -549,8 +578,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         new MaterialAlertDialogBuilder(requireContext())
                 .setView(dialogView)
-                .setTitle("临时锁定商铺")
-                .setMessage("临时锁定商铺可以在当天内只锁定该商铺一次")
+                .setTitle(R.string.temp_block_title)
+                .setMessage(R.string.temp_block_message)
                 .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
                     // 读取下拉框中当前选中的商铺
                     Object selectedShop = sp_temp_block.getSelectedItem();
@@ -571,9 +600,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      * */
     private void temporaryBlockShop(String shopName) {
         Log.d("tempBlock", "临时屏蔽商铺：" + shopName);
-        TemporaryBlockUtils.setTempBlockedShop(requireContext(), shopName);
-        // 同步刷新缓存，保证本次会话内的随机选店立即生效
-        tempBlockedShop = shopName;
+        TemporaryBlockUtils.addTempBlockedShop(requireContext(), shopName);
+        // 重算随机队列：临时屏蔽的商铺立即从随机选店与下拉框中移除
+        refreshAvailableShops();
+        // 提示用户已经生效
+        Toast.makeText(requireContext(), getString(R.string.temp_block_success, shopName), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -688,18 +719,17 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
 
     /**
-     * 检查生成出的商铺是不是包含在被隐藏的商铺之中的
-     * 如果是，就返回false
-     * 不然返回true
-     * @param s 受检查的商铺
+     * 判断商铺是否已被屏蔽（永久屏蔽或当天临时屏蔽）
+     *
+     * @param shopName 受检查的商铺
+     * @return 已屏蔽返回 true，可以参与随机选店返回 false
      * */
-    private boolean checkHideShop(String s){
-        // 永久屏蔽：只查 reloadShop 缓存的集合，不修改它
-        if (hideShopsSet != null && hideShopsSet.contains(s)) {
-            return false;
+    private boolean isShopBlocked(String shopName){
+        // 永久屏蔽：只查缓存集合，不做任何修改
+        if (hideShopsSet != null && hideShopsSet.contains(shopName)) {
+            return true;
         }
-
-        // 临时屏蔽：s 为 null 时 equals 返回 false，即未被临时屏蔽
-        return !s.equals(tempBlockedShop);
+        // 临时屏蔽：只查当天有效的缓存集合
+        return tempBlockedShops.contains(shopName);
     }
 }

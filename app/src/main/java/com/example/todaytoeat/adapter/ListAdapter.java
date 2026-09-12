@@ -92,7 +92,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         Set<String> hideShopsSet = sp.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
         // 临时屏蔽的商铺同样显示置灰，跨天后会自动解除
         boolean isBlocked = (hideShopsSet != null && hideShopsSet.contains(shopNameAndStatus))
-                || shopNameAndStatus.equals(TemporaryBlockUtils.getTempBlockedShop(mContext));
+                || TemporaryBlockUtils.isTempBlocked(mContext, shopNameAndStatus);
 
         if (isBlocked) {
             // 被屏蔽的商铺显示置灰颜色

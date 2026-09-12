@@ -216,7 +216,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     sharedPreferences.edit().putStringSet(PreferenceKeys.KEY_HIDE_SHOPS, hideShopsSet).apply();
                     // 若是临时屏蔽的商铺，一并解除，否则当天依旧抽不到这家店
                     if (TemporaryBlockUtils.isTempBlocked(ListActivity.this, shopName)) {
-                        TemporaryBlockUtils.clearTempBlock(ListActivity.this);
+                        TemporaryBlockUtils.removeTempBlockedShop(ListActivity.this, shopName);
                     }
                     loadShop();
                     adapter.notifyDataSetChanged();

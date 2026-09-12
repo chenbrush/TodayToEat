@@ -18,7 +18,6 @@ package com.example.todaytoeat.fragment;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -538,7 +537,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // shop 已在 reloadShop 中过滤掉被屏蔽的商铺，这里直接作为下拉选项
         List<String> normalShops = new ArrayList<>(Arrays.asList(shop));
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(), android.R.layout.simple_spinner_item, normalShops);
+                requireContext(), android.R.layout.simple_spinner_dropdown_item, normalShops);
         // 下拉展开时的条目布局
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_temp_block.setAdapter(adapter);
@@ -547,7 +546,26 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 .setView(dialogView)
                 .setTitle("临时锁定商铺")
                 .setMessage("临时锁定商铺可以在当天内只锁定该商铺一次")
+                .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
+                    // 读取下拉框中当前选中的商铺
+                    Object selectedShop = sp_temp_block.getSelectedItem();
+                    if (selectedShop != null) {
+                        temporaryBlockShop(selectedShop.toString());
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setOnDismissListener(null)
                 .show();
+    }
+
+    /**
+     * 执行临时屏蔽
+     * 目前只把选中的商铺名抛出来，后续在这里写入当天的屏蔽数据并让随机选店生效
+     *
+     * @param shopName 下拉框中选中的商铺名
+     * */
+    private void temporaryBlockShop(String shopName) {
+        Log.d("tempBlock", "选中的商铺：" + shopName);
     }
 
 

@@ -17,7 +17,6 @@ package com.example.todaytoeat;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -33,6 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.adapter.ListAdapter;
+import com.example.todaytoeat.utils.AppConstantsUtils;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
@@ -43,12 +43,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class ListActivity extends AppCompatActivity implements View.OnClickListener {
     private final List<String> shopList = new ArrayList<>();
     private String path;
+    // 空列表时展示的提示文字（非空表示当前列表里只有一张提示卡片）
+    private String emptyHintText;
     private ListAdapter adapter;
     private SharedPreferences sharedPreferences;
     Set<String> hideShopsSet = new HashSet<>();
@@ -148,6 +149,11 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
     // 长按商铺条目：弹出操作菜单
     private void onShopItemLongClick(int position, MaterialCardView card) {
+        // 提示卡片只是空列表的占位，不提供屏蔽/删除操作
+        if (emptyHintText != null) {
+            restoreCardAfterDialog(card);
+            return;
+        }
         showShopOptions(position, card);
     }
 
@@ -258,7 +264,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     // 加载商铺名称
     private void loadShop() {
         shopList.clear();
-        path = Objects.requireNonNull(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)) + "/files" + File.separatorChar + "shop_list.txt";
+        emptyHintText = null;
+        // 复用统一目录工具，首次安装时会自动创建 files 目录，避免写文件失败
+        path = AppConstantsUtils.getAppDownloadDirectory(this) + File.separatorChar + "shop_list.txt";
 
         // 检测文件是否存在，不存在则创建并写入初始提示文字
         File file = new File(path);
@@ -267,8 +275,15 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         String content = FileUtil.openText(path);
-        // 文件为空或仍是“未添加任何商铺”的初始提示时，说明列表为空，直接返回
+        // 文件为空或仍是“未添加任何商铺”的初始提示时，说明还没有商铺，
+        // 此时放入一条提示数据，保证首次安装也能看到“未添加任何商铺”的卡片
         if (content.isEmpty() || content.equals(getString(R.string.none_shops))) {
+            emptyHintText = getString(R.string.none_shops);
+            shopList.add(emptyHintText);
+            // 清理历史遗留的屏蔽记录，避免提示卡片被当作商铺显示成置灰样式
+            if (hideShopsSet.remove(emptyHintText)) {
+                sharedPreferences.edit().putStringSet(PreferenceKeys.KEY_HIDE_SHOPS, hideShopsSet).apply();
+            }
             return;
         }
 

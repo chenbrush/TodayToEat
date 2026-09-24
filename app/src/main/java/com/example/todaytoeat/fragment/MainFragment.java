@@ -292,6 +292,47 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         String amEaten = yesterday.amEat;
         String pmEaten = yesterday.pmEat;
 
+        // 读取今天已经记录的两餐，作为判断"下一餐该记到哪个时间段"的依据
+        // 注意：清空记录时写入的是 "null：没有记录：null：没有记录" 这类占位内容，不算真正的一餐
+        String todayContent = FileUtil.openText(HistoryManager.getTodayFilePath(requireContext()));
+        HistoryManager.Record todayRecord = HistoryManager.parseHistory(requireContext(), todayContent);
+        boolean noRecord = todayContent.isEmpty() || todayContent.contains("null");
+        String todayAmEat = noRecord ? "" : todayRecord.amEat;
+        String todayPmEat = noRecord ? "" : todayRecord.pmEat;
+
+        // 获取时间，判断时间是否在下午（14点之后21点之前，下一餐算晚饭）
+        lt = LocalTime.now();
+        boolean inAfternoon = lt.getHour() > 14 && lt.getHour() < 21;
+
+        // 不是下午且今天还没有晚饭记录时，沿用原来的弹窗，由用户决定这顿算中饭还是晚饭
+        if (!inAfternoon && todayPmEat.isEmpty()) {
+            String finalNowEat = randomGetShop(amEaten, pmEaten, "");
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(getString(R.string.notice))
+                    .setMessage(R.string.notice_what_time_to_eat_next_time)
+                    .setPositiveButton(R.string.time_mid, (dialogInterface, i) -> saveAndRefresh(finalNowEat, todayPmEat))
+                    .setNegativeButton(R.string.time_night, (dialogInterface, i) -> saveAndRefresh(todayAmEat, finalNowEat))
+                    .show();
+            return;
+        }
+
+        // 下午：下一餐更新晚饭，中饭保持不变；其他时间：下一餐更新中饭，晚饭保持不变
+        // 去重只比较"另一时间段"的那一餐，避免下一餐和另一时间段的那一餐同步
+        String nextEat = randomGetShop(amEaten, pmEaten, inAfternoon ? todayAmEat : todayPmEat);
+        saveAndRefresh(inAfternoon ? todayAmEat : nextEat, inAfternoon ? nextEat : todayPmEat);
+
+    }
+
+    /**
+     * 下一餐随机获取商铺
+     * 依次过滤：昨日重复、相似店名、已屏蔽商铺，以及当天另一餐已经选过的商铺
+     *
+     * @param amEaten  昨日中饭店名
+     * @param pmEaten  昨日晚饭店名
+     * @param otherEat 当天另一餐的店名（为空表示不需要去重）
+     * @return 抽到的店铺名
+     * */
+    private String randomGetShop(String amEaten, String pmEaten, String otherEat) {
         String nowEat;
         int maxAttempts = 100;
         int attempts = 0;
@@ -319,43 +360,37 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             // 判断当前选择的商铺是不是已屏蔽的商铺
             if (isShopBlocked(nowEat)) continue;
 
+            // 同一天的两餐不能是同一家，避免下一餐和另一时间段的那一餐同步
+            if (!otherEat.isEmpty() && otherEat.equals(nowEat)) continue;
+
             // 通过所有过滤条件
             break;
         }
-
-        // 根据时间自动判断用户是否需要选择，并且显示出相应的内容
-        lt = LocalTime.now();
-        if (lt.getHour() > 14 && lt.getHour() < 21){
-            showNextTimeResult(getString(R.string.only_pm) + "：" + nowEat);
-        }else {
-            // 做一个提示框，让用户决定这个下一餐什么时候吃
-            String finalNowEat = nowEat;
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(getString(R.string.notice))
-                    .setMessage(R.string.notice_what_time_to_eat_next_time)
-                    .setPositiveButton(R.string.time_mid, (dialogInterface, i) -> showNextTimeResult(getString(R.string.only_am) + "：" + finalNowEat))
-                    .setNegativeButton(R.string.time_night, (dialogInterface, i) -> showNextTimeResult(getString(R.string.only_pm) + "：" + finalNowEat))
-                    .show();
-        }
-
+        return nowEat;
     }
 
     /**
-     * 显示下一餐结果并保存
+     * 保存当天记录并刷新界面
+     *
+     * @param amEatToday 今天的中饭店名（为空表示没有记录）
+     * @param pmEatToday 今天的晚饭店名（为空表示没有记录）
      */
-    @SuppressLint("SetTextI18n")
-    private void showNextTimeResult(String desc) {
-        // 这些是用来显示界面以及存储的
-        HistoryManager.saveTodayRecord(requireContext(), desc);
-        String[] lines = desc.split("：");
-        if (lines[0].equals(getString(R.string.only_am))){
-            tvResult_first.setText(getString(R.string.am_eat) + "："+ lines[1]);
-        }else {
-            tvResult_first.setText(getString(R.string.pm_eat) + "："+ lines[1]);
+    private void saveAndRefresh(String amEatToday, String pmEatToday) {
+        String record;
+        if (amEatToday.isEmpty()) {
+            // 只有晚饭，按"仅吃晚饭"保存
+            record = getString(R.string.only_pm) + "：" + pmEatToday;
+        } else if (pmEatToday.isEmpty()) {
+            // 只有中饭，按"仅吃中饭"保存
+            record = getString(R.string.only_am) + "：" + amEatToday;
+        } else {
+            // 中饭、晚饭都有，保存完整的两餐
+            record = getString(R.string.am_eat) + "：" + amEatToday + "：" + getString(R.string.pm_eat) + "：" + pmEatToday;
         }
 
-        tvResult_second.setText("");
-        adjustSingleLineCenter();
+        HistoryManager.saveTodayRecord(requireContext(), record);
+        // 按保存后的记录刷新界面，单行/双行以及标签都会自动适配
+        reloadShow();
     }
 
     /**

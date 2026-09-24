@@ -35,7 +35,7 @@
     <string name="after_eat">Eat later</string>
     <string name="only_pm">Dinner Only</string>
     <string name="notice">Friendly Reminder</string>
-    <string name="notice_nagative_button">I\'m going to eat dinner as a midnight snack!!!</string>
+    <string name="notice_nagative_button">Cancel</string>
     <string name="notice_low_shop_nageative_botton">Maybe choose the next meal instead</string>
     <string name="notice_none_shops_message">No stores have been added yet. Would you like to add one?</string>
     <string name="notice_repeat_boom_message">Too few stores have been added. Repeated selections may cause the app to crash.</string>

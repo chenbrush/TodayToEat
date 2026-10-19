@@ -41,4 +41,17 @@ public class AppConstantsUtils {
         String dir = getAppDownloadDirectory(context);
         return dir + File.separatorChar + date + ".txt";
     }
+
+    /**
+     * 获取 json 对象目录文件路径
+     * */
+    public static File getJsonInDataFilePath(Context context){
+        File jsonInDataDir = context.getDataDir();
+
+        if (jsonInDataDir.exists()){
+            jsonInDataDir.mkdirs();
+        }
+
+        return jsonInDataDir;
+    }
 }

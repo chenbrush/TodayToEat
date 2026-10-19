@@ -31,6 +31,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.todaytoeat.adapter.ViewPagerAdapter;
 import com.example.todaytoeat.utils.GithubUpdateUtils;
+import com.example.todaytoeat.utils.JsonReader;
 import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.google.android.material.badge.BadgeDrawable;
@@ -54,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager2 = findViewById(R.id.view_pager);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        // json reader
+        JsonReader jsonReader = new JsonReader();
+        jsonReader.readJsonContext(this);
 
         // 设置 ViewPager2 适配器
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);

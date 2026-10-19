@@ -39,6 +39,7 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.sdp.android
     implementation libs.viewpager2
+    implementation libs.gson
 
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

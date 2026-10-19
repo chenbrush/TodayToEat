@@ -169,6 +169,40 @@ public class JsonReader {
     }
 
     /**
+     * 根据商铺名称获取所属分组
+     *
+     * @param shopName 商铺名称
+     * @return 所属分组；商铺未分组或名称为空时返回 null
+     */
+    public ShopGroupData getGroupByShopName(Context context, String shopName) {
+        String targetShop = shopName == null ? "" : shopName.trim();
+        if (targetShop.isEmpty()) {
+            return null;
+        }
+
+        List<ShopGroupData> groups = readShopGroups(context);
+        for (ShopGroupData group : groups) {
+            if (group.getGroupShopsList().contains(targetShop)) {
+                return group;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据商铺名称获取所属分组名称
+     *
+     * @return 分组名称；商铺未分组时返回空字符串
+     */
+    public String getGroupNameByShopName(Context context, String shopName) {
+        ShopGroupData group = getGroupByShopName(context, shopName);
+        if (group == null || group.getGroupName() == null) {
+            return "";
+        }
+        return group.getGroupName();
+    }
+
+    /**
      * 兼容旧调用：新增或合并分组
      *
      * @return true 表示保存成功

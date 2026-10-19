@@ -35,28 +35,16 @@ public class FileUtil {
      * @param path 文件的保存路径
      * @param txt 要写入文件的字符串内容
      */
-    public static void saveText(String path, String txt){
-        // 声明文件写入流
-        BufferedWriter os = null;
-        try {
+    public static boolean saveText(String path, String txt){
+        try (BufferedWriter os = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(path), StandardCharsets.UTF_8))) {
             // 固定使用 UTF-8 写入，避免中文内容出现乱码
-            os = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(path), StandardCharsets.UTF_8));
-            // 将字符串内容写入文件
             os.write(txt);
+            return true;
         } catch (Exception e) {
             // 捕获文件操作异常并打印
             e.printStackTrace();
-        } finally {
-            // 无论是否发生异常，都要关闭流
-            if (os != null) {
-                try {
-                    // 关闭输出流，释放资源
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            return false;
         }
     }
 

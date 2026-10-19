@@ -48,7 +48,8 @@ public class AppConstantsUtils {
     public static File getJsonInDataFilePath(Context context){
         File jsonInDataDir = context.getDataDir();
 
-        if (jsonInDataDir.exists()){
+        // 目录不存在时创建，避免后续写文件失败
+        if (!jsonInDataDir.exists()){
             jsonInDataDir.mkdirs();
         }
 

@@ -17,9 +17,12 @@ package com.example.todaytoeat.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 文件操作工具类
@@ -36,8 +39,9 @@ public class FileUtil {
         // 声明文件写入流
         BufferedWriter os = null;
         try {
-            // 根据文件路径创建字符输出流
-            os = new BufferedWriter(new FileWriter(path));
+            // 固定使用 UTF-8 写入，避免中文内容出现乱码
+            os = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(path), StandardCharsets.UTF_8));
             // 将字符串内容写入文件
             os.write(txt);
         } catch (Exception e) {
@@ -67,8 +71,9 @@ public class FileUtil {
         // 用于拼接读取到的每行文字
         StringBuilder sb = new StringBuilder();
         try {
-            // 根据文件路径创建字符输入流
-            is = new BufferedReader(new FileReader(path));
+            // 固定使用 UTF-8 读取，和写入编码保持一致
+            is = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(path), StandardCharsets.UTF_8));
             String line = null;
             // 循环按行读取文件内容，直到读取完毕
             while ((line = is.readLine()) != null) {

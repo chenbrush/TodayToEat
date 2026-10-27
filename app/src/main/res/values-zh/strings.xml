@@ -104,4 +104,12 @@
     <string name="temp_block_message">临时锁定商铺可以在当天内只锁定该商铺一次，晚上21点进入新的一天后会自动解除</string>
     <string name="temp_block_success">已临时屏蔽：%1$s</string>
     <string name="add_group">添加分组</string>
+    <string name="choose_action">选择操作</string>
+    <string name="group_name_hint">输入分组名称</string>
+    <string name="group_select_shops">选择要加入分组的商铺</string>
+    <string name="group_no_shop">请先添加商铺</string>
+    <string name="group_name_empty">请输入分组名称</string>
+    <string name="group_no_shop_selected">请至少选择一家商铺</string>
+    <string name="group_add_success">已添加 %1$d 家商铺到分组</string>
+    <string name="group_add_failed">分组保存失败</string>
 </resources>

@@ -103,4 +103,12 @@
     <string name="temp_block_message">A temporarily blocked shop is skipped when picking for the rest of the day. The block is released automatically when the new day starts (after 9:00 PM).</string>
     <string name="temp_block_success">Temporarily blocked: %1$s</string>
     <string name="add_group">Add Group</string>
+    <string name="choose_action">Choose an action</string>
+    <string name="group_name_hint">Enter group name</string>
+    <string name="group_select_shops">Select shops to add to the group</string>
+    <string name="group_no_shop">Please add shops first</string>
+    <string name="group_name_empty">Please enter a group name</string>
+    <string name="group_no_shop_selected">Please select at least one shop</string>
+    <string name="group_add_success">Added %1$d shops to the group</string>
+    <string name="group_add_failed">Failed to save the group</string>
 </resources>

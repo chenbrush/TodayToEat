@@ -103,4 +103,5 @@
     <string name="temp_block_title">临时锁定商铺</string>
     <string name="temp_block_message">临时锁定商铺可以在当天内只锁定该商铺一次，晚上21点进入新的一天后会自动解除</string>
     <string name="temp_block_success">已临时屏蔽：%1$s</string>
+    <string name="add_group">添加分组</string>
 </resources>

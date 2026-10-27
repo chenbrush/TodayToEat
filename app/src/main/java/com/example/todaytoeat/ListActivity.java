@@ -20,8 +20,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -312,30 +315,80 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             // 传递之后结束这个activity
             finish();
         } else if (view.getId() == R.id.ib_edit) {
-            // 加载自定义布局
-            View dialogView = LayoutInflater.from(this).inflate(R.layout.list_dialog, null);
-            EditText etInput = dialogView.findViewById(R.id.et_input);
-
-            // 构建弹窗
+            // 将添加新商铺和创建和修改分组结合起来
+            String[] choices = {getString(R.string.add_shop), getString(R.string.add_group)};
             new MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.add_shop)
-                    .setView(dialogView)
-                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                        // 获取输入的文本
-                        String content = etInput.getText().toString().trim();
-                        // 后续：保存到文件、刷新列表
-                        if (content.isEmpty()) {
-                            return;
+                    .setTitle("选择操作")
+                    .setItems(choices, (dialogInterface, i) -> {
+                        if (i == 0){
+                            noticeAddShop();
+                        } else {
+                            noticeAddGroup();
                         }
-
-                        addNewShop(content);
-                        loadShop();
-                        adapter.notifyDataSetChanged();
-
                     })
-                    .setNegativeButton(R.string.cancel, null)
+                    .create()
                     .show();
+
+
         }
+    }
+
+    /**
+     * 创建添加商铺组弹窗
+     * */
+    private void noticeAddGroup(){
+        // 加载自定义布局
+        View dialogView = LayoutInflater.from(this)
+                .inflate(R.layout.list_add_group_dialog, null);
+        EditText etInput = dialogView.findViewById(R.id.et_input);
+
+        Spinner spinner = dialogView.findViewById(R.id.sp_choice_shop);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                shopList
+        );
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(arrayAdapter);
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("添加商铺组")
+                .setView(dialogView)
+                .setPositiveButton(R.string.confirm, (dialogInterface, i) -> {
+                    String groupName = etInput.getText().toString();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create()
+                .show();
+    }
+
+    /**
+     * 创建添加商铺弹窗
+     * */
+    private void noticeAddShop() {
+        // 加载自定义布局
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.list_add_shop_dialog, null);
+        EditText etInput = dialogView.findViewById(R.id.et_input);
+
+        // 构建弹窗
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.add_shop)
+                .setView(dialogView)
+                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                    // 获取输入的文本
+                    String content = etInput.getText().toString().trim();
+                    // 后续：保存到文件、刷新列表
+                    if (content.isEmpty()) {
+                        return;
+                    }
+
+                    addNewShop(content);
+                    loadShop();
+                    adapter.notifyDataSetChanged();
+
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     // 添加店铺

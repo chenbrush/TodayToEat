@@ -92,17 +92,10 @@ public class ListActivity extends AppCompatActivity {
         adapter.setOnItemLongClickListener(this::onShopItemLongClick);
         lv_list.setAdapter(adapter);
 
-        // 顶部工具栏：返回按钮关闭页面，右侧菜单用于添加商铺
+        // 顶部工具栏：返回按钮关闭页面，右侧编辑按钮用于添加商铺
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.activity_list_toolbar);
         toolbar.setNavigationOnClickListener(view -> finish());
-        toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_edit) {
-                showAddShopDialog();
-                return true;
-            }
-            return false;
-        });
+        findViewById(R.id.ib_edit).setOnClickListener(view -> showAddShopDialog());
 
         // 设置初始状态，在设置监听之前，避免触发 onCheckedChanged
         cb_repetition.setChecked(sharedPreferences.getBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false));

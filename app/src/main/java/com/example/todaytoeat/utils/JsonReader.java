@@ -124,7 +124,6 @@ public class JsonReader {
 
     /**
      * 新增分组；如果分组名已存在，则把商铺合并到原分组
-     *
      * 同一个商铺只会保留在一个分组中，加入新分组时会从其它分组移除。
      *
      * @return true 表示保存成功
@@ -203,12 +202,136 @@ public class JsonReader {
     }
 
     /**
+     * 根据分组名称查找分组
+     *
+     * @param groupName 分组名称
+     * @return 找到的分组；不存在时返回 null
+     */
+    public ShopGroupData getGroupByName(Context context, String groupName) {
+        String name = groupName == null ? "" : groupName.trim();
+        if (name.isEmpty()) {
+            return null;
+        }
+
+        List<ShopGroupData> groups = readShopGroups(context);
+        for (ShopGroupData group : groups) {
+            if (name.equals(group.getGroupName())) {
+                return group;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 兼容旧调用：新增或合并分组
      *
      * @return true 表示保存成功
      */
     public boolean writeShopGroupAndName(Context context, String groupName, String... groupShopNames) {
         return addShopGroup(context, groupName, groupShopNames);
+    }
+
+    /**
+     * 修改分组名称
+     *
+     * 新名称不能为空，也不能与其它分组重名，否则返回 false。
+     *
+     * @param oldGroupName 原分组名称
+     * @param newGroupName 新分组名称
+     * @return true 表示保存成功
+     */
+    public boolean renameShopGroup(Context context, String oldGroupName, String newGroupName) {
+        String oldName = oldGroupName == null ? "" : oldGroupName.trim();
+        String newName = newGroupName == null ? "" : newGroupName.trim();
+        if (oldName.isEmpty() || newName.isEmpty()) {
+            return false;
+        }
+
+        List<ShopGroupData> groups = readShopGroups(context);
+        ShopGroupData target = findGroup(groups, oldName);
+        if (target == null) {
+            return false;
+        }
+
+        // 名称没有变化时直接视为成功
+        if (oldName.equals(newName)) {
+            return true;
+        }
+
+        // 新名称已被其它分组使用，避免误合并
+        if (findGroup(groups, newName) != null) {
+            return false;
+        }
+
+        target.setGroupName(newName);
+        return writeShopGroups(context, groups);
+    }
+
+    /**
+     * 更新分组内的商铺（覆盖原有商铺列表）
+     *
+     * 一个商铺只保留在一个分组中，加入本分组时会从其它分组移除；
+     * 更新后没有商铺时，删除该分组。
+     *
+     * @return true 表示保存成功
+     */
+    public boolean updateShopGroup(Context context, String groupName, String... shopNames) {
+        String name = groupName == null ? "" : groupName.trim();
+        if (name.isEmpty()) {
+            return false;
+        }
+
+        List<ShopGroupData> groups = readShopGroups(context);
+        ShopGroupData group = findGroup(groups, name);
+        if (group == null) {
+            return false;
+        }
+
+        List<String> shops = new ArrayList<>();
+        if (shopNames != null) {
+            for (String shopName : shopNames) {
+                if (shopName == null || shopName.trim().isEmpty()) {
+                    continue;
+                }
+                String shop = shopName.trim();
+                // 保证一个商铺只属于一个分组
+                removeShopFromOtherGroups(groups, group, shop);
+                if (!shops.contains(shop)) {
+                    shops.add(shop);
+                }
+            }
+        }
+
+        // 编辑后没有商铺时，直接删除该分组
+        if (shops.isEmpty()) {
+            groups.remove(group);
+        } else {
+            group.setGroupShopsList(shops);
+        }
+        return writeShopGroups(context, groups);
+    }
+
+    /**
+     * 删除指定分组
+     *
+     * @param groupName 分组名称
+     * @return true 表示保存成功；分组不存在时同样返回 true
+     */
+    public boolean deleteShopGroup(Context context, String groupName) {
+        String name = groupName == null ? "" : groupName.trim();
+        if (name.isEmpty()) {
+            return false;
+        }
+
+        List<ShopGroupData> groups = readShopGroups(context);
+        ShopGroupData group = findGroup(groups, name);
+        if (group == null) {
+            // 分组本来就不存在，视为删除成功
+            return true;
+        }
+
+        groups.remove(group);
+        return writeShopGroups(context, groups);
     }
 
     /**

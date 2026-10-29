@@ -112,4 +112,18 @@
     <string name="group_no_shop_selected">请至少选择一家商铺</string>
     <string name="group_add_success">已添加 %1$d 家商铺到分组</string>
     <string name="group_add_failed">分组保存失败</string>
+    <string name="edit_group">编辑分组</string>
+    <string name="group_choose_edit">选择要编辑的分组</string>
+    <string name="group_edit_name">修改名称</string>
+    <string name="group_edit_shops">编辑商铺</string>
+    <string name="group_delete">删除分组</string>
+    <string name="group_edit_select_shops">选择要保留在该分组的商铺</string>
+    <string name="group_no_group">还没有分组</string>
+    <string name="group_rename_success">分组名称已修改</string>
+    <string name="group_rename_failed">分组名称修改失败</string>
+    <string name="group_edit_success">已更新 %1$d 家商铺</string>
+    <string name="group_edit_failed">分组保存失败</string>
+    <string name="group_delete_confirm">确认删除分组「%1$s」吗？分组内的商铺不会被删除。</string>
+    <string name="group_delete_success">分组已删除</string>
+    <string name="group_delete_failed">分组删除失败</string>
 </resources>

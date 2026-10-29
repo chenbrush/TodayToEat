@@ -39,6 +39,7 @@ import com.example.todaytoeat.utils.AppConstantsUtils;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.JsonReader;
 import com.example.todaytoeat.utils.PreferenceKeys;
+import com.example.todaytoeat.utils.ShopGroupData;
 import com.example.todaytoeat.utils.ShopListUtils;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.TemporaryBlockUtils;
@@ -317,14 +318,16 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             finish();
         } else if (view.getId() == R.id.ib_edit) {
             // 将添加新商铺和创建和修改分组结合起来
-            String[] choices = {getString(R.string.add_shop), getString(R.string.add_group)};
+            String[] choices = {getString(R.string.add_shop), getString(R.string.add_group), getString(R.string.edit_group)};
             new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.choose_action)
                     .setItems(choices, (dialogInterface, i) -> {
                         if (i == 0){
                             noticeAddShop();
-                        } else {
+                        } else if (i == 1){
                             noticeAddGroup();
+                        } else {
+                            noticeModifyGroup();
                         }
                     })
                     .create()
@@ -333,6 +336,169 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+
+    /**
+     * 创建修改商铺组弹窗
+     * */
+    private void noticeModifyGroup(){
+        List<ShopGroupData> groups = new JsonReader().readShopGroups(this);
+        // 还没有分组时直接提示
+        if (groups.isEmpty()) {
+            Toast.makeText(this, R.string.group_no_group, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] groupNames = new String[groups.size()];
+        for (int i = 0; i < groups.size(); i++) {
+            groupNames[i] = groups.get(i).getGroupName();
+        }
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.group_choose_edit)
+                .setItems(groupNames, (dialogInterface, which) ->
+                        showGroupEditActions(groupNames[which]))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    /**
+     * 展示某个分组的编辑操作：修改名称、编辑商铺、删除分组
+     */
+    private void showGroupEditActions(String groupName) {
+        String[] actions = {
+                getString(R.string.group_edit_name),
+                getString(R.string.group_edit_shops),
+                getString(R.string.group_delete)
+        };
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(groupName)
+                .setItems(actions, (dialogInterface, which) -> {
+                    if (which == 0) {
+                        noticeRenameGroup(groupName);
+                    } else if (which == 1) {
+                        noticeEditGroupShops(groupName);
+                    } else {
+                        noticeDeleteGroup(groupName);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    /**
+     * 修改分组名称
+     */
+    private void noticeRenameGroup(String oldName) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.list_add_shop_dialog, null);
+        EditText etInput = dialogView.findViewById(R.id.et_input);
+        // 预填当前名称，方便用户直接修改
+        etInput.setText(oldName);
+        etInput.setSelection(etInput.getText().length());
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.group_edit_name)
+                .setView(dialogView)
+                .setPositiveButton(R.string.confirm, null)
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+
+        // 手动接管确定按钮：名称为空时不关闭弹窗
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                String newName = etInput.getText().toString().trim();
+                if (newName.isEmpty()) {
+                    Toast.makeText(ListActivity.this, R.string.group_name_empty, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                boolean saved = new JsonReader().renameShopGroup(ListActivity.this, oldName, newName);
+                Toast.makeText(ListActivity.this,
+                        saved ? R.string.group_rename_success : R.string.group_rename_failed,
+                        Toast.LENGTH_SHORT).show();
+                if (saved) {
+                    dialog.dismiss();
+                }
+            });
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * 编辑分组内的商铺
+     */
+    private void noticeEditGroupShops(String groupName) {
+        ShopGroupData group = new JsonReader().getGroupByName(this, groupName);
+        if (group == null) {
+            Toast.makeText(this, R.string.group_edit_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        View dialogView = LayoutInflater.from(this)
+                .inflate(R.layout.list_edit_group_dialog, null);
+        LinearLayout llShopChoices = dialogView.findViewById(R.id.ll_shop_choices);
+
+        // 预勾选当前分组内的商铺
+        Set<String> selected = new HashSet<>(group.getGroupShopsList());
+        boolean[] checked = new boolean[shopList.size()];
+        fillShopCheckboxes(llShopChoices, selected, checked);
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle(groupName)
+                .setView(dialogView)
+                .setPositiveButton(R.string.confirm, null)
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+
+        // 手动接管确定按钮：未选择商铺时不关闭弹窗
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                List<String> newShops = new ArrayList<>();
+                for (int i = 0; i < shopList.size(); i++) {
+                    if (checked[i]) {
+                        newShops.add(shopList.get(i));
+                    }
+                }
+                if (newShops.isEmpty()) {
+                    Toast.makeText(ListActivity.this, R.string.group_no_shop_selected, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                boolean saved = new JsonReader().updateShopGroup(ListActivity.this,
+                        groupName,
+                        newShops.toArray(new String[0]));
+                if (saved) {
+                    Toast.makeText(ListActivity.this,
+                            getString(R.string.group_edit_success, newShops.size()),
+                            Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(ListActivity.this, R.string.group_edit_failed, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * 删除分组
+     */
+    private void noticeDeleteGroup(String groupName) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.group_delete)
+                .setMessage(getString(R.string.group_delete_confirm, groupName))
+                .setPositiveButton(R.string.confirm, (dialogInterface, i) -> {
+                    boolean saved = new JsonReader().deleteShopGroup(ListActivity.this, groupName);
+                    Toast.makeText(ListActivity.this,
+                            saved ? R.string.group_delete_success : R.string.group_delete_failed,
+                            Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
 
     /**
      * 创建添加商铺组弹窗
@@ -352,16 +518,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
         // 为每家商铺生成一个复选框，勾选状态记录在 checked 数组里
         boolean[] checked = new boolean[shopList.size()];
-        for (int i = 0; i < shopList.size(); i++) {
-            MaterialCheckBox checkBox = new MaterialCheckBox(this);
-            checkBox.setText(shopList.get(i));
-            checkBox.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-            int index = i;
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> checked[index] = isChecked);
-            llShopChoices.addView(checkBox);
-        }
+        fillShopCheckboxes(llShopChoices, new HashSet<>(), checked);
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.add_group)
@@ -406,6 +563,33 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         dialog.show();
+    }
+
+    /**
+     * 为商铺列表生成复选框
+     *
+     * @param llShopChoices 复选框容器
+     * @param preSelected   预先选中的商铺名称
+     * @param checked       勾选状态数组，长度需与 shopList 一致
+     */
+    private void fillShopCheckboxes(LinearLayout llShopChoices,
+                                    Set<String> preSelected,
+                                    boolean[] checked) {
+        for (int i = 0; i < shopList.size(); i++) {
+            MaterialCheckBox checkBox = new MaterialCheckBox(this);
+            checkBox.setText(shopList.get(i));
+            checkBox.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            boolean isChecked = preSelected.contains(shopList.get(i));
+            checked[i] = isChecked;
+            checkBox.setChecked(isChecked);
+
+            int index = i;
+            checkBox.setOnCheckedChangeListener((buttonView, checkedState) -> checked[index] = checkedState);
+            llShopChoices.addView(checkBox);
+        }
     }
 
     /**

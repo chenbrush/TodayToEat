@@ -111,4 +111,18 @@
     <string name="group_no_shop_selected">Please select at least one shop</string>
     <string name="group_add_success">Added %1$d shops to the group</string>
     <string name="group_add_failed">Failed to save the group</string>
+    <string name="edit_group">Edit Group</string>
+    <string name="group_choose_edit">Select a group to edit</string>
+    <string name="group_edit_name">Rename</string>
+    <string name="group_edit_shops">Edit Shops</string>
+    <string name="group_delete">Delete Group</string>
+    <string name="group_edit_select_shops">Select shops to keep in the group</string>
+    <string name="group_no_group">No groups yet</string>
+    <string name="group_rename_success">Group renamed</string>
+    <string name="group_rename_failed">Failed to rename the group</string>
+    <string name="group_edit_success">Updated %1$d shops in the group</string>
+    <string name="group_edit_failed">Failed to update the group</string>
+    <string name="group_delete_confirm">Delete group \"%1$s\"? The shops inside will not be deleted.</string>
+    <string name="group_delete_success">Group deleted</string>
+    <string name="group_delete_failed">Failed to delete the group</string>
 </resources>

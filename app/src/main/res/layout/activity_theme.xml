@@ -8,7 +8,7 @@
     tools:context=".ThemeActivity"
     android:layout_marginTop="30sp">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:id="@+id/ll_theme_header"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
             android:textSize="30sp"
             tools:ignore="MissingConstraints" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+    </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_dark_or_light"

@@ -8,7 +8,7 @@
     tools:context=".ThemeActivity"
     android:layout_marginTop="30sp">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/ll_theme_header"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
             android:textSize="30sp"
             tools:ignore="MissingConstraints" />
 
-    </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_dark_or_light"
@@ -69,7 +69,8 @@
                 android:id="@+id/rg_color_mode_manager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="false">
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/rb_light"

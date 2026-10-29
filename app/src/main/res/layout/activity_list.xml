@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/list"
+            app:titleTextAppearance="@style/TextAppearance.TodayToEat.ToolbarTitle"
             app:navigationIcon="@drawable/baseline_arrow_back_ios_new_24" />
 
     </com.google.android.material.appbar.AppBarLayout>

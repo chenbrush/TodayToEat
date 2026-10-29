@@ -55,11 +55,13 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- 英文文案字号不同：关闭基线对齐，避免第二个复选框显得下沉 -->
     <LinearLayout
         android:id="@+id/ll_check_box_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/abl_list"
+        android:baselineAligned="false"
         android:orientation="horizontal">
 
         <com.google.android.material.checkbox.MaterialCheckBox

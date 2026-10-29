@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -17,8 +16,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -43,42 +42,37 @@ public class ThemeActivity extends AppCompatActivity {
 
         SwitchMaterial sw_color_manager = findViewById(R.id.sw_color_manager);
         MaterialCardView card_color_manager = findViewById(R.id.card_color_manager);
-        RadioGroup rg_color_mode_manager = findViewById(R.id.rg_color_mode_manager);
-        MaterialRadioButton rb_light = findViewById(R.id.rb_light);
-        MaterialRadioButton rb_dark = findViewById(R.id.rb_dark);
-        MaterialRadioButton rb_system = findViewById(R.id.rb_system);
+        MaterialButtonToggleGroup tg_color_mode_manager = findViewById(R.id.tg_color_mode_manager);
 
-        // 根据设置的默认主题对RadioButton 进行设置
+        // 根据设置的默认主题对按钮组进行设置
         // 为防止出现奇怪的问题，default 和 SYSTEM 一起设置
         int themeMode = ThemesMangerUtils.getColorThemesChoice(ThemeActivity.this);
         switch (themeMode){
             case ThemesMangerUtils.LIGHT:
-                rb_light.setChecked(true);
-                rb_dark.setChecked(false);
-                rb_system.setChecked(false);
+                tg_color_mode_manager.check(R.id.btn_light);
                 break;
 
             case ThemesMangerUtils.DARK:
-                rb_light.setChecked(false);
-                rb_dark.setChecked(true);
-                rb_system.setChecked(false);
+                tg_color_mode_manager.check(R.id.btn_dark);
                 break;
 
             case ThemesMangerUtils.SYSTEM:
             default:
-                rb_light.setChecked(false);
-                rb_dark.setChecked(false);
-                rb_system.setChecked(true);
+                tg_color_mode_manager.check(R.id.btn_system);
                 break;
 
         }
 
-        rg_color_mode_manager.setOnCheckedChangeListener((radioGroup, i) -> {
+        tg_color_mode_manager.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            // 只在按钮被选中时处理，避免取消选中时重复触发
+            if (!isChecked) {
+                return;
+            }
             // 读取改变按钮
             int themeModeChange;
-            if (i == R.id.rb_light){
+            if (checkedId == R.id.btn_light){
                 themeModeChange = ThemesMangerUtils.LIGHT;
-            }else if (i == R.id.rb_dark){
+            }else if (checkedId == R.id.btn_dark){
                 themeModeChange = ThemesMangerUtils.DARK;
             }else {
                 themeModeChange = ThemesMangerUtils.SYSTEM;

@@ -21,8 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -39,6 +37,7 @@ import com.example.todaytoeat.utils.HistoryManager;
 import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -70,36 +69,36 @@ public class HistoryActivity extends AppCompatActivity {
         // 应用卡片高度设置：本页静态筛选卡片（列表条目由 HistoryAdapter 应用）
         ThemesMangerUtils.applyAllCardElevation(this, findViewById(R.id.history_activity));
 
-        // 筛选时间段单选组及对应按钮
-        RadioGroup rgDateFilter = findViewById(R.id.rg_date_filter);
-        RadioButton rb7Days = findViewById(R.id.rb_7days);
-        RadioButton rb10Days = findViewById(R.id.rb_10days);
-        RadioButton rb15Days = findViewById(R.id.rb_15days);
-        RadioButton rb30Days = findViewById(R.id.rb_30days);
+        // 筛选时间段按钮组
+        MaterialButtonToggleGroup tgDateFilter = findViewById(R.id.tg_date_filter);
 
         // 读取本地存储的历史展示天数配置
         SharedPreferences sharedPreferences = getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
         int historyDays = sharedPreferences.getInt(PreferenceKeys.KEY_HISTORY_DAYS, 7);
 
-        // 根据存储值默认选中对应天数单选框
+        // 根据存储值默认选中对应天数按钮
         if (historyDays == 7) {
-            rb7Days.setChecked(true);
+            tgDateFilter.check(R.id.btn_7days);
         } else if (historyDays == 10) {
-            rb10Days.setChecked(true);
+            tgDateFilter.check(R.id.btn_10days);
         } else if (historyDays == 15) {
-            rb15Days.setChecked(true);
+            tgDateFilter.check(R.id.btn_15days);
         } else if (historyDays == 30) {
-            rb30Days.setChecked(true);
+            tgDateFilter.check(R.id.btn_30days);
         }
 
-        // 单选框切换监听：修改筛选天数并刷新列表
-        rgDateFilter.setOnCheckedChangeListener((group, checkedId) -> {
+        // 按钮切换监听：修改筛选天数并刷新列表
+        tgDateFilter.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            // 只在按钮被选中时处理，避免取消选中时重复触发
+            if (!isChecked) {
+                return;
+            }
             int days;
-            if (checkedId == R.id.rb_7days) {
+            if (checkedId == R.id.btn_7days) {
                 days = 7;
-            } else if (checkedId == R.id.rb_10days) {
+            } else if (checkedId == R.id.btn_10days) {
                 days = 10;
-            } else if (checkedId == R.id.rb_15days) {
+            } else if (checkedId == R.id.btn_15days) {
                 days = 15;
             } else {
                 days = 30;

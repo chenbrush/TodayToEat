@@ -89,74 +89,51 @@
                 android:layout_marginTop="10sp"
                 android:layout_marginEnd="10sp" />
 
-            <RadioGroup
-                android:id="@+id/rg_date_filter"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/tg_date_filter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/tv_history_filter"
                 android:layout_marginStart="10sp"
                 android:layout_marginEnd="10sp"
                 android:layout_marginTop="5sp"
                 android:layout_marginBottom="5sp"
-                android:gravity="center">
+                android:gravity="center"
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
-                <RadioButton
-                    android:id="@+id/rb_7days"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_7days"
+                    style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:maxLines="1"
-                    android:text="@string/filter_7_days"
-                    android:textSize="16sp"
-                    app:autoSizeMaxTextSize="16sp"
-                    app:autoSizeMinTextSize="11sp"
-                    app:autoSizeStepGranularity="1sp"
-                    app:autoSizeTextType="uniform"
-                    android:gravity="center" />
+                    android:text="@string/filter_7_days" />
 
-                <RadioButton
-                    android:id="@+id/rb_10days"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_10days"
+                    style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:maxLines="1"
-                    android:text="@string/filter_10_days"
-                    android:textSize="16sp"
-                    app:autoSizeMaxTextSize="16sp"
-                    app:autoSizeMinTextSize="11sp"
-                    app:autoSizeStepGranularity="1sp"
-                    app:autoSizeTextType="uniform"
-                    android:gravity="center" />
+                    android:text="@string/filter_10_days" />
 
-                <RadioButton
-                    android:id="@+id/rb_15days"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_15days"
+                    style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:maxLines="1"
-                    android:text="@string/filter_15_days"
-                    android:textSize="16sp"
-                    app:autoSizeMaxTextSize="16sp"
-                    app:autoSizeMinTextSize="11sp"
-                    app:autoSizeStepGranularity="1sp"
-                    app:autoSizeTextType="uniform"
-                    android:gravity="center" />
+                    android:text="@string/filter_15_days" />
 
-                <RadioButton
-                    android:id="@+id/rb_30days"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_30days"
+                    style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:maxLines="1"
-                    android:text="@string/filter_30_days"
-                    android:textSize="16sp"
-                    app:autoSizeMaxTextSize="16sp"
-                    app:autoSizeMinTextSize="11sp"
-                    app:autoSizeStepGranularity="1sp"
-                    app:autoSizeTextType="uniform"
-                    android:gravity="center" />
-            </RadioGroup>
+                    android:text="@string/filter_30_days" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
         </LinearLayout>
 

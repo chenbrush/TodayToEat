@@ -171,14 +171,15 @@
                 app:autoSizeStepGranularity="1sp"
                 app:autoSizeTextType="uniform"/>
 
-            <androidx.appcompat.widget.AppCompatSeekBar
+            <com.google.android.material.slider.Slider
                 android:id="@+id/sb_change_card_elevation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
                 android:layout_marginBottom="10sp"
-                android:max="20"
-                android:min="1"/>
+                android:valueFrom="1"
+                android:valueTo="20"
+                android:stepSize="1" />
 
             <TextView
                 android:id="@+id/tv_change_card_result"

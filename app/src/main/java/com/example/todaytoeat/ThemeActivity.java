@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -20,6 +19,7 @@ import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.radiobutton.MaterialRadioButton;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class ThemeActivity extends AppCompatActivity {
@@ -105,34 +105,22 @@ public class ThemeActivity extends AppCompatActivity {
 
         findViewById(R.id.ib_back).setOnClickListener(view -> finish());
 
-        SeekBar sb_change_color_elevation = findViewById(R.id.sb_change_card_elevation);
+        Slider sb_change_color_elevation = findViewById(R.id.sb_change_card_elevation);
         TextView tv_change_card_result = findViewById(R.id.tv_change_card_result);
 
+        // 读取已保存的卡片高度（1~20），并同步到滑块
         int progressValue = ThemesMangerUtils.getCardElevationValue(ThemeActivity.this);
-        sb_change_color_elevation.setProgress(progressValue);
+        sb_change_color_elevation.setValue(progressValue);
         tv_change_card_result.setText(getString(R.string.card_height_current) + progressValue);
         MaterialCardView card_change_card_elevation = findViewById(R.id.card_change_card_elevation);
 
-        sb_change_color_elevation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                Log.d("seekbar", "onProgressChanged: " + i);
-                tv_change_card_result.setText(getString(R.string.card_height_current) + i);
-                card_change_card_elevation.setCardElevation(i * ThemesMangerUtils.CARD_ELEVATION_NORMAL_VALUE);
-                ThemesMangerUtils.putAllCardElevation(ThemeActivity.this, i);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Log.d("seekbar", "stop");
-                restartWithFade();
-            }
+        // 监听滑块值变化，实时更新预览卡片高度并保存
+        sb_change_color_elevation.addOnChangeListener((slider, value, fromUser) -> {
+            int elevation = (int) value;
+            Log.d("slider", "onValueChange: " + elevation);
+            tv_change_card_result.setText(getString(R.string.card_height_current) + elevation);
+            card_change_card_elevation.setCardElevation(elevation * ThemesMangerUtils.CARD_ELEVATION_NORMAL_VALUE);
+            ThemesMangerUtils.putAllCardElevation(ThemeActivity.this, elevation);
         });
 
     }
@@ -141,6 +129,7 @@ public class ThemeActivity extends AppCompatActivity {
      * 以淡入淡出动画重启主题管理页。
      * 相比直接 recreate，能避免切换深浅色时出现生硬闪烁。
      */
+    @SuppressLint("ResourceAsColor")
     @SuppressWarnings("deprecation")
     private void restartWithFade() {
         finish();

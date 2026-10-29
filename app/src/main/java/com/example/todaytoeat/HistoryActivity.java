@@ -37,6 +37,7 @@ import com.example.todaytoeat.utils.HistoryManager;
 import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -137,8 +138,9 @@ public class HistoryActivity extends AppCompatActivity {
 
         loadHistoryData();
 
-        // 返回按钮点击事件：关闭当前页面回到首页
-        findViewById(R.id.ib_back).setOnClickListener(view -> finish());
+        // 顶部工具栏返回按钮：关闭当前页面回到首页
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(view -> finish());
     }
 
     /**

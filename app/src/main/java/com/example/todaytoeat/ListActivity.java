@@ -39,6 +39,7 @@ import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.ShopListUtils;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.TemporaryBlockUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -48,7 +49,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ListActivity extends AppCompatActivity implements View.OnClickListener {
+public class ListActivity extends AppCompatActivity {
     private final List<String> shopList = new ArrayList<>();
     private String path;
     // 空列表时展示的提示文字（非空表示当前列表里只有一张提示卡片）
@@ -91,8 +92,17 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         adapter.setOnItemLongClickListener(this::onShopItemLongClick);
         lv_list.setAdapter(adapter);
 
-        findViewById(R.id.ib_back).setOnClickListener(this);
-        findViewById(R.id.ib_edit).setOnClickListener(this);
+        // 顶部工具栏：返回按钮关闭页面，右侧菜单用于添加商铺
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.activity_list_toolbar);
+        toolbar.setNavigationOnClickListener(view -> finish());
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_edit) {
+                showAddShopDialog();
+                return true;
+            }
+            return false;
+        });
 
         // 设置初始状态，在设置监听之前，避免触发 onCheckedChanged
         cb_repetition.setChecked(sharedPreferences.getBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false));
@@ -306,36 +316,30 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.ib_back) {
-            // 传递之后结束这个activity
-            finish();
-        } else if (view.getId() == R.id.ib_edit) {
-            // 加载自定义布局
-            View dialogView = LayoutInflater.from(this).inflate(R.layout.list_dialog, null);
-            EditText etInput = dialogView.findViewById(R.id.et_input);
+    // 弹出添加商铺弹窗
+    private void showAddShopDialog() {
+        // 加载自定义布局
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.list_dialog, null);
+        EditText etInput = dialogView.findViewById(R.id.et_input);
 
-            // 构建弹窗
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.add_shop)
-                    .setView(dialogView)
-                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                        // 获取输入的文本
-                        String content = etInput.getText().toString().trim();
-                        // 后续：保存到文件、刷新列表
-                        if (content.isEmpty()) {
-                            return;
-                        }
+        // 构建弹窗
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.add_shop)
+                .setView(dialogView)
+                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                    // 获取输入的文本
+                    String content = etInput.getText().toString().trim();
+                    // 内容为空时不处理
+                    if (content.isEmpty()) {
+                        return;
+                    }
 
-                        addNewShop(content);
-                        loadShop();
-                        adapter.notifyDataSetChanged();
-
-                    })
-                    .setNegativeButton(R.string.cancel, null)
-                    .show();
-        }
+                    addNewShop(content);
+                    loadShop();
+                    adapter.notifyDataSetChanged();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     // 添加店铺

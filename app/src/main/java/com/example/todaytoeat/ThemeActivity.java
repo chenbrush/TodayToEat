@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.slider.Slider;
@@ -97,7 +98,9 @@ public class ThemeActivity extends AppCompatActivity {
             card_color_manager.setVisibility(View.GONE);
         }
 
-        findViewById(R.id.ib_back).setOnClickListener(view -> finish());
+        // 顶部工具栏返回按钮：关闭当前页面
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(view -> finish());
 
         Slider sb_change_color_elevation = findViewById(R.id.sb_change_card_elevation);
         TextView tv_change_card_result = findViewById(R.id.tv_change_card_result);

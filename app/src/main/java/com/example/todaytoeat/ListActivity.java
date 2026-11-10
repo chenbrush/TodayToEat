@@ -443,8 +443,10 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
         // 预勾选当前分组内的商铺
         Set<String> selected = new HashSet<>(group.getGroupShopsList());
+        // 属于其它分组的商铺只展示但不可勾选
+        Set<String> disabledShops = getGroupedShops(groupName);
         boolean[] checked = new boolean[shopList.size()];
-        fillShopCheckboxes(llShopChoices, selected, checked);
+        fillShopCheckboxes(llShopChoices, selected, disabledShops, checked);
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(groupName)
@@ -519,8 +521,10 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         LinearLayout llShopChoices = dialogView.findViewById(R.id.ll_shop_choices);
 
         // 为每家商铺生成一个复选框，勾选状态记录在 checked 数组里
+        // 已经属于其它分组的商铺只展示但不可勾选
+        Set<String> groupedShops = getGroupedShops(null);
         boolean[] checked = new boolean[shopList.size()];
-        fillShopCheckboxes(llShopChoices, new HashSet<>(), checked);
+        fillShopCheckboxes(llShopChoices, new HashSet<>(), groupedShops, checked);
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.add_group)
@@ -572,19 +576,26 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      *
      * @param llShopChoices 复选框容器
      * @param preSelected   预先选中的商铺名称
+     * @param disabledShops 不可勾选的商铺名称
      * @param checked       勾选状态数组，长度需与 shopList 一致
      */
     private void fillShopCheckboxes(LinearLayout llShopChoices,
                                     Set<String> preSelected,
+                                    Set<String> disabledShops,
                                     boolean[] checked) {
         for (int i = 0; i < shopList.size(); i++) {
+            String shopName = shopList.get(i);
             MaterialCheckBox checkBox = new MaterialCheckBox(this);
-            checkBox.setText(shopList.get(i));
+            checkBox.setText(shopName);
             checkBox.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            boolean isChecked = preSelected.contains(shopList.get(i));
+            // 已经属于其它分组的商铺置灰，只展示但不可勾选
+            boolean isDisabled = disabledShops.contains(shopName);
+            checkBox.setEnabled(!isDisabled);
+
+            boolean isChecked = !isDisabled && preSelected.contains(shopName);
             checked[i] = isChecked;
             checkBox.setChecked(isChecked);
 
@@ -592,6 +603,25 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             checkBox.setOnCheckedChangeListener((buttonView, checkedState) -> checked[index] = checkedState);
             llShopChoices.addView(checkBox);
         }
+    }
+
+    /**
+     * 收集已经属于分组的商铺名称
+     *
+     * @param exceptGroupName 需要排除的分组名称；为 null 时收集全部分组
+     * @return 已分组商铺名称集合
+     */
+    private Set<String> getGroupedShops(String exceptGroupName) {
+        Set<String> grouped = new HashSet<>();
+        for (ShopGroupData group : new JsonReader().readShopGroups(this)) {
+            if (exceptGroupName != null && exceptGroupName.equals(group.getGroupName())) {
+                continue;
+            }
+            if (group.getGroupShopsList() != null) {
+                grouped.addAll(group.getGroupShopsList());
+            }
+        }
+        return grouped;
     }
 
     /**

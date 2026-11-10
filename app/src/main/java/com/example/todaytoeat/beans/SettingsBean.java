@@ -33,7 +33,6 @@ public class SettingsBean {
     private static final int[] iconArr = {
             R.drawable.baseline_history_black_24,
             R.drawable.baseline_format_list_bulleted_24,
-            R.drawable.baseline_settings_black_24,
             R.drawable.baseline_color_lens_24,
             R.drawable.baseline_info_24
     };
@@ -41,7 +40,6 @@ public class SettingsBean {
     private static final int[] nameResArr = {
             R.string.history,
             R.string.list,
-            R.string.selection_settings,
             R.string.theme,
             R.string.version
     };

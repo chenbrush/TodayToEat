@@ -34,7 +34,6 @@ import android.view.ViewGroup;
 import com.example.todaytoeat.HistoryActivity;
 import com.example.todaytoeat.ListActivity;
 import com.example.todaytoeat.R;
-import com.example.todaytoeat.SelectionSettingsActivity;
 import com.example.todaytoeat.ThemeActivity;
 import com.example.todaytoeat.VersionActivity;
 import com.example.todaytoeat.adapter.SettingAdapter;
@@ -104,13 +103,6 @@ public class SettingFragment extends Fragment {
                 break;
 
             case 2:
-                // 选择设置
-                Intent intentSelection = new Intent();
-                intentSelection.setClass(requireContext(), SelectionSettingsActivity.class);
-                startActivity(intentSelection);
-                break;
-
-            case 3:
                 // 主题管理
                 Intent intentTheme = new Intent();
                 intentTheme.setClass(requireContext(), ThemeActivity.class);

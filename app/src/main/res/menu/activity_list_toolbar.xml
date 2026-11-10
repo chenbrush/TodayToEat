@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 商铺列表页顶部工具栏菜单：右侧编辑按钮用于添加商铺 -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/baseline_edit_30"
+        android:title="@string/add_shop"
+        app:showAsAction="always" />
+
+</menu>

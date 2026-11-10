@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 页面顶部工具栏标题样式：恢复为 30sp 并加粗，长文本自动缩放避免被截断 -->
+<resources>
+
+    <style name="TextAppearance.TodayToEat.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">18sp</item>
+        <item name="android:autoSizeMaxTextSize">30sp</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
+    </style>
+
+</resources>

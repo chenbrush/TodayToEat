@@ -126,5 +126,11 @@
     <string name="group_delete_confirm">Delete group \"%1$s\"? The shops inside will not be deleted.</string>
     <string name="group_delete_success">Group deleted</string>
     <string name="group_delete_failed">Failed to delete the group</string>
+    <string name="selection_settings">Selection Settings</string>
+    <string name="allow_shop_grouping">Allow Shop Grouping</string>
+    <string name="allow_shop_grouping_desc">When enabled, the random result avoids picking two shops from the same group.</string>
+    <string name="dialog_add_shop_group">Group (optional)</string>
+    <string name="ungrouped">Ungrouped</string>
+    <string name="shop_name_with_group">%1$s (%2$s)</string>
 </resources>
 

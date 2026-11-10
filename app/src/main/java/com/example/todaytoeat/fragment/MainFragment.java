@@ -81,6 +81,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences sharedPreferences;
     private boolean repStatus;
     private boolean similar;
+    // 是否允许使用商铺分组（开启后随机选择会按分组抽取）
+    private boolean grouping;
     // 缓存的被屏蔽商铺集合（在 loadAvailableShops 中读取一次，供 isShopBlocked 使用）
     private Set<String> hideShopsSet;
     // 缓存的当天临时屏蔽商铺集合（同样在 reloadShop 中读取，跨天后会自动失效）
@@ -161,8 +163,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         repStatus = sharedPreferences.getBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false);
         // 获取是否过滤相似店名，默认关闭false
         similar = sharedPreferences.getBoolean(PreferenceKeys.KEY_SIMILAR, false);
+        // 获取是否允许使用商铺分组，默认关闭false
+        grouping = sharedPreferences.getBoolean(PreferenceKeys.KEY_SHOP_GROUPING, false);
         Log.d("get settings rep status", repStatus + "");
         Log.d("get settings similar", similar + "");
+        Log.d("get settings grouping", grouping + "");
     }
 
     /**
@@ -441,11 +446,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             // 尝试100次强制退出
             if (attempts > maxAttempts) break;
 
-            // 随机早、晚餐下标
-            int zw = r.nextInt(shop.length);
-            amEat = shop[zw];
-            int ws = r.nextInt(shop.length);
-            pmEat = shop[ws];
+            // 随机早、晚餐
+            amEat = shop[r.nextInt(shop.length)];
+            pmEat = shop[r.nextInt(shop.length)];
 
             // 开启昨日重复过滤
             if (repStatus) {
@@ -813,6 +816,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
      * @return 两个商铺属于同一分组时返回 true，否则返回 false
      */
     private boolean isSameGroup(String shopA, String shopB) {
+        // 未开启商铺分组时不做同组判断
+        if (!grouping) {
+            return false;
+        }
         // 店名为空或未分组时直接返回 false，避免误判
         if (shopA == null || shopB == null || shopA.isEmpty() || shopB.isEmpty()) {
             return false;

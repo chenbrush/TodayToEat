@@ -8,44 +8,33 @@
     tools:context=".ThemeActivity"
     android:layout_marginTop="30sp">
 
-    <LinearLayout
-        android:id="@+id/ll_theme_header"
-        app:layout_constraintTop_toTopOf="parent"
+    <!-- 标准 Material 顶部应用栏：AppBarLayout 只能纵向排列，不设置 orientation -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_theme"
         android:layout_width="match_parent"
-        android:layout_height="50sp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
-            android:id="@+id/ib_back"
-            android:layout_width="0dp"
-            android:layout_height="50sp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:src="@drawable/baseline_arrow_back_ios_new_24"
-            android:backgroundTint="@color/transparent"/>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/theme"
+            app:titleTextAppearance="@style/TextAppearance.TodayToEat.ToolbarTitle"
+            app:navigationIcon="@drawable/baseline_arrow_back_ios_new_24" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|start"
-            android:layout_weight="9"
-            android:text="@string/theme"
-            android:textSize="30sp"
-            tools:ignore="MissingConstraints" />
-
-    </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_dark_or_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:cardCornerRadius="10sp"
         app:cardElevation="3sp"
         android:outlineAmbientShadowColor="@android:color/transparent"
         android:outlineSpotShadowColor="@android:color/transparent"
         android:layout_margin="10sp"
-        app:layout_constraintTop_toBottomOf="@id/ll_theme_header"
+        app:layout_constraintTop_toBottomOf="@id/abl_theme"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -65,55 +54,39 @@
                 app:autoSizeStepGranularity="1sp"
                 app:autoSizeTextType="uniform" />
 
-            <RadioGroup
-                android:id="@+id/rg_color_mode_manager"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/tg_color_mode_manager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/rb_light"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_light"
+                    style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="@string/light"
-                    android:textSize="20sp"
-                    app:autoSizeMaxTextSize="20sp"
-                    app:autoSizeMinTextSize="12sp"
-                    app:autoSizeStepGranularity="1sp"
-                    app:autoSizeTextType="uniform"
-                    android:gravity="center_vertical" />
+                    android:text="@string/light" />
 
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/rb_dark"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_dark"
+                    style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="@string/dark"
-                    android:textSize="20sp"
-                    app:autoSizeMaxTextSize="20sp"
-                    app:autoSizeMinTextSize="12sp"
-                    app:autoSizeStepGranularity="1sp"
-                    app:autoSizeTextType="uniform"
-                    android:gravity="center_vertical" />
+                    android:text="@string/dark" />
 
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/rb_system"
-                    android:layout_width="0sp"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_system"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="@string/follow_system"
-                    android:textSize="20sp"
-                    app:autoSizeMaxTextSize="20sp"
-                    app:autoSizeMinTextSize="12sp"
-                    app:autoSizeStepGranularity="1sp"
-                    app:autoSizeTextType="uniform"
-                    android:gravity="center_vertical"/>
+                    android:text="@string/follow_system" />
 
-            </RadioGroup>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
         </LinearLayout>
 
@@ -124,7 +97,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:cardCornerRadius="10sp"
         app:cardElevation="3sp"
         android:outlineAmbientShadowColor="@android:color/transparent"
         android:outlineSpotShadowColor="@android:color/transparent"
@@ -147,7 +119,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:cardCornerRadius="10sp"
         app:cardElevation="3sp"
         android:outlineAmbientShadowColor="@android:color/transparent"
         android:outlineSpotShadowColor="@android:color/transparent"
@@ -171,14 +142,15 @@
                 app:autoSizeStepGranularity="1sp"
                 app:autoSizeTextType="uniform"/>
 
-            <androidx.appcompat.widget.AppCompatSeekBar
+            <com.google.android.material.slider.Slider
                 android:id="@+id/sb_change_card_elevation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
                 android:layout_marginBottom="10sp"
-                android:max="20"
-                android:min="1"/>
+                android:valueFrom="1"
+                android:valueTo="20"
+                android:stepSize="1" />
 
             <TextView
                 android:id="@+id/tv_change_card_result"

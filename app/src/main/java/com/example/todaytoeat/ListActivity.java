@@ -16,11 +16,11 @@
 package com.example.todaytoeat;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -43,6 +43,7 @@ import com.example.todaytoeat.utils.ShopGroupData;
 import com.example.todaytoeat.utils.ShopListUtils;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.TemporaryBlockUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -53,7 +54,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ListActivity extends AppCompatActivity implements View.OnClickListener {
+public class ListActivity extends AppCompatActivity {
     private final List<String> shopList = new ArrayList<>();
     private String path;
     // 空列表时展示的提示文字（非空表示当前列表里只有一张提示卡片）
@@ -84,8 +85,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         RecyclerView lv_list = findViewById(R.id.lv_list);
-        CheckBox cb_repetition = findViewById(R.id.cb_repetition);
-        CheckBox cb_similar = findViewById(R.id.cb_similar);
 
         loadShop();
 
@@ -96,63 +95,17 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         adapter.setOnItemLongClickListener(this::onShopItemLongClick);
         lv_list.setAdapter(adapter);
 
-        findViewById(R.id.ib_back).setOnClickListener(this);
-        findViewById(R.id.ib_edit).setOnClickListener(this);
-
-        // 设置初始状态，在设置监听之前，避免触发 onCheckedChanged
-        cb_repetition.setChecked(sharedPreferences.getBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false));
-        cb_similar.setChecked(sharedPreferences.getBoolean(PreferenceKeys.KEY_SIMILAR, false));
-
-        cb_repetition.setOnCheckedChangeListener((compoundButton, b) -> {
-            sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_REPETITION_STATUS, b).apply();
-            // 如果商铺小于四个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
-            if (b && shopList.size() < 4) {
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle(getString(R.string.notice))
-                        .setMessage(R.string.notice_repeat_boom_message)
-                        .setPositiveButton(R.string.notice_repeat_boom_positive_botton, (dialogInterface, i) -> {
-                            sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false).apply();
-                            cb_repetition.setChecked(false);
-                        });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
+        // 顶部工具栏：返回按钮关闭页面，右侧编辑按钮用于添加商铺
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(view -> finish());
+        findViewById(R.id.ib_edit).setOnClickListener(view -> showShopManagementDialog());
+        // 右上角选择设置按钮：进入选择设置页
+        findViewById(R.id.ib_selection_settings).setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setClass(this, SelectionSettingsActivity.class);
+            startActivity(intent);
         });
 
-        // 设置相似商铺
-        cb_similar.setOnCheckedChangeListener((compoundButton, b) -> {
-            // 还有一个取消
-            if (!b) {
-                sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, false).apply();
-                return;
-            }
-
-            // 如果商铺小于3个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
-            if (shopList.size() < 3) {
-                // 直接更改
-                sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, false).apply();
-                cb_repetition.setChecked(false);
-
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle(getString(R.string.notice))
-                        .setMessage(R.string.notice_repeat_boom_message)
-                        .setPositiveButton(R.string.notice_repeat_boom_positive_botton, null);
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                return;
-            }
-
-            // 得先做一个提示，确保用户知道效果
-            new MaterialAlertDialogBuilder(ListActivity.this)
-                    .setTitle(getString(R.string.notice))
-                    .setMessage(R.string.list_notice_similar_message)
-                    .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, true).apply())
-                    .setNegativeButton(getString(R.string.cancel), null)
-                    .show();
-
-        });
     }
 
     // 长按商铺条目：弹出操作菜单
@@ -313,30 +266,21 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.ib_back) {
-            // 传递之后结束这个activity
-            finish();
-        } else if (view.getId() == R.id.ib_edit) {
-            // 将添加新商铺和创建和修改分组结合起来
-            String[] choices = {getString(R.string.add_shop), getString(R.string.add_group), getString(R.string.edit_group)};
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.choose_action)
-                    .setItems(choices, (dialogInterface, i) -> {
-                        if (i == 0){
-                            noticeAddShop();
-                        } else if (i == 1){
-                            noticeAddGroup();
-                        } else {
-                            noticeModifyGroup();
-                        }
-                    })
-                    .create()
-                    .show();
-
-
-        }
+    // 右上角编辑按钮：在添加商铺、添加分组、编辑分组之间选择
+    private void showShopManagementDialog() {
+        String[] choices = {getString(R.string.add_shop), getString(R.string.add_group), getString(R.string.edit_group)};
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.choose_action)
+                .setItems(choices, (dialogInterface, i) -> {
+                    if (i == 0) {
+                        noticeAddShop();
+                    } else if (i == 1) {
+                        noticeAddGroup();
+                    } else {
+                        noticeModifyGroup();
+                    }
+                })
+                .show();
     }
 
     /**

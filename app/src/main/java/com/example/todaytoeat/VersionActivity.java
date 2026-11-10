@@ -39,6 +39,7 @@ import com.example.todaytoeat.utils.GithubUpdateUtils;
 import com.example.todaytoeat.utils.PreferenceKeys;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
@@ -81,7 +82,9 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
 
         Button btn_check_update = findViewById(R.id.btn_check_update);
         btn_check_update.setOnClickListener(this);
-        findViewById(R.id.ib_back).setOnClickListener(this);
+        // 顶部工具栏返回按钮：关闭当前页面
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(view -> finish());
         findViewById(R.id.btn_enter_program).setOnClickListener(this);
         tv_auto_update = findViewById(R.id.tv_auto_update);
         tv_auto_update.setText(sharedPreferences.getString(PreferenceKeys.KEY_LAST_UPDATE_DATE, ""));
@@ -174,8 +177,6 @@ public class VersionActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }).start();
 
-        } else if (view.getId() == R.id.ib_back) {
-            finish();
         } else if (view.getId() == R.id.btn_enter_program) {
             String url = "https://github.com/chenbrush/TodayToEat";
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));

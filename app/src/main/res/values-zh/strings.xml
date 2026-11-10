@@ -126,4 +126,10 @@
     <string name="group_delete_confirm">确认删除分组「%1$s」吗？分组内的商铺不会被删除。</string>
     <string name="group_delete_success">分组已删除</string>
     <string name="group_delete_failed">分组删除失败</string>
+    <string name="selection_settings">选择设置</string>
+    <string name="allow_shop_grouping">允许使用商铺分组</string>
+    <string name="allow_shop_grouping_desc">开启后随机结果会尽量避免抽取同一分组内的两家商铺</string>
+    <string name="dialog_add_shop_group">分组（可选）</string>
+    <string name="ungrouped">未分组</string>
+    <string name="shop_name_with_group">%1$s（%2$s）</string>
 </resources>

@@ -44,7 +44,6 @@
             android:id="@+id/card_text"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            app:cardCornerRadius="10sp"
             android:layout_margin="30sp"
             app:cardElevation="3sp"
             android:outlineAmbientShadowColor="@android:color/transparent"
@@ -121,7 +120,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
-            app:cornerRadius="10dp"
             android:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
@@ -140,7 +138,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_all_day"
-            app:cornerRadius="10dp"
             android:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -83,16 +83,15 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // 设置店铺名称
-        String shopNameAndStatus = mShopList.get(position);
-        holder.tv_shop.setText(shopNameAndStatus);
+        String shopName = mShopList.get(position);
+        holder.tv_shop.setText(shopName);
 
         // 设置屏蔽商铺颜色：永久屏蔽集合只做读取，不能修改 getStringSet 返回的实例
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
         Set<String> hideShopsSet = sp.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
         // 临时屏蔽的商铺同样显示置灰，跨天后会自动解除
-        boolean isBlocked = (hideShopsSet != null && hideShopsSet.contains(shopNameAndStatus))
-                || TemporaryBlockUtils.isTempBlocked(mContext, shopNameAndStatus);
+        boolean isBlocked = (hideShopsSet != null && hideShopsSet.contains(shopName))
+                || TemporaryBlockUtils.isTempBlocked(mContext, shopName);
 
         if (isBlocked) {
             // 被屏蔽的商铺显示置灰颜色

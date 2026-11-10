@@ -335,6 +335,39 @@ public class JsonReader {
     }
 
     /**
+     * 从全部分组中移除指定商铺，并清理因此变空的分组
+     *
+     * @param shopName 商铺名称
+     * @return true 表示保存成功；商铺本来就不在分组中时同样返回 true
+     */
+    public boolean removeShopFromAllGroups(Context context, String shopName) {
+        String shop = shopName == null ? "" : shopName.trim();
+        if (shop.isEmpty()) {
+            return false;
+        }
+
+        List<ShopGroupData> groups = readShopGroups(context);
+        boolean changed = false;
+        for (int i = groups.size() - 1; i >= 0; i--) {
+            ShopGroupData group = groups.get(i);
+            List<String> shops = group.getGroupShopsList();
+            if (shops != null && shops.remove(shop)) {
+                changed = true;
+            }
+            // 分组内没有商铺时直接删除该分组
+            if (shops == null || shops.isEmpty()) {
+                groups.remove(i);
+                changed = true;
+            }
+        }
+
+        if (!changed) {
+            return true;
+        }
+        return writeShopGroups(context, groups);
+    }
+
+    /**
      * 解析分组数据，兼容三种 JSON 格式：
      * 1. [{ "groupName": "...", "groupShopsList": [...] }]
      * 2. { "groups": [{ "groupName": "...", "groupShopsList": [...] }] }

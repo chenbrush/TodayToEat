@@ -250,6 +250,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     // 同步从屏蔽集合中移除并保存，避免残留屏蔽记录
                     hideShopsSet.remove(shopName);
                     sharedPreferences.edit().putStringSet(PreferenceKeys.KEY_HIDE_SHOPS, hideShopsSet).apply();
+                    // 同步从商铺分组中移除，并清理因此变空的分组，避免分组数据残留
+                    new JsonReader().removeShopFromAllGroups(ListActivity.this, shopName);
 
                     // 对删除过后的店铺进行重新整理并且更新文件
                     StringBuilder updateShops = new StringBuilder();

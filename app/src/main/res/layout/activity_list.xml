@@ -55,55 +55,13 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- 英文文案字号不同：关闭基线对齐，避免第二个复选框显得下沉 -->
-    <LinearLayout
-        android:id="@+id/ll_check_box_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/abl_list"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/cb_repetition"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:maxLines="2"
-            android:text="@string/repetition"
-            android:textSize="15sp"
-            app:autoSizeMaxTextSize="15sp"
-            app:autoSizeMinTextSize="11sp"
-            app:autoSizeStepGranularity="1sp"
-            app:autoSizeTextType="uniform"
-            />
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/cb_similar"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:maxLines="2"
-            android:text="@string/similar"
-            android:textSize="15sp"
-            app:autoSizeMaxTextSize="15sp"
-            app:autoSizeMinTextSize="11sp"
-            app:autoSizeStepGranularity="1sp"
-            app:autoSizeTextType="uniform"
-            />
-
-
-    </LinearLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lv_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/ll_check_box_group"
+        app:layout_constraintTop_toBottomOf="@id/abl_list"
         app:layout_constraintBottom_toTopOf="@+id/tv_notice"
         tools:ignore="MissingConstraints" />
 

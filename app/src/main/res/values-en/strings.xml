@@ -102,4 +102,11 @@
     <string name="temp_block_title">Temporarily Block Shop</string>
     <string name="temp_block_message">A temporarily blocked shop is skipped when picking for the rest of the day. The block is released automatically when the new day starts (after 9:00 PM).</string>
     <string name="temp_block_success">Temporarily blocked: %1$s</string>
+
+    <string name="selection_settings">Selection Settings</string>
+    <string name="allow_shop_grouping">Allow Shop Grouping</string>
+    <string name="allow_shop_grouping_desc">When enabled, a random group is picked first, then a shop within it. Set a group name when adding a shop.</string>
+    <string name="dialog_add_shop_group">Group (optional)</string>
+    <string name="ungrouped">Ungrouped</string>
+    <string name="shop_name_with_group">%1$s (%2$s)</string>
 </resources>

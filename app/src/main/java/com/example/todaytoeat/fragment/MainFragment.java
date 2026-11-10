@@ -47,6 +47,7 @@ import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.HistoryManager;
 import com.example.todaytoeat.utils.PreferenceKeys;
+import com.example.todaytoeat.utils.ShopGroupUtils;
 import com.example.todaytoeat.utils.ShopListUtils;
 import com.example.todaytoeat.utils.TemporaryBlockUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
@@ -57,7 +58,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -77,6 +80,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences sharedPreferences;
     private boolean repStatus;
     private boolean similar;
+    // 是否允许使用商铺分组（开启后随机选择会按分组抽取）
+    private boolean grouping;
     // 缓存的被屏蔽商铺集合（在 loadAvailableShops 中读取一次，供 isShopBlocked 使用）
     private Set<String> hideShopsSet;
     // 缓存的当天临时屏蔽商铺集合（同样在 reloadShop 中读取，跨天后会自动失效）
@@ -154,8 +159,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         repStatus = sharedPreferences.getBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false);
         // 获取是否过滤相似店名，默认关闭false
         similar = sharedPreferences.getBoolean(PreferenceKeys.KEY_SIMILAR, false);
+        // 获取是否允许使用商铺分组，默认关闭false
+        grouping = sharedPreferences.getBoolean(PreferenceKeys.KEY_SHOP_GROUPING, false);
         Log.d("get settings rep status", repStatus + "");
         Log.d("get settings similar", similar + "");
+        Log.d("get settings grouping", grouping + "");
     }
 
     // 恢复显示界面
@@ -340,10 +348,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             attempts++;
             // 尝试100次仍无合适店铺，直接随机返回一个
             if (attempts > maxAttempts) {
-                nowEat = shop[r.nextInt(shop.length)];
+                nowEat = ShopGroupUtils.getShopName(shop[r.nextInt(shop.length)]);
                 break;
             }
-            nowEat = shop[r.nextInt(shop.length)];
+            // 原始店名可能带分组标记，展示与比较都使用去掉标记后的显示名
+            String rawNowEat = pickGroupedShop();
+            nowEat = ShopGroupUtils.getShopName(rawNowEat);
 
             // 开启重复过滤：当前店铺不能等于昨日早/晚餐
             if (repStatus && (nowEat.equals(amEaten) || nowEat.equals(pmEaten))) {
@@ -357,8 +367,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 continue;
             }
 
-            // 判断当前选择的商铺是不是已屏蔽的商铺
-            if (isShopBlocked(nowEat)) continue;
+            // 判断当前选择的商铺（原始名）是不是已屏蔽的商铺
+            if (isShopBlocked(rawNowEat)) continue;
 
             // 同一天的两餐不能是同一家，避免下一餐和另一时间段的那一餐同步
             if (!otherEat.isEmpty() && otherEat.equals(nowEat)) continue;
@@ -367,6 +377,48 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             break;
         }
         return nowEat;
+    }
+
+    /**
+     * 随机抽取一家商铺的原始店名。
+     * 开启分组时先随机抽取一个分组，再从组内随机抽取商铺；
+     * 未开启分组或只有一个分组时，直接在全量商铺中随机抽取。
+     */
+    private String pickGroupedShop() {
+        if (!grouping || shop.length == 0) {
+            return shop[r.nextInt(shop.length)];
+        }
+
+        Map<String, List<String>> groups = groupAvailableShops();
+        if (groups.size() <= 1) {
+            return shop[r.nextInt(shop.length)];
+        }
+
+        String[] groupNames = groups.keySet().toArray(new String[0]);
+        String groupName = groupNames[r.nextInt(groupNames.length)];
+        List<String> shopsInGroup = groups.get(groupName);
+        return shopsInGroup.get(r.nextInt(shopsInGroup.size()));
+    }
+
+    /**
+     * 按“#分组”标记把当前可选商铺分组。
+     * 未设置分组的商铺统一归入“未分组”。
+     */
+    private Map<String, List<String>> groupAvailableShops() {
+        Map<String, List<String>> groups = new LinkedHashMap<>();
+        for (String rawShop : shop) {
+            String groupName = ShopGroupUtils.getGroupName(rawShop);
+            if (groupName == null || groupName.isEmpty()) {
+                groupName = getString(R.string.ungrouped);
+            }
+            List<String> shopsInGroup = groups.get(groupName);
+            if (shopsInGroup == null) {
+                shopsInGroup = new ArrayList<>();
+                groups.put(groupName, shopsInGroup);
+            }
+            shopsInGroup.add(rawShop);
+        }
+        return groups;
     }
 
     /**
@@ -411,11 +463,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             // 尝试100次强制退出
             if (attempts > maxAttempts) break;
 
-            // 随机早、晚餐下标
-            int zw = r.nextInt(shop.length);
-            amEat = shop[zw];
-            int ws = r.nextInt(shop.length);
-            pmEat = shop[ws];
+            // 随机早、晚餐，带分组时按分组抽取，结果统一转换为显示名
+            String rawAmEat = pickGroupedShop();
+            String rawPmEat = pickGroupedShop();
+            amEat = ShopGroupUtils.getShopName(rawAmEat);
+            pmEat = ShopGroupUtils.getShopName(rawPmEat);
 
             // 开启昨日重复过滤
             if (repStatus) {
@@ -440,8 +492,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
             }
 
-            // 早晚店铺不能一致且都不是已屏蔽的商铺，满足则退出循环
-            if (!amEat.equals(pmEat) && !isShopBlocked(amEat) && !isShopBlocked(pmEat)) break;
+            // 早晚店铺不能一致，且原始店名都未被屏蔽
+            if (!amEat.equals(pmEat) && !isShopBlocked(rawAmEat) && !isShopBlocked(rawPmEat)) break;
         }
 
         // 更新页面双行结果

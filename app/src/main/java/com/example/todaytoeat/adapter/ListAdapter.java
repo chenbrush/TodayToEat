@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todaytoeat.R;
 import com.example.todaytoeat.utils.PreferenceKeys;
+import com.example.todaytoeat.utils.ShopGroupUtils;
 import com.example.todaytoeat.utils.TemporaryBlockUtils;
 import com.example.todaytoeat.utils.ThemesMangerUtils;
 import com.google.android.material.card.MaterialCardView;
@@ -83,16 +84,20 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // 设置店铺名称
-        String shopNameAndStatus = mShopList.get(position);
-        holder.tv_shop.setText(shopNameAndStatus);
+        // 原始店名可能带“#分组名”标记，展示时拆分成显示名与分组
+        String rawShopName = mShopList.get(position);
+        String groupName = ShopGroupUtils.getGroupName(rawShopName);
+        String displayName = ShopGroupUtils.getShopName(rawShopName);
+        holder.tv_shop.setText(groupName == null
+                ? displayName
+                : mContext.getString(R.string.shop_name_with_group, displayName, groupName));
 
         // 设置屏蔽商铺颜色：永久屏蔽集合只做读取，不能修改 getStringSet 返回的实例
         SharedPreferences sp = mContext.getSharedPreferences(PreferenceKeys.PREFS_NAME, MODE_PRIVATE);
         Set<String> hideShopsSet = sp.getStringSet(PreferenceKeys.KEY_HIDE_SHOPS, null);
         // 临时屏蔽的商铺同样显示置灰，跨天后会自动解除
-        boolean isBlocked = (hideShopsSet != null && hideShopsSet.contains(shopNameAndStatus))
-                || TemporaryBlockUtils.isTempBlocked(mContext, shopNameAndStatus);
+        boolean isBlocked = (hideShopsSet != null && hideShopsSet.contains(rawShopName))
+                || TemporaryBlockUtils.isTempBlocked(mContext, rawShopName);
 
         if (isBlocked) {
             // 被屏蔽的商铺显示置灰颜色

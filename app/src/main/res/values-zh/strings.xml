@@ -103,4 +103,11 @@
     <string name="temp_block_title">临时锁定商铺</string>
     <string name="temp_block_message">临时锁定商铺可以在当天内只锁定该商铺一次，晚上21点进入新的一天后会自动解除</string>
     <string name="temp_block_success">已临时屏蔽：%1$s</string>
+
+    <string name="selection_settings">选择设置</string>
+    <string name="allow_shop_grouping">允许使用商铺分组</string>
+    <string name="allow_shop_grouping_desc">开启后随机选择会先抽取分组，再从组内抽取商铺；添加商铺时可填写分组名</string>
+    <string name="dialog_add_shop_group">分组（可选）</string>
+    <string name="ungrouped">未分组</string>
+    <string name="shop_name_with_group">%1$s（%2$s）</string>
 </resources>

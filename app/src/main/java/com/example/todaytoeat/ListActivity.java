@@ -20,11 +20,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -36,6 +34,7 @@ import com.example.todaytoeat.adapter.ListAdapter;
 import com.example.todaytoeat.utils.AppConstantsUtils;
 import com.example.todaytoeat.utils.FileUtil;
 import com.example.todaytoeat.utils.PreferenceKeys;
+import com.example.todaytoeat.utils.ShopGroupUtils;
 import com.example.todaytoeat.utils.ShopListUtils;
 import com.example.todaytoeat.utils.SystemBarUtils;
 import com.example.todaytoeat.utils.TemporaryBlockUtils;
@@ -80,8 +79,6 @@ public class ListActivity extends AppCompatActivity {
         }
 
         RecyclerView lv_list = findViewById(R.id.lv_list);
-        CheckBox cb_repetition = findViewById(R.id.cb_repetition);
-        CheckBox cb_similar = findViewById(R.id.cb_similar);
 
         loadShop();
 
@@ -97,60 +94,6 @@ public class ListActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(view -> finish());
         findViewById(R.id.ib_edit).setOnClickListener(view -> showAddShopDialog());
 
-        // 设置初始状态，在设置监听之前，避免触发 onCheckedChanged
-        cb_repetition.setChecked(sharedPreferences.getBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false));
-        cb_similar.setChecked(sharedPreferences.getBoolean(PreferenceKeys.KEY_SIMILAR, false));
-
-        cb_repetition.setOnCheckedChangeListener((compoundButton, b) -> {
-            sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_REPETITION_STATUS, b).apply();
-            // 如果商铺小于四个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
-            if (b && shopList.size() < 4) {
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle(getString(R.string.notice))
-                        .setMessage(R.string.notice_repeat_boom_message)
-                        .setPositiveButton(R.string.notice_repeat_boom_positive_botton, (dialogInterface, i) -> {
-                            sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_REPETITION_STATUS, false).apply();
-                            cb_repetition.setChecked(false);
-                        });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
-
-        // 设置相似商铺
-        cb_similar.setOnCheckedChangeListener((compoundButton, b) -> {
-            // 还有一个取消
-            if (!b) {
-                sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, false).apply();
-                return;
-            }
-
-            // 如果商铺小于3个并且单选框为选中状态，会导致程序崩溃，所以要解决这个问题
-            if (shopList.size() < 3) {
-                // 直接更改
-                sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, false).apply();
-                cb_repetition.setChecked(false);
-
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ListActivity.this)
-                        .setTitle(getString(R.string.notice))
-                        .setMessage(R.string.notice_repeat_boom_message)
-                        .setPositiveButton(R.string.notice_repeat_boom_positive_botton, null);
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                return;
-            }
-
-            // 得先做一个提示，确保用户知道效果
-            new MaterialAlertDialogBuilder(ListActivity.this)
-                    .setTitle(getString(R.string.notice))
-                    .setMessage(R.string.list_notice_similar_message)
-                    .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> sharedPreferences.edit().putBoolean(PreferenceKeys.KEY_SIMILAR, true).apply())
-                    .setNegativeButton(getString(R.string.cancel), null)
-                    .show();
-
-        });
     }
 
     // 长按商铺条目：弹出操作菜单
@@ -177,7 +120,7 @@ public class ListActivity extends AppCompatActivity {
         }
 
         new MaterialAlertDialogBuilder(ListActivity.this)
-                .setTitle(shopName)
+                .setTitle(ShopGroupUtils.getShopName(shopName))
                 .setItems(options, (dialogInterface, which) -> {
                     if (isBlocked) {
                         if (which == 0) {
@@ -314,20 +257,22 @@ public class ListActivity extends AppCompatActivity {
         // 加载自定义布局
         View dialogView = LayoutInflater.from(this).inflate(R.layout.list_dialog, null);
         EditText etInput = dialogView.findViewById(R.id.et_input);
+        EditText etInputGroup = dialogView.findViewById(R.id.et_input_group);
 
         // 构建弹窗
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.add_shop)
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                    // 获取输入的文本
+                    // 获取输入的店名与分组（分组可选）
                     String content = etInput.getText().toString().trim();
+                    String group = etInputGroup.getText().toString().trim();
                     // 内容为空时不处理
                     if (content.isEmpty()) {
                         return;
                     }
 
-                    addNewShop(content);
+                    addNewShop(ShopGroupUtils.buildShopName(content, group));
                     loadShop();
                     adapter.notifyDataSetChanged();
                 })

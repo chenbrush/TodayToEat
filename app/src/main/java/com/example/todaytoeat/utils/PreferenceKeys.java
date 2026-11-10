@@ -37,6 +37,9 @@ public final class PreferenceKeys {
     /** 相似店名去重开关（boolean） */
     public static final String KEY_SIMILAR = "similar";
 
+    /** 是否允许使用商铺分组（boolean） */
+    public static final String KEY_SHOP_GROUPING = "shopGrouping";
+
     /** 被屏蔽（隐藏）的店铺名称集合（StringSet） */
     public static final String KEY_HIDE_SHOPS = "HideShops";
 
